@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 **/node_modules
 client/.pnp
@@ -27,4 +25,4 @@ todo.txt
 /client/config/config.ts
 /src/config/config.ts
 nodemon.json
-dist
+nodemon-example.json

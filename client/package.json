@@ -1,0 +1,60 @@
+{
+  "name": "react-express-template",
+  "version": "1.0.0",
+  "description": "a template for apps using react, express, scss, tailwind, ejs, mongoose and typescript.",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "postcss": "^8.3.6",
+    "postcss-cli": "^8.3.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "tailwindcss": "^2.2.7",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "build-scss": "sass scss/index.scss:src/assets/style.css",
+    "build-css": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss  ",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.duraken.com/everythingguy/react-express-template.git"
+  },
+  "author": "everythingguy",
+  "license": "ISC",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^16.6.1",
+    "@types/react": "^17.0.17",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-router": "^5.1.16",
+    "@types/react-router-dom": "^5.1.8",
+    "sass": "^1.37.5"
+  }
+}

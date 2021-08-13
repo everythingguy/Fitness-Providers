@@ -1,0 +1,21 @@
+{
+    "restartable": "rs",
+    "ignore": [".git", "node_modules/", "dist/", "coverage/", "client/", "public/", "private/"],
+    "watch": ["src/"],
+    "execMap": {
+      "ts": "node -r ts-node/register"
+    },
+    "env": {
+      "NODE_ENV": "development",
+      "DB_USERNAME": "",
+      "DB_PASSWORD": "",
+      "DB_AUTHSOURCE": "admin",
+      "DB_IP": "",
+      "DB_PORT": 27017,
+      "DB_COLLECTION": "",
+      "SECRET": "",
+      "PORT": 5000,
+      "CI": false
+    },
+    "ext": "js,json,ts"
+  }
