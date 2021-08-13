@@ -11,7 +11,9 @@ import validator from "express-validator";
 import mongoose from "mongoose";
 
 //local imports
-import { BASE_URL } from "./config/config";
+import ConfigType from "./types/config";
+const config: ConfigType = require("../config/config.json");
+const { BASE_URL } = config;
 import mainRouter from "./routers/main";
 import { isLoggedIn } from "./controllers/user";
 
@@ -102,7 +104,7 @@ app.use("/api/v1", mainRouter);
 //serve react front end
 app.get("*", (req, res) => {
     try {
-        res.sendFile("../client/build/index.html");
+        res.sendFile(path.resolve("client/build/index.html"));
     } catch(e) {
         const err = "Error: react app not built, in order to access the app either run 'npm run build' in the client folder or go to port 3000 to work on the app with live changes";
         console.log(err);

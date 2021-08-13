@@ -5,7 +5,7 @@ This is a template for apps using react, express, scss, tailwind, ejs, mongoose,
 ### Configuration
 configure nodemon-sample.json with your enviroment variables and rename it to nodemon.json. 
 
-configure src/config/config-sample.ts with your domain names and rename the file as config.ts and then copy it to client/src/config directory
+configure /config/config-sample.json with your domain names and rename the file as config.json and then copy it to client/src/config directory
 
 ### Commands
 
@@ -39,11 +39,15 @@ Once you are done designing your program you can dockerize it with the included 
 
 To build the container run "docker build -t imageTag .".
 
-Mountable volumes include the container paths "/app/client/src/config", and "/app/config".
+Mountable volume for config is "/app/config".
 
 When running the docker container make sure to set the enviroment variables that are set in nodemon.json.
 
 The docker container will run both the react app and node app on port 80 by default this can be override with the environment variable PORT.
+
+```bash
+docker run --name value -p 80:80 -e DB_USERNAME=value -e DB_PASSWORD=value -e DB_AUTHSOURCE=admin -e DB_IP=value -e DB_PORT=27017 -e DB_COLLECTION=value -e SECRET=value -v VolPath:/app/config imageTag
+```
 
 ## Warning
 Do not make changes in the dist or the client/build folders. They will be overriden when the applications are rebuilt!

@@ -1,5 +1,6 @@
-import { API_URL } from './config/config';
-
+import config from './config/config.json';
+var API_URL = config.API_URL;
+if(process.env.NODE_ENV === "production") API_URL = "/api/v1";
 export default class API {
     static async createUser(name, email, username, password) {
         const jsonData = JSON.stringify({ name, email, username, password });

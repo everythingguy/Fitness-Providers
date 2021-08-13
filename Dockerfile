@@ -1,18 +1,20 @@
 FROM node:latest
 
-RUN apt update && apt upgrade -y
+RUN apt update && apt upgrade -y && npm i -g npm
 
 WORKDIR /app
 
 COPY . /app
 
+RUN npm i -g postcss-cli && npm i -g postcss && npm i -g typescript && npm i -D && cp ./config/config-sample.json ./config/config.json && cd client && cp ./src/config/config-sample.json ./src/config/config.json && npm i -D && cd ..
+
 ENV NODE_ENV "production"
 ENV PORT 80
 
-RUN npm i -g postcss-cli && npm i -g postcss && npn i -D && npm run build && npm i --only=prod && cd client && npm i --only=prod && cp ./src/config/config-example.ts ./src/config/config.ts && npm run build && cd ..
+RUN npm run build && cd client && npm run build && cd .. && npm i --only=prod && cd client && npm i --only=prod && cd ..
 
-VOLUME ["/app/client/src/config", "/app/config"]
+VOLUME ["/app/config"]
 
-CMD cd client && npm run build && cd .. && npm run start
+CMD npm run start
 
 EXPOSE 80 443

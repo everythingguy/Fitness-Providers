@@ -24,7 +24,7 @@ client/.pnp.js
 
 todo.txt
 
-/client/config/config.ts
-/src/config/config.ts
+/client/config/config.json
+/config/config.json
 nodemon.json
 dist
