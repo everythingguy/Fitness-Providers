@@ -9,6 +9,7 @@ import flash from "connect-flash";
 import cors from "cors";
 import validator from "express-validator";
 import mongoose from "mongoose";
+import "colors";
 
 //local imports
 import ConfigType from "./types/config";
@@ -34,9 +35,9 @@ const connectDB = async () => {
             useUnifiedTopology: true
         });
         
-        console.log(`DB Connected: ${conn.connection.host}`);
+        console.log(`DB Connected: ${conn.connection.host}`.green.underline);
     } catch (err) {
-        console.log(err.message);
+        console.log(err.message.red);
         process.exit(1);
     }
 }; 
@@ -117,5 +118,5 @@ const port = process.env.PORT || 5000;
 app.set("port", port);
 
 app.listen(port, () => {
-    console.log(`API listening on port ${port}`);
+    console.log(`API listening on port ${port}`.yellow.underline);
 });
