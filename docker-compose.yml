@@ -1,0 +1,28 @@
+version: "3"
+services:
+  web:
+    build: .
+    image: template
+    container_name: template
+    ports:
+      - 80:80
+    volumes:
+      - ./config:/app/config
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootpassword
+      - DB_AUTHSOURCE=admin
+      - DB_IP=mongo
+      - DB_PORT=27017
+      - DB_COLLECTION=template
+      - SECRET=PLEASECHANGE2LONG&RANDOMSECRET
+  mongo:
+    image: mongo:latest
+    container_name: template_mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword

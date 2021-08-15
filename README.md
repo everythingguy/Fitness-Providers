@@ -55,6 +55,18 @@ The docker container will run both the react app and node app on port 80 by defa
 docker run --name value -p 80:80 -e DB_USERNAME=value -e DB_PASSWORD=value -e DB_AUTHSOURCE=admin -e DB_IP=value -e DB_PORT=27017 -e DB_COLLECTION=value -e SECRET=value -v VolPath:/app/config imageTag
 ```
 
+### Docker Compose
+
+A docker compose file is also included. Simply run "docker-compose up" and you are up and running. The web site can be found on localhost at port 80. Feel free to make env and other changes in side the docker-compose.yml file.
+
+You can also run it detached with "docker-compose up -d".
+
+To tear it down simply run "docker-compose down".
+
+Your root config directory is passed to the container and the mongo database persists its data in mongodb_data.
+
+To rebuild the image that docker compose uses run "docker-compose build" otherwise docker-compose will not run with your app changes.
+
 ## Warning
 
 Do not make changes in the dist or the client/build folders. They will be overriden when the applications are rebuilt!

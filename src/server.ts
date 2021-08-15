@@ -1,5 +1,5 @@
 //imports
-import express from "express";
+import express, { NextFunction } from "express";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
@@ -17,6 +17,7 @@ const { BASE_URL } = config;
 import mainRouter from "./routers/main";
 import { isLoggedIn } from "./controllers/user";
 import { getMongoURI } from "./utils/db";
+import User from "./models/user";
 
 //global variables
 var MongoStore = require("connect-mongo")(session);
@@ -84,6 +85,13 @@ app.use("/users", express.static(__dirname + "/../private"));
 //ejs
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+//logger
+app.use(async (req: any, res, next) => {
+  if (req.user) console.log(`${req.user.username} ${req.method} ${req.url}`);
+  else console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 //router
 export var apiPath = "/api/v1";

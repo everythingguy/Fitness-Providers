@@ -28,3 +28,4 @@ todo.txt
 /config/config.json
 .env
 dist
+mongodb_data
