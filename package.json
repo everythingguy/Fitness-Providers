@@ -11,7 +11,8 @@
     "server": "nodemon --config nodemon.json src/app.ts",
     "server:debug": "nodemon --config nodemon.json --inspect-brk src/app.ts",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --collectCoverage"
   },
   "repository": {
     "type": "git",

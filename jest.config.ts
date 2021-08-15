@@ -9,4 +9,6 @@ export default {
   modulePathIgnorePatterns: ["client", "dist"],
   setupFiles: ["dotenv/config"],
   testTimeout: 10000,
+  collectCoverageFrom: ["src/**/*.{ts,tsx}"],
+  coverageDirectory: "coverage",
 };
