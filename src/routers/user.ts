@@ -19,7 +19,7 @@ router
 
 router
     .route('/')
-    .get(isLoggedIn, getUser);
-    //.delete(isLoggedIn, deleteUser);
+    .get(isLoggedIn, getUser)
+    .delete(isLoggedIn, deleteUser);
 
 export default router;

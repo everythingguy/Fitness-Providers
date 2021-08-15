@@ -1,9 +1,17 @@
-cache:
-    paths:
-        - node_modules/
-
 stages:
+    - test
     - build_image
+
+test:
+    image: node:latest
+    stage: test
+    services:
+      - mongo
+    script:
+        - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript && cp ./config/config-sample.json ./config/config.json
+        - npm i -D
+        - cp .env-sample .env
+        - npm run test
 
 build_image:
     image: docker:latest
