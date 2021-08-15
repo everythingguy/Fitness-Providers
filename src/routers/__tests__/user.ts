@@ -37,7 +37,7 @@ describe("env", () => {
     expect(process.env.DB_PORT).toBeDefined();
   });
   it("should have db collection", () => {
-    expect(process.env.DB_COLLECTION).toBeDefined();
+    expect(process.env.DB_NAME).toBeDefined();
   });
   it("should have secret", () => {
     expect(process.env.SECRET).toBeDefined();
