@@ -1,11 +1,9 @@
-export interface MongoResult {
-    _doc: any
-}
+import { Document } from "mongoose";
 
-export interface User extends MongoResult {
-    name: string,
-    email: string,
-    username: string,
-    password: string,
-    _id: string
+export interface User extends Document {
+  name: string;
+  email: string;
+  username: string;
+  password?: string;
+  isValidPassword: (password: string) => Promise<boolean>;
 }

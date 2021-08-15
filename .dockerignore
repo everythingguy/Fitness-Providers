@@ -8,6 +8,7 @@ client/.pnp.js
 
 # production
 **/build
+dist
 
 # misc
 **/.DS_Store
@@ -25,4 +26,5 @@ todo.txt
 /client/config/config.json
 /src/config/config.json
 nodemon.json
-nodemon-example.json
+.env
+.env-sample

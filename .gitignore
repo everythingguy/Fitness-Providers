@@ -26,5 +26,5 @@ todo.txt
 
 /client/config/config.json
 /config/config.json
-nodemon.json
+.env
 dist
