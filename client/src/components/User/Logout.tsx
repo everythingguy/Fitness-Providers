@@ -1,19 +1,15 @@
-import API from '../../API';
+import API from "../../API";
 
-export const Logout = () => {
+export const Logout: React.FC = () => {
+  const logoutUser = async () => {
+    await API.logoutUser();
 
-    const logoutUser = async () => {
-        await API.logoutUser();
+    sessionStorage.clear();
 
-        sessionStorage.clear();
-    
-        window.location.pathname = '/';
-    };
+    window.location.pathname = "/";
+  };
 
-    logoutUser();
+  logoutUser();
 
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};

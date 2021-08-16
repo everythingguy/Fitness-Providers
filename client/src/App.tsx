@@ -1,20 +1,19 @@
-import { Header } from './components/Header'
-import { Main } from './components/Main';
-import { Footer } from './components/Footer';
+import { Header } from "./components/Header";
+import { Main } from "./components/Main";
+import { Footer } from "./components/Footer";
 
-import { UserProvider } from './context/UserState';
+import { UserProvider } from "./context/UserState";
 
 function App() {
   return (
     <div className="bg-gray-900">
       <UserProvider>
-          <Header/> 
-          <Main />
+        <Header />
+        <Main />
       </UserProvider>
-      <Footer/>
+      <Footer />
     </div>
   );
 }
 
 export default App;
-

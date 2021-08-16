@@ -1,7 +1,3 @@
-export const Footer = () => {
-    return (
-        <div>
-            
-        </div>
-    )
-}
+export const Footer: React.FC = () => {
+  return <div></div>;
+};

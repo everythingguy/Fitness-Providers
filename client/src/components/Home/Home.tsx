@@ -1,6 +1,3 @@
-export const Home = () => {
-    return(
-        <>
-        </>
-    );
+export const Home: React.FC = () => {
+  return <></>;
 };
