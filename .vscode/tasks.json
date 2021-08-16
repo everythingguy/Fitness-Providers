@@ -48,6 +48,14 @@
       "detail": "concurrently \"npm run server\" \"npm run client\"",
       "runOptions": {
         "runOn": "folderOpen"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
       }
     },
     {
@@ -89,14 +97,30 @@
       "command": "npm i -D",
       "problemMatcher": [],
       "label": "npm: install -D",
-      "detail": "install dev dependencies from package"
+      "detail": "install dev dependencies from package",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     },
     {
       "type": "shell",
       "command": "npm i -D --prefix client",
       "problemMatcher": [],
       "label": "npm: install -D - client",
-      "detail": "install client dev dependencies from package"
+      "detail": "install client dev dependencies from package",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     },
     {
       "type": "npm",

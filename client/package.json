@@ -18,7 +18,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "build-scss": "sass scss/index.scss:src/assets/style.css",
+    "build-scss": "sass scss/style.scss:src/assets/style.css",
     "build-css": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss",
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -55,6 +55,7 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.1.8",
+    "react-express-template": "file:..",
     "sass": "^1.37.5"
   }
 }
