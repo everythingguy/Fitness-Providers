@@ -1,15 +1,24 @@
 {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2,
-    "editor.useTabStops": true,
-    "editor.formatOnSave": true,
-    "emmet.includeLanguages": {
-        "javascript": "javascriptreact"
-     },
-     "[typescript]": {
-         "editor.defaultFormatter": "esbenp.prettier-vscode"
-     },
-     "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.useTabStops": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "liveSassCompile.settings.formats": [
+    {
+      "format": "expanded",
+      "extensionName": ".css",
+      "savePath": "/client/src/assets"
+    },
+    {
+      "format": "compressed",
+      "extensionName": ".min.css",
+      "savePath": "/client/src/assets"
     }
+  ],
+  "liveSassCompile.settings.showOutputWindow": false,
+  "browser-preview.startUrl": "http://localhost:3000"
 }

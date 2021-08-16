@@ -1,0 +1,118 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": ["$tsc"],
+      "label": "npm: build",
+      "detail": "tsc",
+      "dependsOn": ["npm: install -D"]
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "path": "client/",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": [
+        "npm: build",
+        "npm: build-css - client",
+        "npm: install - client"
+      ],
+      "problemMatcher": [],
+      "label": "npm: build - client",
+      "detail": "react-scripts build"
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "dependsOn": ["npm: install -D", "npm: install -D - client"],
+      "problemMatcher": [],
+      "label": "npm: test",
+      "detail": "jest"
+    },
+    {
+      "type": "npm",
+      "script": "dev",
+      "dependsOn": ["npm: install -D", "npm: install -D - client"],
+      "problemMatcher": [],
+      "label": "npm: dev",
+      "detail": "concurrently \"npm run server\" \"npm run client\"",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build-css",
+      "path": "client/",
+      "group": "build",
+      "dependsOn": ["npm: install - client"],
+      "problemMatcher": [],
+      "label": "npm: build-css - client",
+      "detail": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss  "
+    },
+    {
+      "type": "npm",
+      "script": "coverage",
+      "dependsOn": ["npm: install -D", "npm: install -D - client"],
+      "problemMatcher": [],
+      "label": "npm: coverage",
+      "detail": "jest --collectCoverage",
+      "group": "test"
+    },
+    {
+      "type": "npm",
+      "script": "install",
+      "problemMatcher": [],
+      "label": "npm: install",
+      "detail": "install dependencies from package"
+    },
+    {
+      "type": "npm",
+      "script": "install",
+      "path": "client/",
+      "problemMatcher": [],
+      "label": "npm: install - client",
+      "detail": "install client dependencies from package"
+    },
+    {
+      "type": "shell",
+      "command": "npm i -D",
+      "problemMatcher": [],
+      "label": "npm: install -D",
+      "detail": "install dev dependencies from package"
+    },
+    {
+      "type": "shell",
+      "command": "npm i -D --prefix client",
+      "problemMatcher": [],
+      "label": "npm: install -D - client",
+      "detail": "install client dev dependencies from package"
+    },
+    {
+      "type": "npm",
+      "script": "lint",
+      "dependsOn": ["npm: install -D"],
+      "problemMatcher": [],
+      "label": "npm: lint",
+      "detail": "tslint -c tslint.json -p tsconfig.json --fix"
+    },
+    {
+      "type": "npm",
+      "script": "start",
+      "dependsOn": ["npm: build", "npm: build - client"],
+      "problemMatcher": [],
+      "label": "npm: start",
+      "detail": "node dist/app.js"
+    }
+  ]
+}

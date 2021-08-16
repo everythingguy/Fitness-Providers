@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build-scss": "sass scss/index.scss:src/assets/style.css",
-    "build-css": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss  ",
+    "build-css": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
