@@ -1,60 +1,57 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../../API";
 
 export const Register: React.FC = () => {
+  //field state
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  //tailwind class names for the button
   const button =
     "cursor-pointer text-center max-w-full bg-transparent hover:bg-purple-500 text-purple-700 font-semibold hover:text-white py-2 px-4 border border-purple-500 hover:border-transparent rounded";
   const inputStyle = "mb-10 mx-10 bg-purple-200";
 
-  const enterSubmit = async (e) => {
+  //allows the enter key to submit the form
+  const enterSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       e.preventDefault();
       await submitForm();
     }
   };
 
+  //process the form
   const submitForm = async () => {
-    const nameElement = document.getElementById("name") as HTMLInputElement;
-    const emailElement = document.getElementById("email") as HTMLInputElement;
-
-    const usernameElement = document.getElementById(
-      "username"
-    ) as HTMLInputElement;
-    const passwordElement = document.getElementById(
-      "password"
-    ) as HTMLInputElement;
-
     const error = document.getElementById("error");
 
-    if (
-      nameElement &&
-      emailElement &&
-      usernameElement &&
-      passwordElement &&
-      error
-    ) {
-      const name = nameElement.value;
-      const email = emailElement.value;
-
-      const username = usernameElement.value;
-      const password = passwordElement.value;
-
+    //if the error element was found by id
+    if (error) {
       error.innerHTML = "";
 
+      //if all fields are filled in
       if (name && email && username && password) {
+        //ask the api to create the user
         var data = await API.createUser(name, email, username, password);
 
-        if (data.success) {
-          sessionStorage.removeItem("VideoState");
-
-          window.location.pathname = "/user/login";
-        } else {
+        //if success redirect to login
+        if (data.success) window.location.pathname = "/user/login";
+        //otherwise
+        else {
+          //print each error
           for (var i = 0; i < data.error.length; i++) {
+            data.error = data.error as { msg: string }[];
             error.innerHTML += "<p>" + data.error[i].msg + "</p>";
           }
 
+          //display the error in a block
           error.style.display = "block";
         }
-      } else {
+      }
+      //otherwise
+      else {
+        //tell the user to finish filling the form
         error.innerText = "Please fill in all fields";
         error.style.display = "block";
       }
@@ -73,6 +70,8 @@ export const Register: React.FC = () => {
           className={inputStyle}
           type="text"
           id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           onKeyUp={(e) => enterSubmit(e)}
         />
         <label>Email</label>
@@ -80,6 +79,8 @@ export const Register: React.FC = () => {
           className={inputStyle}
           type="text"
           id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           onKeyUp={(e) => enterSubmit(e)}
         />
         <label>Username</label>
@@ -87,6 +88,8 @@ export const Register: React.FC = () => {
           className={inputStyle}
           type="text"
           id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           onKeyUp={(e) => enterSubmit(e)}
         />
         <label>Password</label>
@@ -94,14 +97,16 @@ export const Register: React.FC = () => {
           className={inputStyle}
           type="password"
           id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           onKeyUp={(e) => enterSubmit(e)}
         />
-        <a className={button + " mr-10"} href="/user/login">
+        <Link to="/user/login" className={button + " mr-10"}>
           Back
-        </a>
-        <a className={button} onClick={submitForm}>
+        </Link>
+        <button className={button} onClick={submitForm}>
           Register
-        </a>
+        </button>
       </div>
     </>
   );

@@ -1,50 +1,58 @@
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../../API";
 import { UserContext } from "../../context/UserState";
 
 export const Login: React.FC = () => {
-  const { loggedIn } = useContext(UserContext) as {
-    loggedIn: boolean;
-    user: null;
-  };
+  //logged in context
+  const { loggedIn } = useContext(UserContext);
+
+  //field state
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  //tailwind class names for the button
   const button =
     "cursor-pointer text-center max-w-full bg-transparent hover:bg-purple-500 text-purple-700 font-semibold hover:text-white py-2 px-4 border border-purple-500 hover:border-transparent rounded";
 
-  const enterSubmit = async (e) => {
+  //allows the enter key to submit the form
+  const enterSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       e.preventDefault();
       await submitForm();
     }
   };
 
+  //process the form
   const submitForm = async () => {
-    const usernameElement = document.getElementById(
-      "username"
-    ) as HTMLInputElement;
-    const passwordElement = document.getElementById(
-      "password"
-    ) as HTMLInputElement;
     const error = document.getElementById("error");
 
-    if (usernameElement && passwordElement && error) {
-      const username = usernameElement.value;
-      const password = passwordElement.value;
-
+    //if the error element was found by id
+    if (error) {
+      //if the user is logged out and filled in the form
       if (username && password && !loggedIn) {
+        //try to login with the provided credientials
         var data = await API.loginUser(username, password);
 
+        //if success redirect home
         if (data.success) {
-          sessionStorage.removeItem("VideoState");
-
           window.location.pathname = "/";
-        } else {
+        }
+        //otherwise
+        else {
+          //tell the user they entered wrong info
           error.innerText = "Incorrect username or password";
           error.style.display = "block";
         }
-      } else if (loggedIn) {
+      }
+      //if the user is already logged in warn them
+      else if (loggedIn) {
         error.innerText = "Please logout before logging in";
         error.style.display = "block";
-      } else {
+      }
+      //otherwise
+      else {
+        //tell the user to fill out the form
         error.innerText = "Please enter a username and password";
         error.style.display = "block";
       }
@@ -63,6 +71,8 @@ export const Login: React.FC = () => {
           className="mx-10 bg-purple-200"
           type="text"
           id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           onKeyUp={(e) => enterSubmit(e)}
         />
         <label className="my-10">Password</label>
@@ -70,14 +80,16 @@ export const Login: React.FC = () => {
           className="my-10 mx-10 bg-purple-200"
           type="password"
           id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           onKeyUp={(e) => enterSubmit(e)}
         />
-        <a className={button + " mr-10"} href="/user/register">
+        <Link to="/user/register" className={button + " mr-10"}>
           Register
-        </a>
-        <a className={button} onClick={(e) => submitForm()}>
+        </Link>
+        <button className={button} onClick={(e) => submitForm()}>
           Login
-        </a>
+        </button>
       </div>
     </>
   );

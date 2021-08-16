@@ -1,39 +1,52 @@
-import { createContext, useReducer } from 'react';
-import UserReducer from './UserReducer';
-import API from '../API';
+import { createContext, useReducer } from "react";
+import UserReducer from "./UserReducer";
+import API from "../API";
 
-var loadedState = sessionStorage.getItem("UserState");
-if(loadedState) loadedState = JSON.parse(loadedState);
+import User from "../types/User";
 
-const initialState = loadedState || {
-    loggedIn: false,
-    user: null
+interface State {
+  loggedIn: boolean;
+  user?: User;
+}
+
+interface Props {
+  children: any;
+}
+
+var loadedState: State | null = null;
+const storage = sessionStorage.getItem("UserState");
+if (storage) loadedState = JSON.parse(storage);
+
+const initialState: State = loadedState || {
+  loggedIn: false,
 };
 
 export const UserContext = createContext(initialState);
 
-export const UserProvider = ({children}) => {
-    const [state, dispatch] = useReducer(UserReducer, initialState);
+export const UserProvider: React.FC<Props> = ({ children }) => {
+  const [state, dispatch] = useReducer(UserReducer, initialState);
 
-    async function setLogin() {
-        if(!state.loggedIn) {
-        const user = await API.getUserData();
-        if(user.success)
-            dispatch({
-                action: 'SET_LOGIN',
-                payload: user
-            });
-        }
+  async function setLogin() {
+    if (!state.loggedIn) {
+      const user = await API.getUserData();
+      if (user.success)
+        dispatch({
+          action: "SET_LOGIN",
+          payload: user as { success: true; user: User },
+        });
     }
+  }
 
-    setLogin();
+  setLogin();
 
-    return(
-        <UserContext.Provider value={{
-            user: state.user,
-            loggedIn: state.loggedIn
-        }}>
-            {children}
-        </UserContext.Provider>
-    );
+  return (
+    <UserContext.Provider
+      value={{
+        user: state.user,
+        loggedIn: state.loggedIn,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 };

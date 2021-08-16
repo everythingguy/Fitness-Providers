@@ -2,12 +2,9 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserState";
 
 export const Header: React.FC = () => {
-  const { loggedIn } = useContext(UserContext) as {
-    loggedIn: boolean;
-    user: null;
-  };
+  const { loggedIn } = useContext(UserContext);
 
-  const toggleVisability = (id) => {
+  const toggleVisability = (id: string) => {
     var element = document.getElementById(id);
     if (element) {
       element.style.height = "0%";
@@ -17,7 +14,7 @@ export const Header: React.FC = () => {
     }
   };
 
-  const growth = (element, height) => {
+  const growth = (element: HTMLElement, height: number) => {
     element.style.height = height + "px";
     height += 10;
     console.log(height);
