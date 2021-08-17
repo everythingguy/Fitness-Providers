@@ -170,14 +170,28 @@
           ],
           "background": {
             "activeOnStart": true,
-            "beginsPattern": ".",
-            "endsPattern": "."
+            "beginsPattern": "cross-env BROWSER=none react-scripts start",
+            "endsPattern": "Compiled"
           }
         }
       ],
       "label": "npm: silent-client",
       "detail": "npm run silent-start --prefix client",
       "isBackground": true
+    },
+    {
+      "label": "Terminate All Tasks",
+      "command": "echo ${input:terminate}",
+      "type": "shell",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "terminate",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "terminateAll"
     }
   ]
 }

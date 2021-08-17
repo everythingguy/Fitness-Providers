@@ -20,7 +20,8 @@
       "request": "launch",
       "url": "http://localhost:3000/",
       "webRoot": "${workspaceFolder}/client",
-      "preLaunchTask": "npm: silent-client"
+      "preLaunchTask": "npm: silent-client",
+      "postDebugTask": "Terminate All Tasks"
     }
   ],
   "compounds": [
