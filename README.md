@@ -20,22 +20,23 @@ To develop the application run "npm run test" in the root directory
 
 Bellow are descriptions for the "npm run" commands.
 
-| Folder | Command      | Description                                                          |
-| ------ | ------------ | -------------------------------------------------------------------- |
-| root   | lint         | Runs the Typescript linter                                           |
-| root   | build        | Builds the nodejs typescript                                         |
-| root   | start        | Once the nodejs typescript is built you can run it with this command |
-| root   | client       | Runs the client start command from the root folder                   |
-| root   | server       | Runs the nodejs app in development mode providing live changes       |
-| root   | server:debug | Runs the nodejs app in debug mode                                    |
-| root   | dev          | Runs both the react app and the nodejs app in development mode       |
-| root   | test         | Runs unit tests using jest                                           |
-| client | build-scss   | Builds the index.scss file as style.css                              |
-| client | build-css    | Runs the build-scss command and builds tailwind                      |
-| client | start        | Starts the react app in development mode                             |
-| client | build        | Builds the react app for use in production                           |
-| client | test         | Runs App.test to test the application for bugs                       |
-| client | eject        | Ejects the react app from the framework, THIS CANNOT BE UNDONE!      |
+| Folder | Command      | Description                                                                          |
+| ------ | ------------ | ------------------------------------------------------------------------------------ |
+| root   | lint         | Runs the Typescript linter                                                           |
+| root   | build        | Builds the nodejs typescript                                                         |
+| root   | start        | Once the nodejs typescript is built you can run it with this command                 |
+| root   | client       | Runs the client start command from the root folder                                   |
+| root   | server       | Runs the nodejs app in development mode providing live changes                       |
+| root   | server:debug | Runs the nodejs app in debug mode                                                    |
+| root   | dev          | Runs both the react app and the nodejs app in development mode                       |
+| root   | silent-dev   | Runs both the react app and the nodejs app in development mode w/o opening a browser |
+| root   | test         | Runs unit tests using jest                                                           |
+| client | build-scss   | Builds the index.scss file as style.css                                              |
+| client | build-css    | Runs the build-scss command and builds tailwind                                      |
+| client | start        | Starts the react app in development mode                                             |
+| client | build        | Builds the react app for use in production                                           |
+| client | test         | Runs App.test to test the application for bugs                                       |
+| client | eject        | Ejects the react app from the framework, THIS CANNOT BE UNDONE!                      |
 
 ## Finishing Up
 
