@@ -1,4 +1,3 @@
-import Response from "../types/Response";
 import User from "../types/User";
 
 type Actions = {

@@ -21,6 +21,7 @@
     "redhat.vscode-yaml",
     "mongodb.mongodb-vscode",
     "ritwickdey.live-sass",
-    "stevencl.adddoccomments"
+    "stevencl.adddoccomments",
+    "auchenberg.vscode-browser-preview"
   ]
 }

@@ -4,6 +4,7 @@
     {
       "label": "Open Browser Preview",
       "command": "${command:simpleBrowser.show}",
+      //"command": "${command:browser-preview.openPreview}",
       "problemMatcher": []
     },
     {
@@ -178,6 +179,19 @@
       "label": "npm: silent-client",
       "detail": "npm run silent-start --prefix client",
       "isBackground": true
+    },
+    {
+      "label": "Sleep",
+      "type": "shell",
+      "command": "sleep 10",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     },
     {
       "label": "Terminate All Tasks",
