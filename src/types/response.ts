@@ -1,14 +1,16 @@
 export interface ResUser {
-  _id?: string;
+  _id: string;
   name: string;
   email: string;
   username: string;
-  password?: string;
 }
 
 export interface userResponse {
   success: true;
-  data?: ResUser;
+  data?: {
+    user: ResUser;
+    accessToken?: string;
+  };
 }
 
 export interface errorResponse {

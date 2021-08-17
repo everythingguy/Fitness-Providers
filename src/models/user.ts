@@ -31,6 +31,11 @@ const UserSchema = new mongoose.Schema<User>(
       trim: true,
       required: [true, "Missing password"],
     },
+    tokenVersion: {
+      type: Number,
+      trim: true,
+      default: 0,
+    },
   },
   {
     collection: "users",

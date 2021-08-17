@@ -1,6 +1,5 @@
 //imports
 import express, { NextFunction } from "express";
-import passport from "passport";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import session from "express-session";
@@ -15,9 +14,8 @@ import ConfigType from "./types/config";
 const config: ConfigType = require("../config/config.json");
 const { BASE_URL } = config;
 import mainRouter from "./routers/main";
-import { isLoggedIn } from "./controllers/user";
+import { isLoggedIn, ReqUser } from "./controllers/user";
 import { getMongoURI } from "./utils/db";
-import User from "./models/user";
 
 //global variables
 var MongoStore = require("connect-mongo")(session);
@@ -53,8 +51,7 @@ app.use(
   })
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(ReqUser);
 
 app.use(
   validator({

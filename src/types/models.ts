@@ -5,5 +5,6 @@ export interface User extends Document {
   email: string;
   username: string;
   password?: string;
+  tokenVersion: number;
   isValidPassword: (password: string) => Promise<boolean>;
 }

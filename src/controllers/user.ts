@@ -1,63 +1,109 @@
-import passport from "passport";
-import PassportLocal from "passport-local";
 import express from "express";
 
 import User from "../models/user";
 import { User as UserType } from "../types/models";
-import { UserDoc } from "./../types/passport";
 import { errorResponse, ResUser } from "../types/response";
 import { userResponse as userResponseType } from "../types/response";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
+import { apiPath } from "../server";
 
-const LocalStrategy = PassportLocal.Strategy;
+interface Request extends express.Request {
+  user?: ResUser;
+  logout: (res: express.Response) => void;
+}
 
-passport.serializeUser((user: UserDoc, done) => {
-  done(null, user._doc._id);
-});
+interface payload extends JwtPayload {
+  userID: string;
+  tokenVersion: number;
+}
 
-passport.deserializeUser(async (id, done) => {
-  var userData = await User.findById(id);
-  if (userData) {
-    done(null, userData);
-  }
-});
-
-passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      var user = await User.findOne({ username });
-
-      if (!user) {
-        return done(null, false, {
-          message: "Inncorrect Username or Password",
-        });
-      }
-
-      if (await user.isValidPassword(password)) {
-        return done(null, user);
-      } else {
-        return done(null, false, {
-          message: "Inncorrect Username or Password",
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      return done(err);
-    }
-  })
-);
-
-const userResponse = (userData: UserType | UserDoc): ResUser => {
+const userResponse = (userData: UserType): ResUser => {
   var userRes: ResUser;
-  if ((userData as UserDoc)._doc) userRes = { ...(userData as UserDoc)._doc };
-  else userRes = { ...(userData as UserType) };
+  userRes = {
+    _id: userData._id,
+    name: userData.name,
+    email: userData.email,
+    username: userData.username,
+  };
 
-  delete userRes.password;
   return userRes;
 };
 
+const createRefreshToken = (user: UserType) => {
+  return sign(
+    { userID: user.id, tokenVersion: user.tokenVersion },
+    process.env.REFRESH_TOKEN_SECRET!,
+    {
+      expiresIn: "7d",
+    }
+  );
+};
+
+const createAccessToken = (user: UserType) => {
+  return sign({ userID: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
+    expiresIn: "15m",
+  });
+};
+
+const sendRefreshToken = (res: express.Response, token: string) => {
+  res.cookie("jid", token, {
+    httpOnly: true,
+    path: apiPath + "/user/refresh_token",
+  });
+};
+
+const clearCookies = (res: express.Response) => {
+  res.clearCookie("connect.sid");
+  res.clearCookie("jid");
+};
+
 //middleware
+export async function ReqUser(
+  req: Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  //look for access token and create req.user
+  const authHeader = req.headers["authorization"];
+
+  //if access token in header
+  if (authHeader) {
+    try {
+      //parse token
+      const token = authHeader.split(" ")[1];
+      //read payload from token
+      const payload: payload = verify(
+        token,
+        process.env.ACCESS_TOKEN_SECRET!
+      ) as payload;
+      //get the user that owns the token
+      const user = await User.findById(payload.userID);
+
+      //if user found
+      if (user) {
+        //set the user to the request
+        req.user = userResponse(user);
+        //create logout function
+        req.logout = async (res: express.Response) => {
+          sendRefreshToken(res, "");
+        };
+      }
+    } catch (err) {
+      req.user = undefined;
+    }
+  }
+
+  next();
+}
+
+async function revokeRefreshTokensForUser(req: Request) {
+  const u = await User.findById(req.user._id);
+  u.tokenVersion = u.tokenVersion + 1;
+  await u.save();
+}
+
 export function isLoggedIn(
-  req: express.Request,
+  req: Request,
   res: express.Response,
   next: express.NextFunction
 ) {
@@ -70,7 +116,7 @@ export function isLoggedIn(
 }
 
 export function isLoggedOut(
-  req: express.Request,
+  req: Request,
   res: express.Response,
   next: express.NextFunction
 ) {
@@ -87,10 +133,92 @@ export function isLoggedOut(
  * @route POST /api/v1/user/login
  * @access Public
  */
-export function loginUser(req: any, res: express.Response) {
-  return res.status(200).json({
+export async function loginUser(req: Request, res: express.Response) {
+  try {
+    var user = await User.findOne({ username: req.body.username });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: "Inncorrect Username or Password",
+      } as errorResponse);
+    }
+
+    if (await user.isValidPassword(req.body.password)) {
+      sendRefreshToken(res, createRefreshToken(user));
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          user: userResponse(user),
+          accessToken: createAccessToken(user),
+        },
+      } as userResponseType);
+    } else {
+      return res.status(401).json({
+        success: false,
+        error: "Inncorrect Username or Password",
+      } as errorResponse);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    } as errorResponse);
+  }
+}
+
+/**
+ * @desc Create new access token
+ * @route POST /api/v1/user/refresh_token
+ * @access Restricted
+ */
+export async function refresh_token(req: Request, res: express.Response) {
+  const token = req.cookies.jid;
+  if (!token) {
+    return res.status(401).send({
+      success: false,
+      error: "Not authenticated",
+    } as errorResponse);
+  }
+
+  var payload: payload;
+  try {
+    payload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as payload;
+  } catch (err) {
+    console.log(err);
+    return res.status(401).send({
+      success: false,
+      error: "Not authenticated",
+    } as errorResponse);
+  }
+
+  const user = await User.findById(payload.userID);
+
+  if (!user) {
+    return res.status(500).send({
+      success: false,
+      error: "Server Error",
+    } as errorResponse);
+  }
+
+  if (user.tokenVersion !== payload.tokenVersion) {
+    return res.status(401).send({
+      success: false,
+      error: "Not authenticated",
+    } as errorResponse);
+  }
+
+  //comment out if you do not want users staying longed in forever if they use the site every week
+  sendRefreshToken(res, createRefreshToken(user));
+
+  return res.status(200).send({
     success: true,
-    data: userResponse(req.user),
+    data: {
+      user: userResponse(user),
+      accessToken: createAccessToken(user),
+    },
   } as userResponseType);
 }
 
@@ -99,11 +227,11 @@ export function loginUser(req: any, res: express.Response) {
  * @route POST /api/v1/user/logout
  * @access Public
  */
-export function logoutUser(req: express.Request, res: express.Response) {
-  req.logout();
+export function logoutUser(req: Request, res: express.Response) {
+  req.logout(res);
 
   req.session.destroy(function () {
-    res.clearCookie("connect.sid");
+    clearCookies(res);
 
     res.status(200).json({
       success: true,
@@ -116,7 +244,7 @@ export function logoutUser(req: express.Request, res: express.Response) {
  * @route POST /api/v1/user/register
  * @access Public
  */
-export async function addUser(req: express.Request, res: express.Response) {
+export async function addUser(req: Request, res: express.Response) {
   try {
     req.checkBody("name", "Name is required").notEmpty();
     req.checkBody("email", "Email is required").notEmpty();
@@ -158,7 +286,7 @@ export async function addUser(req: express.Request, res: express.Response) {
 
       return res.status(201).json({
         success: true,
-        data: userResponse(user),
+        data: { user: userResponse(user) },
       } as userResponseType);
     }
   } catch (err) {
@@ -183,7 +311,7 @@ export async function addUser(req: express.Request, res: express.Response) {
  * @route GET /api/v1/user
  * @access Restricted
  */
-export async function getUser(req: any, res: express.Response) {
+export async function getUser(req: Request, res: express.Response) {
   try {
     var user: UserType;
     if (req.user) user = await User.findById(req.user._id);
@@ -197,7 +325,7 @@ export async function getUser(req: any, res: express.Response) {
 
     return res.status(200).json({
       success: true,
-      data: userResponse(user),
+      data: { user: userResponse(user) },
     } as userResponseType);
   } catch (err) {
     return res.status(500).json({
@@ -212,7 +340,7 @@ export async function getUser(req: any, res: express.Response) {
  * @route DELETE /api/v1/user
  * @access Restricted
  */
-export async function deleteUser(req: any, res: express.Response) {
+export async function deleteUser(req: Request, res: express.Response) {
   try {
     var user: UserType;
     if (req.user) user = await User.findById(req.user._id);
@@ -226,14 +354,14 @@ export async function deleteUser(req: any, res: express.Response) {
 
     await user.remove();
 
-    req.logout();
+    req.logout(res);
 
     req.session.destroy(function () {
-      res.clearCookie("connect.sid");
+      clearCookies(res);
 
       res.status(200).json({
         success: true,
-        data: userResponse(user),
+        data: { user: userResponse(user) },
       } as userResponseType);
     });
   } catch (err) {
