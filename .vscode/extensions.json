@@ -2,7 +2,6 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "ms-vscode.node-debug2",
-    "msjsdiag.debugger-for-chrome",
     "coenraads.bracket-pair-colorizer-2",
     "hookyqr.beautify",
     "ms-azuretools.vscode-docker",

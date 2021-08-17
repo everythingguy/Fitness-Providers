@@ -154,6 +154,30 @@
       "problemMatcher": [],
       "label": "npm: start",
       "detail": "node dist/app.js"
+    },
+    {
+      "type": "npm",
+      "script": "silent-client",
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".",
+            "endsPattern": "."
+          }
+        }
+      ],
+      "label": "npm: silent-client",
+      "detail": "npm run silent-start --prefix client",
+      "isBackground": true
     }
   ]
 }
