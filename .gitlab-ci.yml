@@ -1,35 +1,56 @@
 stages:
-    - test
-    - build_image
+  - test
+  - build_image
 
 test:
-    image: node:latest
-    stage: test
-    services:
-      - mongo
-    script:
-        - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript && cp ./config/config-sample.json ./config/config.json
-        - npm i -D
-        - cp .env-sample .env
-        - npm run test
+  image: node:latest
+  stage: test
+  services:
+    - mongo
+  script:
+    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript && cp ./config/config-sample.json ./config/config.json
+    - npm i -D
+    - cp .env-sample .env
+    - npm run test
+
+build_jwt:
+  image: docker:latest
+  stage: build_image
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+  tags:
+    - docker
+  only:
+    - jwt
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:jwt-$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:jwt-latest .
+    - docker push $CI_REGISTRY_IMAGE:jwt-$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:jwt-latest
+  after_script:
+    - docker logout $CI_REGISTRY
 
 build_image:
-    image: docker:latest
-    stage: build_image
-    variables:
-        DOCKER_DRIVER: overlay2
-        DOCKER_TLS_CERTDIR: "/certs"
-    tags:
-        - docker
-    only:
-        - master
-    services:
-        - docker:dind
-    before_script:
-        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-    script: 
-        - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest .
-        - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-        - docker push $CI_REGISTRY_IMAGE:latest
-    after_script:
-        - docker logout $CI_REGISTRY
+  image: docker:latest
+  stage: build_image
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+  tags:
+    - docker
+  only:
+    - master
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  after_script:
+    - docker logout $CI_REGISTRY
