@@ -4,6 +4,11 @@ This is a template for apps using react, express, scss, tailwind, ejs, mongoose,
 
 ## Getting Started
 
+### Branches
+
+- master: uses cookie/session authentication
+- jwt: uses jwt authentication w/ a refresh token stored in a http only cookie and a access token stored in a variable (memory)
+
 ### Configuration
 
 configure .env-sample with your enviroment variables and add "CI=false". Make sure to rename it to .env
