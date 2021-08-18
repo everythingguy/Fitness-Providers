@@ -169,7 +169,8 @@ describe("toJSON", () => {
       name: user.name,
       username: user.username,
       email: user.email,
-    });
+      tokenVersion: 0,
+    } as UserType);
   });
 });
 

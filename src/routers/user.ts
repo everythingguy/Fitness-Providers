@@ -9,13 +9,14 @@ import {
   isLoggedIn,
   isLoggedOut,
   refresh_token,
+  authRefreshToken,
 } from "../controllers/user";
 
 const router = express.Router();
 
 router.route("/login").post(isLoggedOut, loginUser);
 
-router.route("/refresh_token").post(refresh_token);
+router.route("/refresh_token").post(authRefreshToken, refresh_token);
 
 router.route("/logout").post(isLoggedIn, logoutUser);
 

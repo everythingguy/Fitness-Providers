@@ -9,6 +9,7 @@ import { apiPath } from "../server";
 
 interface Request extends express.Request {
   user?: ResUser;
+  payload?: payload;
   logout: (res: express.Response) => void;
 }
 
@@ -55,6 +56,51 @@ const sendRefreshToken = (res: express.Response, token: string) => {
 const clearCookies = (res: express.Response) => {
   res.clearCookie("connect.sid");
   res.clearCookie("jid");
+};
+
+export const authRefreshToken = async (
+  req: Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const token = req.cookies.jid;
+  if (!token) {
+    return res.status(401).send({
+      success: false,
+      error: "Not authenticated",
+    } as errorResponse);
+  }
+
+  var payload: payload;
+  try {
+    payload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as payload;
+  } catch (err) {
+    console.log(err);
+    return res.status(401).send({
+      success: false,
+      error: "Not authenticated",
+    } as errorResponse);
+  }
+
+  const user = await User.findById(payload.userID);
+
+  if (!user) {
+    return res.status(500).send({
+      success: false,
+      error: "Server Error",
+    } as errorResponse);
+  }
+
+  if (user.tokenVersion !== payload.tokenVersion) {
+    return res.status(401).send({
+      success: false,
+      error: "Not authenticated",
+    } as errorResponse);
+  }
+
+  req.payload = payload;
+
+  return next();
 };
 
 //middleware
@@ -175,41 +221,8 @@ export async function loginUser(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function refresh_token(req: Request, res: express.Response) {
-  const token = req.cookies.jid;
-  if (!token) {
-    return res.status(401).send({
-      success: false,
-      error: "Not authenticated",
-    } as errorResponse);
-  }
-
-  var payload: payload;
-  try {
-    payload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as payload;
-  } catch (err) {
-    console.log(err);
-    return res.status(401).send({
-      success: false,
-      error: "Not authenticated",
-    } as errorResponse);
-  }
-
-  const user = await User.findById(payload.userID);
-
-  if (!user) {
-    return res.status(500).send({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
-
-  if (user.tokenVersion !== payload.tokenVersion) {
-    return res.status(401).send({
-      success: false,
-      error: "Not authenticated",
-    } as errorResponse);
-  }
-
+  //get user from req.payload, set by the authRefreshToken middleware
+  const user = await User.findById(req.payload.userID);
   //comment out if you do not want users staying longed in forever if they use the site every week
   sendRefreshToken(res, createRefreshToken(user));
 
@@ -235,6 +248,9 @@ export function logoutUser(req: Request, res: express.Response) {
 
     res.status(200).json({
       success: true,
+      data: {
+        accessToken: "",
+      },
     } as userResponseType);
   });
 }

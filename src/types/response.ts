@@ -7,8 +7,8 @@ export interface ResUser {
 
 export interface userResponse {
   success: true;
-  data?: {
-    user: ResUser;
+  data: {
+    user?: ResUser;
     accessToken?: string;
   };
 }

@@ -6,6 +6,7 @@ import { errorResponse, userResponse } from "../../types/response";
 import connectDB, { getMongoURI } from "./../../utils/db";
 
 var authCookie = "";
+var accessToken = "";
 var conn: Connection;
 
 beforeAll(async () => {
@@ -61,7 +62,11 @@ describe(`GET ${apiPath}/user/login`, () => {
       .expect(401)
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.text).toEqual("Unauthorized");
+        const resp = JSON.parse(res.text);
+        expect(resp).toEqual({
+          success: false,
+          error: "Inncorrect Username or Password",
+        });
         done();
       });
   });
@@ -71,7 +76,7 @@ describe(`GET ${apiPath}/user`, () => {
   it("should fail to return the user's info", (done) => {
     request(app)
       .get(`${apiPath}/user`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
       .end((err, res) => {
@@ -89,7 +94,7 @@ describe(`POST ${apiPath}/user/logout`, () => {
   it("should fail to logout the user", (done) => {
     request(app)
       .post(`${apiPath}/user/logout`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
       .end((err, res) => {
@@ -107,7 +112,7 @@ describe(`DELETE ${apiPath}/user`, () => {
   it("should fail to delete the user", (done) => {
     request(app)
       .del(`${apiPath}/user`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
       .end((err, res) => {
@@ -125,7 +130,6 @@ describe(`GET ${apiPath}/user/register`, () => {
   it("should register a new user named john doe", (done) => {
     request(app)
       .post(`${apiPath}/user/register`)
-      .set("Cookie", authCookie)
       .send({
         name: "John Doe",
         email: "jdoe@doe.com",
@@ -139,11 +143,12 @@ describe(`GET ${apiPath}/user/register`, () => {
         expect(JSON.parse(res.text) as userResponse).toBeDefined();
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
-        expect(resp.data.name).toEqual("John Doe");
-        expect(resp.data.username).toEqual("john");
-        expect(resp.data.email).toEqual("jdoe@doe.com");
-        expect(resp.data._id).toBeDefined();
-        expect(resp.data.password).toBeUndefined();
+        expect(resp.data.user.name).toEqual("John Doe");
+        expect(resp.data.user.username).toEqual("john");
+        expect(resp.data.user.email).toEqual("jdoe@doe.com");
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
         done();
       });
   });
@@ -153,7 +158,6 @@ describe(`GET ${apiPath}/user/register`, () => {
   it("should fail to register the same username", (done) => {
     request(app)
       .post(`${apiPath}/user/register`)
-      .set("Cookie", authCookie)
       .send({
         name: "John Doe",
         email: "jdoe@doe.com",
@@ -177,7 +181,6 @@ describe(`GET ${apiPath}/user/register`, () => {
   it("should fail to register the same email", (done) => {
     request(app)
       .post(`${apiPath}/user/register`)
-      .set("Cookie", authCookie)
       .send({
         name: "John Doe",
         email: "jdoe@doe.com",
@@ -201,7 +204,7 @@ describe(`GET ${apiPath}/user/login`, () => {
   it("should successfully login", (done) => {
     request(app)
       .post(`${apiPath}/user/login`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .send({
         username: "john",
         password: "doe21",
@@ -214,11 +217,12 @@ describe(`GET ${apiPath}/user/login`, () => {
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
         expect(resp.data).toBeDefined();
-        expect(resp.data.email).toBeDefined();
-        expect(resp.data.username).toBeDefined();
-        expect(resp.data.name).toBeDefined();
-        expect(resp.data._id).toBeDefined();
-        expect(resp.data.password).toBeUndefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
 
         //set cookie
         expect(res.headers["set-cookie"]).toBeDefined();
@@ -226,6 +230,10 @@ describe(`GET ${apiPath}/user/login`, () => {
           .split(",")
           .map((item: string) => item.split(";")[0]);
         authCookie = cookies.join(";");
+
+        //set access token
+        expect(resp.data.accessToken).toBeDefined();
+        accessToken = resp.data.accessToken;
 
         done();
       });
@@ -236,7 +244,7 @@ describe(`GET ${apiPath}/user/login`, () => {
   it("should fail to login twice", (done) => {
     request(app)
       .post(`${apiPath}/user/login`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .send({
         username: "john",
         password: "doe21",
@@ -249,7 +257,6 @@ describe(`GET ${apiPath}/user/login`, () => {
         const resp = JSON.parse(res.text) as errorResponse;
         expect(resp.success).toBeFalsy();
         expect(resp.error).toEqual("Please logout before logging in");
-        expect(res.headers["set-cookie"]).toBeUndefined();
         done();
       });
   });
@@ -259,7 +266,7 @@ describe(`GET ${apiPath}/user`, () => {
   it("should return the user's info", (done) => {
     request(app)
       .get(`${apiPath}/user`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .expect(200)
       .expect("Content-Type", /json/)
       .end((err, res) => {
@@ -268,11 +275,12 @@ describe(`GET ${apiPath}/user`, () => {
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
         expect(resp.data).toBeDefined();
-        expect(resp.data.email).toBeDefined();
-        expect(resp.data.username).toBeDefined();
-        expect(resp.data.name).toBeDefined();
-        expect(resp.data._id).toBeDefined();
-        expect(resp.data.password).toBeUndefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
         done();
       });
   });
@@ -282,7 +290,7 @@ describe(`POST ${apiPath}/user/logout`, () => {
   it("should logout the user", (done) => {
     request(app)
       .post(`${apiPath}/user/logout`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .expect(200)
       .expect("Content-Type", /json/)
       .end((err, res) => {
@@ -290,7 +298,11 @@ describe(`POST ${apiPath}/user/logout`, () => {
         expect(JSON.parse(res.text) as userResponse).toBeDefined();
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
-        expect(resp.data).toBeUndefined();
+        expect(resp.data.user).toBeUndefined();
+        expect(resp.data.accessToken).toBe("");
+
+        accessToken = resp.data.accessToken;
+
         done();
       });
   });
@@ -300,7 +312,7 @@ describe(`GET ${apiPath}/user`, () => {
   it("should fail to return the user's info", (done) => {
     request(app)
       .get(`${apiPath}/user`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
       .end((err, res) => {
@@ -318,7 +330,7 @@ describe(`GET ${apiPath}/user/login`, () => {
   it("should successfully login", (done) => {
     request(app)
       .post(`${apiPath}/user/login`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .send({
         username: "john",
         password: "doe21",
@@ -331,18 +343,23 @@ describe(`GET ${apiPath}/user/login`, () => {
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
         expect(resp.data).toBeDefined();
-        expect(resp.data.email).toBeDefined();
-        expect(resp.data.username).toBeDefined();
-        expect(resp.data.name).toBeDefined();
-        expect(resp.data._id).toBeDefined();
-        expect(resp.data.password).toBeUndefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
 
-        //set cookie
+        //set refresh token cookie
         expect(res.headers["set-cookie"]).toBeDefined();
         const cookies = res.headers["set-cookie"][0]
           .split(",")
           .map((item: string) => item.split(";")[0]);
         authCookie = cookies.join(";");
+
+        //set access token
+        expect(resp.data.accessToken).toBeDefined();
+        accessToken = resp.data.accessToken;
 
         done();
       });
@@ -353,6 +370,7 @@ describe(`DELETE ${apiPath}/user`, () => {
   it("should delete the user", (done) => {
     request(app)
       .del(`${apiPath}/user`)
+      .set("Authorization", "bearer " + accessToken)
       .set("Cookie", authCookie)
       .expect(200)
       .expect("Content-Type", /json/)
@@ -362,11 +380,12 @@ describe(`DELETE ${apiPath}/user`, () => {
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
         expect(resp.data).toBeDefined();
-        expect(resp.data.email).toBeDefined();
-        expect(resp.data.username).toBeDefined();
-        expect(resp.data.name).toBeDefined();
-        expect(resp.data._id).toBeDefined();
-        expect(resp.data.password).toBeUndefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
         done();
       });
   });
@@ -376,7 +395,7 @@ describe(`GET ${apiPath}/user`, () => {
   it("should fail to return the user's info", (done) => {
     request(app)
       .get(`${apiPath}/user`)
-      .set("Cookie", authCookie)
+      .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
       .end((err, res) => {
