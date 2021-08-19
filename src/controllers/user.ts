@@ -377,7 +377,7 @@ export async function deleteUser(req: Request, res: express.Response) {
 
       res.status(200).json({
         success: true,
-        data: { user: userResponse(user) },
+        data: { user: userResponse(user), accessToken: "" },
       } as userResponseType);
     });
   } catch (err) {
