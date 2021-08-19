@@ -130,7 +130,7 @@ export async function ReqUser(
         //set the user to the request
         req.user = userResponse(user);
         //create logout function
-        req.logout = async (res: express.Response) => {
+        req.logout = (res: express.Response) => {
           sendRefreshToken(res, "");
         };
       }
