@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { UserContext } from "../context/UserState";
+import { Link } from "react-router-dom";
 
 export const Header: React.FC = () => {
   const { loggedIn } = useContext(UserContext);
@@ -24,6 +25,14 @@ export const Header: React.FC = () => {
   return (
     <nav>
       <ul className="flex bg-gray-800 pb-5">
+        <li className="ml-4">
+          <Link
+            to="/"
+            className="text-purple-500 hover:text-purple-800 cursor-pointer"
+          >
+            Home
+          </Link>
+        </li>
         <li className="ml-auto mr-6 ml-4">
           {loggedIn ? (
             <>
@@ -37,21 +46,21 @@ export const Header: React.FC = () => {
                 id="profile-dropdown"
                 className=" overflow-hidden bg-gray-800 rounded-lg absolute items-center top right-0 mr-2 mt-5 p-2 invisible"
               >
-                <a
+                <Link
+                  to="/user/logout"
                   className="py-2 text-purple-500 hover:text-purple-800 cursor-pointer block"
-                  href="/user/logout"
                 >
                   Logout
-                </a>
+                </Link>
               </div>
             </>
           ) : (
-            <a
+            <Link
+              to="/user/login"
               className="text-purple-500 hover:text-purple-800 cursor-pointer"
-              href="/user/login"
             >
               Login
-            </a>
+            </Link>
           )}
         </li>
       </ul>
