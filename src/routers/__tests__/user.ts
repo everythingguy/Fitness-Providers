@@ -2,7 +2,7 @@ import request from "supertest";
 import { Connection } from "mongoose";
 
 import app, { apiPath } from "../../server";
-import { errorResponse, userResponse } from "../../types/response";
+import { errorResponse, userResponse } from "../../@types/response";
 import connectDB, { getMongoURI } from "./../../utils/db";
 
 var authCookie = "";

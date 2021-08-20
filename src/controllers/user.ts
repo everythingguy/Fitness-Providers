@@ -3,10 +3,10 @@ import PassportLocal from "passport-local";
 import express from "express";
 
 import User from "../models/user";
-import { User as UserType } from "../types/models";
-import { UserDoc } from "./../types/passport";
-import { errorResponse, ResUser } from "../types/response";
-import { userResponse as userResponseType } from "../types/response";
+import { User as UserType } from "../@types/models";
+import { UserDoc } from "../@types/passport";
+import { errorResponse, ResUser } from "../@types/response";
+import { userResponse as userResponseType } from "../@types/response";
 
 const LocalStrategy = PassportLocal.Strategy;
 

@@ -11,13 +11,12 @@ import validator from "express-validator";
 import "colors";
 
 //local imports
-import ConfigType from "./types/config";
+import ConfigType from "./@types/config";
 const config: ConfigType = require("../config/config.json");
 const { BASE_URL } = config;
 import mainRouter from "./routers/main";
 import { isLoggedIn } from "./controllers/user";
 import { getMongoURI } from "./utils/db";
-import User from "./models/user";
 
 //global variables
 var MongoStore = require("connect-mongo")(session);

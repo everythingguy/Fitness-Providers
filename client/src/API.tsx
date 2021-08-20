@@ -1,6 +1,6 @@
 import config from "./config/config.json";
-import Response from "./types/Response";
-import User from "./types/User";
+import Response from "./@types/Response";
+import User from "./@types/User";
 var API_URL = config.API_URL;
 if (process.env.NODE_ENV === "production") API_URL = "/api/v1";
 export default class API {

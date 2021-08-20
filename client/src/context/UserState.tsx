@@ -2,7 +2,7 @@ import { createContext, useReducer } from "react";
 import UserReducer from "./UserReducer";
 import API from "../API";
 
-import User from "../types/User";
+import User from "../@types/User";
 
 interface State {
   loggedIn: boolean;
