@@ -1,5 +1,5 @@
 //imports
-import express, { NextFunction } from "express";
+import express from "express";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import session from "express-session";
@@ -10,7 +10,7 @@ import validator from "express-validator";
 import "colors";
 
 //local imports
-import ConfigType from "./types/config";
+import ConfigType from "./@types/config";
 const config: ConfigType = require("../config/config.json");
 const { BASE_URL } = config;
 import mainRouter from "./routers/main";

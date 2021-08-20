@@ -2,7 +2,7 @@ import faker from "faker";
 import { Connection } from "mongoose";
 
 import User from "../user";
-import { User as UserType } from "./../../types/models";
+import { User as UserType } from "./../../@types/models";
 import connectDB, { getMongoURI } from "./../../utils/db";
 
 var conn: Connection;

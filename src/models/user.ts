@@ -1,7 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import validator from "validator";
-import { User } from "../types/models";
+import { User } from "../@types/models";
 
 //debug
 //mongoose.set('debug', true);

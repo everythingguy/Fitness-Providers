@@ -1,9 +1,9 @@
 import express from "express";
 
 import User from "../models/user";
-import { User as UserType } from "../types/models";
-import { errorResponse, ResUser } from "../types/response";
-import { userResponse as userResponseType } from "../types/response";
+import { User as UserType } from "../@types/models";
+import { errorResponse, ResUser } from "../@types/response";
+import { userResponse as userResponseType } from "../@types/response";
 import { JwtPayload, sign, verify } from "jsonwebtoken";
 import { apiPath } from "../server";
 

@@ -1,5 +1,5 @@
 import config from "./config/config.json";
-import { ReturnResponse, Response } from "./types/Response";
+import { ReturnResponse, Response } from "./@types/Response";
 var API_URL = config.API_URL;
 if (process.env.NODE_ENV === "production") API_URL = "/api/v1";
 var accessToken = "";
