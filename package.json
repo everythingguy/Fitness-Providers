@@ -14,8 +14,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "silent-dev": "concurrently \"npm run server\" \"npm run silent-client\"",
     "test": "jest",
-    "coverage": "jest --collectCoverage",
-    "e2e": "npm run e2e --prefix client"
+    "coverage": "jest --collectCoverage"
   },
   "repository": {
     "type": "git",
