@@ -24,7 +24,8 @@
     "silent-start": "cross-env BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "e2e": "cypress open"
   },
   "repository": {
     "type": "git",
@@ -51,12 +52,15 @@
     ]
   },
   "devDependencies": {
+    "@cypress/react": "^5.9.4",
+    "@cypress/webpack-dev-server": "^1.4.0",
     "@types/node": "^16.6.1",
     "@types/react": "^17.0.17",
     "@types/react-dom": "^17.0.9",
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.1.8",
     "cross-env": "^7.0.3",
+    "cypress": "^8.3.0",
     "react-express-template": "file:..",
     "sass": "^1.37.5"
   }

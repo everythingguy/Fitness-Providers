@@ -24,6 +24,8 @@ dist
 todo.txt
 
 /client/config/config.json
+/client/cypress
+/client/cypress.json
 /src/config/config.json
 nodemon.json
 .env
