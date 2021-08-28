@@ -1,4 +1,4 @@
-import API from "../../API";
+import API from "../../../API";
 
 export const Logout: React.FC = () => {
   const logoutUser = async () => {
