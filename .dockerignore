@@ -31,3 +31,4 @@ nodemon.json
 .env
 .env-sample
 mongodb_data
+junit.xml

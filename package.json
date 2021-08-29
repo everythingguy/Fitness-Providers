@@ -46,6 +46,7 @@
     "eslint-plugin-cypress": "^2.11.3",
     "faker": "^5.5.3",
     "jest": "26.6.0",
+    "jest-junit": "^12.2.0",
     "nodemon": "^2.0.12",
     "supertest": "^6.1.5",
     "ts-jest": "^26.0.0",

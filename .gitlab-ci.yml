@@ -12,6 +12,14 @@ test:
     - npm i -D
     - cp .env-sample .env
     - npm run test
+  artifacts:
+    untracked: false
+    expire_in: 30 days
+    when: always
+    paths:
+      - /app/junit.xml
+    reports:
+      junit: /app/junit.xml
 
 build_jwt:
   image: docker:latest
