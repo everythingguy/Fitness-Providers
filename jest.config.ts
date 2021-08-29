@@ -11,4 +11,5 @@ export default {
   testTimeout: 10000,
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
   coverageDirectory: "coverage",
+  reporters: ["default", "jest-junit"],
 };

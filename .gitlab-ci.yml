@@ -5,6 +5,7 @@ stages:
 test:
   image: node:latest
   stage: test
+  needs: []
   services:
     - mongo
   script:
@@ -12,10 +13,20 @@ test:
     - npm i -D
     - cp .env-sample .env
     - npm run test
+  artifacts:
+    untracked: false
+    expire_in: 30 days
+    when: always
+    paths:
+      - junit.xml
+    reports:
+      junit: junit.xml
 
 build_jwt:
   image: docker:latest
   stage: build_image
+  needs:
+    - test
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
@@ -37,6 +48,8 @@ build_jwt:
 build_image:
   image: docker:latest
   stage: build_image
+  needs:
+    - test
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
