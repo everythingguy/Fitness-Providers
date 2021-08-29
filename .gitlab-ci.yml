@@ -1,3 +1,22 @@
+cache:
+  - key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
+    policy: pull-push
+  - key:
+      files:
+        - client/package-lock.json
+    paths:
+      - client/node_modules
+    policy: pull-push
+  - key: $CI_COMMIT_SHA
+    paths:
+      - dist
+      - client/build
+    policy: pull-push
+
 stages:
   - test
   - build_image
@@ -27,6 +46,7 @@ build_jwt:
   stage: build_image
   needs:
     - test
+  cache: []
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
@@ -50,6 +70,7 @@ build_image:
   stage: build_image
   needs:
     - test
+  cache: []
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
