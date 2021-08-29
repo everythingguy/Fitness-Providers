@@ -41,6 +41,30 @@ test:
     reports:
       junit: junit.xml
 
+build_jwt_staging:
+  image: docker:latest
+  stage: build_image
+  needs:
+    - test
+  cache: []
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+  tags:
+    - docker
+  only:
+    - /^jwt-.*$/
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-jwt --tag $CI_REGISTRY_IMAGE:staging-jwt .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-jwt
+    - docker push $CI_REGISTRY_IMAGE:staging-jwt
+  after_script:
+    - docker logout $CI_REGISTRY
+
 build_jwt:
   image: docker:latest
   stage: build_image
@@ -59,9 +83,33 @@ build_jwt:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:jwt-$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:jwt-latest .
-    - docker push $CI_REGISTRY_IMAGE:jwt-$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:jwt-latest
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-jwt --tag $CI_REGISTRY_IMAGE:latest-jwt .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-jwt
+    - docker push $CI_REGISTRY_IMAGE:latest-jwt
+  after_script:
+    - docker logout $CI_REGISTRY
+
+build_image_staging:
+  image: docker:latest
+  stage: build_image
+  needs:
+    - test
+  cache: []
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+  tags:
+    - docker
+  only:
+    - /^cookieAuth-.*$/
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:staging
   after_script:
     - docker logout $CI_REGISTRY
 
