@@ -17,9 +17,9 @@ test:
     expire_in: 30 days
     when: always
     paths:
-      - /app/junit.xml
+      - junit.xml
     reports:
-      junit: /app/junit.xml
+      junit: junit.xml
 
 build_jwt:
   image: docker:latest
