@@ -63,8 +63,8 @@ build_jwt_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:staging-jwt-$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging-jwt .
-    - docker push $CI_REGISTRY_IMAGE:staging-jwt-$CI_COMMIT_SHA
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging-jwt .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:staging-jwt
   after_script:
     - docker logout $CI_REGISTRY
@@ -90,8 +90,9 @@ build_jwt_branch:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:staging-jwt-$CI_COMMIT_SHA .
-    - docker push $CI_REGISTRY_IMAGE:staging-jwt-$CI_COMMIT_SHA
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:branch-jwt-$CI_COMMIT_BRANCH .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:branch-jwt-$CI_COMMIT_BRANCH
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -114,8 +115,8 @@ build_jwt:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-jwt --tag $CI_REGISTRY_IMAGE:latest-jwt .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-jwt
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest-jwt .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:latest-jwt
   after_script:
     - docker logout $CI_REGISTRY
@@ -139,8 +140,8 @@ build_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:staging-$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging .
-    - docker push $CI_REGISTRY_IMAGE:staging-$CI_COMMIT_SHA
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:staging
   after_script:
     - docker logout $CI_REGISTRY
@@ -166,8 +167,9 @@ build_image_branch:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:staging-$CI_COMMIT_SHA .
-    - docker push $CI_REGISTRY_IMAGE:staging-$CI_COMMIT_SHA
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:branch-$CI_COMMIT_BRANCH .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:branch-$CI_COMMIT_BRANCH
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -203,6 +205,7 @@ deploy_staging:
   tags:
     - docker
     - amd64
+  cache: []
   variables:
     GIT_STRATEGY: none
     DOMAIN: http://10.0.0.194
@@ -211,6 +214,7 @@ deploy_staging:
     DOCKER_NAME: react-express-template-staging
     CONFIG_DIR: /mnt/user/appdata/react-express-template/cookieAuth
     IMAGE_TAG: staging
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: staging-deployment
     url: $DOMAIN:$PORT
@@ -220,10 +224,10 @@ deploy_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker pull $CI_REGISTRY_IMAGE:staging
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -232,17 +236,17 @@ stop_staging:
   variables:
     GIT_STRATEGY: none
     DOCKER_NAME: react-express-template-staging
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: staging-deployment
     action: stop
+  only:
+    - cookieAuth-staging
   when: manual
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  cache: []
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
-  after_script:
-    - docker logout $CI_REGISTRY
 
 deploy_jwt_staging:
   stage: deploy
@@ -251,6 +255,7 @@ deploy_jwt_staging:
   tags:
     - docker
     - amd64
+  cache: []
   variables:
     GIT_STRATEGY: none
     DOMAIN: http://10.0.0.194
@@ -259,6 +264,7 @@ deploy_jwt_staging:
     DOCKER_NAME: react-express-template-jwt-staging
     CONFIG_DIR: /mnt/user/appdata/react-express-template/jwt
     IMAGE_TAG: staging-jwt
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: jwt-staging-deployment
     url: $DOMAIN:$PORT
@@ -268,10 +274,10 @@ deploy_jwt_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker pull $CI_REGISTRY_IMAGE:staging-jwt
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging-jwt
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -280,14 +286,14 @@ stop_jwt_staging:
   variables:
     GIT_STRATEGY: none
     DOCKER_NAME: react-express-template-jwt-staging
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: jwt-staging-deployment
     action: stop
+  only:
+    - jwt-staging
   when: manual
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  cache: []
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
-  after_script:
-    - docker logout $CI_REGISTRY
