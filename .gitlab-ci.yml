@@ -235,6 +235,8 @@ stop_staging:
   environment:
     name: staging-deployment
     action: stop
+  only:
+    - cookieAuth-staging
   when: manual
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
@@ -283,6 +285,8 @@ stop_jwt_staging:
   environment:
     name: jwt-staging-deployment
     action: stop
+  only:
+    - jwt-staging
   when: manual
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
