@@ -227,7 +227,7 @@ deploy_staging:
     - docker pull $CI_REGISTRY_IMAGE:staging
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -277,7 +277,7 @@ deploy_jwt_staging:
     - docker pull $CI_REGISTRY_IMAGE:staging-jwt
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging-jwt
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging-jwt
   after_script:
     - docker logout $CI_REGISTRY
 
