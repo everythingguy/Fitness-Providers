@@ -83,6 +83,8 @@ build_jwt_branch:
     - amd64
   only:
     - /^jwt-.*$/
+  except:
+    - jwt-staging
   services:
     - docker:dind
   before_script:
@@ -157,6 +159,8 @@ build_image_branch:
     - amd64
   only:
     - /^cookieAuth-.*$/
+  except:
+    - cookieAuth-staging
   services:
     - docker:dind
   before_script:
