@@ -214,7 +214,7 @@ deploy_staging:
     DOCKER_NAME: react-express-template-staging
     CONFIG_DIR: /mnt/user/appdata/react-express-template/cookieAuth
     IMAGE_TAG: staging
-    DOCKER_HOST: $STAGING_HOST
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: staging-deployment
     url: $DOMAIN:$PORT
@@ -236,7 +236,7 @@ stop_staging:
   variables:
     GIT_STRATEGY: none
     DOCKER_NAME: react-express-template-staging
-    DOCKER_HOST: $STAGING_HOST
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: staging-deployment
     action: stop
@@ -264,7 +264,7 @@ deploy_jwt_staging:
     DOCKER_NAME: react-express-template-jwt-staging
     CONFIG_DIR: /mnt/user/appdata/react-express-template/jwt
     IMAGE_TAG: staging-jwt
-    DOCKER_HOST: $STAGING_HOST
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: jwt-staging-deployment
     url: $DOMAIN:$PORT
@@ -286,7 +286,7 @@ stop_jwt_staging:
   variables:
     GIT_STRATEGY: none
     DOCKER_NAME: react-express-template-jwt-staging
-    DOCKER_HOST: $STAGING_HOST
+    DOCKER_HOST: 10.0.0.194:2375
   environment:
     name: jwt-staging-deployment
     action: stop
