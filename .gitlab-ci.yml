@@ -222,10 +222,10 @@ deploy_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker pull $CI_REGISTRY_IMAGE:staging
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config
+    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -242,13 +242,9 @@ stop_staging:
   when: manual
   services:
     - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
-  after_script:
-    - docker logout $CI_REGISTRY
 
 deploy_jwt_staging:
   stage: deploy
@@ -276,10 +272,10 @@ deploy_jwt_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker pull $CI_REGISTRY_IMAGE:staging-jwt
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config
+    - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging-jwt
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -296,10 +292,6 @@ stop_jwt_staging:
   when: manual
   services:
     - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
-  after_script:
-    - docker logout $CI_REGISTRY
