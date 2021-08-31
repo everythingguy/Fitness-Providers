@@ -214,6 +214,7 @@ deploy_staging:
     DOCKER_NAME: react-express-template-staging
     CONFIG_DIR: /mnt/user/appdata/react-express-template/cookieAuth
     IMAGE_TAG: staging
+    DOCKER_HOST: $STAGING_HOST
   environment:
     name: staging-deployment
     url: $DOMAIN:$PORT
@@ -221,8 +222,6 @@ deploy_staging:
   only:
     - cookieAuth-staging
   before_script:
-    - docker context create --docker host=$STAGING_HOST deploy
-    - docker context use deploy
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
     - docker pull $CI_REGISTRY_IMAGE:staging
@@ -231,13 +230,13 @@ deploy_staging:
     - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging
   after_script:
     - docker logout $CI_REGISTRY
-    - docker context use default
 
 stop_staging:
   stage: deploy
   variables:
     GIT_STRATEGY: none
     DOCKER_NAME: react-express-template-staging
+    DOCKER_HOST: $STAGING_HOST
   environment:
     name: staging-deployment
     action: stop
@@ -245,13 +244,9 @@ stop_staging:
     - cookieAuth-staging
   when: manual
   cache: []
-  before_script:
-    - docker context create --docker host=$STAGING_HOST deploy
-    - docker context use deploy
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
-    - docker context use default
 
 deploy_jwt_staging:
   stage: deploy
@@ -269,6 +264,7 @@ deploy_jwt_staging:
     DOCKER_NAME: react-express-template-jwt-staging
     CONFIG_DIR: /mnt/user/appdata/react-express-template/jwt
     IMAGE_TAG: staging-jwt
+    DOCKER_HOST: $STAGING_HOST
   environment:
     name: jwt-staging-deployment
     url: $DOMAIN:$PORT
@@ -276,8 +272,6 @@ deploy_jwt_staging:
   only:
     - jwt-staging
   before_script:
-    - docker context create --docker host=$STAGING_HOST deploy
-    - docker context use deploy
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
     - docker pull $CI_REGISTRY_IMAGE:staging-jwt
@@ -286,13 +280,13 @@ deploy_jwt_staging:
     - docker run -d --name $DOCKER_NAME -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging-jwt
   after_script:
     - docker logout $CI_REGISTRY
-    - docker context use default
 
 stop_jwt_staging:
   stage: deploy
   variables:
     GIT_STRATEGY: none
     DOCKER_NAME: react-express-template-jwt-staging
+    DOCKER_HOST: $STAGING_HOST
   environment:
     name: jwt-staging-deployment
     action: stop
@@ -300,10 +294,6 @@ stop_jwt_staging:
     - jwt-staging
   when: manual
   cache: []
-  before_script:
-    - docker context create --docker host=$STAGING_HOST deploy
-    - docker context use deploy
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
-    - docker context use default
