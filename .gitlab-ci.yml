@@ -215,6 +215,7 @@ deploy_staging:
     CONFIG_DIR: /mnt/user/appdata/react-express-template/cookieAuth
     IMAGE_TAG: staging
     DOCKER_HOST: 10.0.0.194:2375
+    DB_NAME: cookieAuthStaging
   environment:
     name: staging-deployment
     url: $DOMAIN:$PORT
@@ -227,7 +228,7 @@ deploy_staging:
     - docker pull $CI_REGISTRY_IMAGE:staging
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:staging
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -265,6 +266,7 @@ deploy_jwt_staging:
     CONFIG_DIR: /mnt/user/appdata/react-express-template/jwt
     IMAGE_TAG: staging-jwt
     DOCKER_HOST: 10.0.0.194:2375
+    DB_NAME: jwtStaging
   environment:
     name: jwt-staging-deployment
     url: $DOMAIN:$PORT
@@ -277,7 +279,7 @@ deploy_jwt_staging:
     - docker pull $CI_REGISTRY_IMAGE:staging-jwt
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config $CI_REGISTRY_IMAGE:staging-jwt
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET -e REFRESH_TOKEN_SECRET=$REFRESH_TOKEN_SECRET -e ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET $CI_REGISTRY_IMAGE:staging-jwt
   after_script:
     - docker logout $CI_REGISTRY
 
