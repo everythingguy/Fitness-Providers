@@ -205,6 +205,7 @@ deploy_staging:
   tags:
     - docker
     - amd64
+  cache: []
   variables:
     GIT_STRATEGY: none
     DOMAIN: http://10.0.0.194
@@ -242,6 +243,7 @@ stop_staging:
   only:
     - cookieAuth-staging
   when: manual
+  cache: []
   services:
     - docker:dind
   script:
@@ -255,6 +257,7 @@ deploy_jwt_staging:
   tags:
     - docker
     - amd64
+  cache: []
   variables:
     GIT_STRATEGY: none
     DOMAIN: http://10.0.0.194
@@ -292,6 +295,7 @@ stop_jwt_staging:
   only:
     - jwt-staging
   when: manual
+  cache: []
   services:
     - docker:dind
   script:
