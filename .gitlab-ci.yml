@@ -208,7 +208,6 @@ deploy_staging:
   cache: []
   variables:
     GIT_STRATEGY: none
-    DOMAIN: http://10.0.0.194
     PORT: 7070
     CONTAINER_PORT: 80
     DOCKER_NAME: react-express-template-staging
@@ -218,7 +217,7 @@ deploy_staging:
     DB_NAME: cookieAuthStaging
   environment:
     name: staging-deployment
-    url: $DOMAIN:$PORT
+    url: https://staging-jwtauth.duraken.com
     on_stop: stop_staging
   only:
     - cookieAuth-staging
@@ -259,7 +258,6 @@ deploy_jwt_staging:
   cache: []
   variables:
     GIT_STRATEGY: none
-    DOMAIN: http://10.0.0.194
     PORT: 7060
     CONTAINER_PORT: 80
     DOCKER_NAME: react-express-template-jwt-staging
@@ -269,7 +267,7 @@ deploy_jwt_staging:
     DB_NAME: jwtStaging
   environment:
     name: jwt-staging-deployment
-    url: $DOMAIN:$PORT
+    url: https://staging-cookieauth.duraken.com/
     on_stop: stop_jwt_staging
   only:
     - jwt-staging
