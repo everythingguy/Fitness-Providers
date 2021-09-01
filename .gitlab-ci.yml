@@ -217,7 +217,7 @@ deploy_staging:
     DB_NAME: cookieAuthStaging
   environment:
     name: staging-deployment
-    url: https://staging-jwtauth.duraken.com
+    url: https://jwt.duraken.com
     on_stop: stop_staging
   only:
     - cookieAuth-staging
@@ -267,7 +267,7 @@ deploy_jwt_staging:
     DB_NAME: jwtStaging
   environment:
     name: jwt-staging-deployment
-    url: https://staging-cookieauth.duraken.com/
+    url: https://cookie.duraken.com/
     on_stop: stop_jwt_staging
   only:
     - jwt-staging
