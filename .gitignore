@@ -25,6 +25,9 @@ client/.pnp.js
 todo.txt
 
 /client/src/config/config.json
+/client/src/assets/main.css
+/client/src/assets/style.css
+/client/src/assets/style.css.map
 /config/config.json
 .env
 dist
