@@ -224,10 +224,10 @@ deploy_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker pull $CI_REGISTRY_IMAGE:staging
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:staging
+    - docker create --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
   after_script:
     - docker logout $CI_REGISTRY
 
@@ -274,10 +274,10 @@ deploy_jwt_staging:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker pull $CI_REGISTRY_IMAGE:staging-jwt
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET -e REFRESH_TOKEN_SECRET=$REFRESH_TOKEN_SECRET -e ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET $CI_REGISTRY_IMAGE:staging-jwt
+    - docker create --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET -e REFRESH_TOKEN_SECRET=$REFRESH_TOKEN_SECRET -e ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
   after_script:
     - docker logout $CI_REGISTRY
 
