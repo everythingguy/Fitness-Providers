@@ -15,6 +15,6 @@ RUN npm run build && cd client && npm run build-css && npm run build && cd .. &&
 
 VOLUME ["/app/config"]
 
-ENTRYPOINT [ "npm", "run", "start" ]
+ENTRYPOINT [ "node", "dist/app.js" ]
 
 EXPOSE 80 443
