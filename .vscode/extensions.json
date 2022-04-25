@@ -12,7 +12,6 @@
     "ecmel.vscode-html-css",
     "xabikos.javascriptsnippets",
     "eg2.vscode-npm-script",
-    "fknop.vscode-npm",
     "equimper.react-native-react-redux",
     "ms-vscode-remote.vscode-remote-extensionpack",
     "shan.code-settings-sync",
@@ -21,6 +20,8 @@
     "mongodb.mongodb-vscode",
     "ritwickdey.live-sass",
     "stevencl.adddoccomments",
-    "auchenberg.vscode-browser-preview"
+    "auchenberg.vscode-browser-preview",
+    "hashicorp.terraform",
+    "ms-vscode.vscode-typescript-tslint-plugin"
   ]
 }

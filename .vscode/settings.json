@@ -20,5 +20,8 @@
     }
   ],
   "liveSassCompile.settings.showOutputWindow": false,
-  "browser-preview.startUrl": "http://localhost:3000"
+  "browser-preview.startUrl": "http://localhost:3000",
+  "files.associations": {
+    "*.tfvars": "terraform"
+  }
 }
