@@ -22,6 +22,9 @@ client/.pnp.js
 **/yarn-debug.log*
 **/yarn-error.log*
 
+**/*.auto.tfvars
+!**/*-sample.auto.tfvars
+
 todo.txt
 
 /client/src/assets/main.css
