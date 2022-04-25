@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN npm i -g postcss-cli && npm i -g postcss && npm i -g typescript && npm i -D && cp ./config/config-sample.json ./config/config.json && cd client && cp ./src/config/config-sample.json ./src/config/config.json && npm i -D && cd ..
+RUN npm i -g postcss-cli && npm i -g postcss && npm i -g typescript && npm i -D && cp ./config/config-sample.json ./config/config.json && cd client && npm i -D && cd ..
 
 ENV NODE_ENV "production"
 ENV PORT 80
