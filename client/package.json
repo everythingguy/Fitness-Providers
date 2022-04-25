@@ -1,7 +1,7 @@
 {
-  "name": "react-express-template",
+  "name": "fitness-providers",
   "version": "1.0.0",
-  "description": "a template for apps using react, express, scss, tailwind, ejs, mongoose and typescript.",
+  "description": "This is a full scale website for students to find fitness instructors.",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.duraken.com/everythingguy/react-express-template.git"
+    "url": "https://gitlab.duraken.com/fitness-providers/fitness-providers.git"
   },
   "author": "everythingguy",
   "license": "ISC",
@@ -61,7 +61,7 @@
     "@types/react-router-dom": "^5.1.8",
     "cross-env": "^7.0.3",
     "cypress": "^8.3.0",
-    "react-express-template": "file:..",
+    "fitness-providers": "file:..",
     "sass": "^1.37.5"
   }
 }
