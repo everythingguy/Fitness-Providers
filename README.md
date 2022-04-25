@@ -1,19 +1,50 @@
-# React/Express Template
+# What is this?
 
-This is a template for apps using react, express, scss, tailwind, ejs, mongoose, and typescript.
+This is a full scale website for students to find fitness instructors.
+
+This app uses
+
+- Linter
+  - TSLint
+  - ESLint
+- Frameworks
+  - React
+  - Express
+- Programming Languages
+  - Typescript
+- Infrastructure as Code
+  - Terraform
+- CI/CD
+  - GitLab
+  - Docker
+- Testing
+  - Cypress (e2e)
+  - Jest (model testing/unit testing/API testing)
+  - Postman (manual testing of API)
+- CSS
+  - SCSS
+  - Tailwind
+  - Bootstrap
+- Templating
+  - ejs
+- Database
+  - MongoDB
+  - S3 Object Storage
+- Cloud
+  - Heroku (Web Host)
+  - MongoDB (Database)
+  - MailGun (Mail Server)
+  - Wasabi (Object Storage)
+- Third Party APIs
+  - PayPal Subscriptions
 
 ## Getting Started
-
-### Branches
-
-- master: uses cookie/session authentication
-- jwt: uses jwt authentication w/ a refresh token stored in a http only cookie and a access token stored in a variable (memory)
 
 ### Configuration
 
 configure .env-sample with your enviroment variables and add "CI=false". Make sure to rename it to .env
 
-configure /config/config-sample.json with your domain names and rename the file as config.json and then copy it to client/src/config directory
+configure /config/config-sample.json with your domain names and rename the file as config.json
 
 ### Commands
 
