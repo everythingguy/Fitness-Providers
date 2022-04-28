@@ -9,17 +9,17 @@ import { apiPath } from "../server";
 
 interface Request extends express.Request {
   user?: ResUser;
-  payload?: payload;
+  payload?: Payload;
   logout: (res: express.Response) => void;
 }
 
-interface payload extends JwtPayload {
+interface Payload extends JwtPayload {
   userID: string;
   tokenVersion: number;
 }
 
 const userResponse = (userData: UserType): ResUser => {
-  var userRes: ResUser;
+  let userRes: ResUser;
   userRes = {
     _id: userData._id,
     name: userData.name,
@@ -71,10 +71,11 @@ export const authRefreshToken = async (
     } as errorResponse);
   }
 
-  var payload: payload;
+  let payload: Payload;
   try {
-    payload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as payload;
+    payload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as Payload;
   } catch (err) {
+    // tslint:disable-next-line: no-console
     console.log(err);
     return res.status(401).send({
       success: false,
@@ -103,35 +104,35 @@ export const authRefreshToken = async (
   return next();
 };
 
-//middleware
+// middleware
 export async function ReqUser(
   req: Request,
   res: express.Response,
   next: express.NextFunction
 ) {
-  //look for access token and create req.user
-  const authHeader = req.headers["authorization"];
+  // look for access token and create req.user
+  const authHeader = req.headers.authorization;
 
-  //if access token in header
+  // if access token in header
   if (authHeader) {
     try {
-      //parse token
+      // parse token
       const token = authHeader.split(" ")[1];
-      //read payload from token
-      const payload: payload = verify(
+      // read payload from token
+      const payload: Payload = verify(
         token,
         process.env.ACCESS_TOKEN_SECRET!
-      ) as payload;
-      //get the user that owns the token
+      ) as Payload;
+      // get the user that owns the token
       const user = await User.findById(payload.userID);
 
-      //if user found
+      // if user found
       if (user) {
-        //set the user to the request
+        // set the user to the request
         req.user = userResponse(user);
-        //create logout function
-        req.logout = (res: express.Response) => {
-          sendRefreshToken(res, "");
+        // create logout function
+        req.logout = (resp: express.Response) => {
+          sendRefreshToken(resp, "");
         };
       }
     } catch (err) {
@@ -181,7 +182,7 @@ export function isLoggedOut(
  */
 export async function loginUser(req: Request, res: express.Response) {
   try {
-    var user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({ username: req.body.username });
 
     if (!user) {
       return res.status(401).json({
@@ -207,6 +208,7 @@ export async function loginUser(req: Request, res: express.Response) {
       } as errorResponse);
     }
   } catch (err) {
+    // tslint:disable-next-line: no-console
     console.log(err);
     return res.status(500).json({
       success: false,
@@ -221,9 +223,9 @@ export async function loginUser(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function refresh_token(req: Request, res: express.Response) {
-  //get user from req.payload, set by the authRefreshToken middleware
+  // get user from req.payload, set by the authRefreshToken middleware
   const user = await User.findById(req.payload.userID);
-  //comment out if you do not want users staying longed in forever if they use the site every week
+  // comment out if you do not want users staying longed in forever if they use the site every week
   sendRefreshToken(res, createRefreshToken(user));
 
   return res.status(200).send({
@@ -243,7 +245,7 @@ export async function refresh_token(req: Request, res: express.Response) {
 export function logoutUser(req: Request, res: express.Response) {
   req.logout(res);
 
-  req.session.destroy(function () {
+  req.session.destroy(() => {
     clearCookies(res);
 
     res.status(200).json({
@@ -271,16 +273,17 @@ export async function addUser(req: Request, res: express.Response) {
       .checkBody("password", "Password must be at least 5 digits long")
       .isLength({ min: 5 });
 
-    var errors = req.validationErrors();
+    const errors = req.validationErrors();
 
     if (errors) {
+      // tslint:disable-next-line: no-console
       console.log(errors);
       return res.status(400).json({
         success: false,
         error: errors,
       } as errorResponse);
     } else {
-      var uniqueCheck = await User.findOne({
+      let uniqueCheck = await User.findOne({
         username: req.body.username,
       });
       if (uniqueCheck) {
@@ -329,7 +332,7 @@ export async function addUser(req: Request, res: express.Response) {
  */
 export async function getUser(req: Request, res: express.Response) {
   try {
-    var user: UserType;
+    let user: UserType;
     if (req.user) user = await User.findById(req.user._id);
 
     if (!user) {
@@ -358,7 +361,7 @@ export async function getUser(req: Request, res: express.Response) {
  */
 export async function deleteUser(req: Request, res: express.Response) {
   try {
-    var user: UserType;
+    let user: UserType;
     if (req.user) user = await User.findById(req.user._id);
 
     if (!user) {
@@ -372,7 +375,7 @@ export async function deleteUser(req: Request, res: express.Response) {
 
     req.logout(res);
 
-    req.session.destroy(function () {
+    req.session.destroy(() => {
       clearCookies(res);
 
       res.status(200).json({

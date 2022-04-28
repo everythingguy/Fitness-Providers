@@ -1,4 +1,4 @@
-//imports
+// imports
 import express from "express";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
@@ -9,16 +9,17 @@ import cors from "cors";
 import validator from "express-validator";
 import "colors";
 
-//local imports
+// local imports
 import mainRouter from "./routers/main";
 import { isLoggedIn, ReqUser } from "./controllers/user";
 import { getMongoURI } from "./utils/db";
 
-//global variables
-var MongoStore = require("connect-mongo")(session);
+// global variables
+// tslint:disable-next-line: no-var-requires
+const MongoStore = require("connect-mongo")(session);
 const app = express();
 
-//middleware
+// middleware
 app.use(
   cors({
     origin: process.env.BASE_URL,
@@ -52,10 +53,9 @@ app.use(ReqUser);
 
 app.use(
   validator({
-    errorFormatter: function (param, msg, value) {
-      var namespace = param.split("."),
-        root = namespace.shift(),
-        formParam = root;
+    errorFormatter: (param, msg, value) => {
+      const namespace = param.split(".");
+      let formParam = namespace.shift();
 
       while (namespace.length) {
         formParam += "[" + namespace.shift() + "]";
@@ -63,41 +63,44 @@ app.use(
 
       return {
         param: formParam,
-        msg: msg,
-        value: value,
+        msg,
+        value,
       };
     },
   })
 );
 
-//serve static files
+// serve static files
 app.use(express.static(__dirname + "/../client/build"));
 app.use(express.static(__dirname + "/../public"));
 app.use("/users", isLoggedIn);
 app.use("/users", express.static(__dirname + "/../private"));
 
-//ejs
+// ejs
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-//logger
+// logger
 app.use(async (req: any, res, next) => {
+  // tslint:disable-next-line: no-console
   if (req.user) console.log(`${req.user.username} ${req.method} ${req.url}`);
+  // tslint:disable-next-line: no-console
   else console.log(`${req.method} ${req.url}`);
   next();
 });
 
-//router
-export var apiPath = "/api/v1";
+// router
+export let apiPath = "/api/v1";
 app.use(apiPath, mainRouter);
 
-//serve react front end
+// serve react front end
 app.get("*", (req, res) => {
   try {
     res.sendFile(path.resolve("client/build/index.html"));
   } catch (e) {
     const err =
       "Error: react app not built, in order to access the app either run 'npm run build' in the client folder or go to port 3000 to work on the app with live changes";
+    // tslint:disable-next-line: no-console
     console.log(err);
     res.send(err);
   }
