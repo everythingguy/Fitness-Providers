@@ -15,7 +15,9 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "tailwindcss": "^2.2.7",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "dotenv": "^16.0.0",
+    "webpack": "^4.44.2"
   },
   "scripts": {
     "build-scss": "sass scss/style.scss:src/assets/style.css",
