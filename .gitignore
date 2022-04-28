@@ -30,7 +30,6 @@ todo.txt
 /client/src/assets/main.css
 /client/src/assets/style.css
 /client/src/assets/style.css.map
-/config/config.json
 .env
 dist
 mongodb_data

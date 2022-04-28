@@ -25,7 +25,6 @@ todo.txt
 
 /client/cypress
 /client/cypress.json
-/src/config/config.json
 nodemon.json
 .env
 .env-sample

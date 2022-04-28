@@ -44,8 +44,6 @@ This app uses
 
 configure .env-sample with your enviroment variables and add "CI=false". Make sure to rename it to .env
 
-configure /config/config-sample.json with your domain names and rename the file as config.json
-
 ### Commands
 
 To build the scss and tailwind for the front end use a terminal to change into the client directory and run "npm run build-css"

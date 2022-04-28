@@ -10,9 +10,6 @@ import validator from "express-validator";
 import "colors";
 
 //local imports
-import ConfigType from "./@types/config";
-const config: ConfigType = require("../config/config.json");
-const { BASE_URL } = config;
 import mainRouter from "./routers/main";
 import { isLoggedIn, ReqUser } from "./controllers/user";
 import { getMongoURI } from "./utils/db";
@@ -24,7 +21,7 @@ const app = express();
 //middleware
 app.use(
   cors({
-    origin: BASE_URL,
+    origin: process.env.BASE_URL,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })

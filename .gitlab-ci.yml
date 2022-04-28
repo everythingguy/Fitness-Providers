@@ -31,7 +31,7 @@ test:
   services:
     - mongo
   script:
-    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript && cp ./config/config-sample.json ./config/config.json
+    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript
     - npm i -D
     - cp .env-sample .env
     - npm run test
