@@ -34,3 +34,4 @@ todo.txt
 dist
 mongodb_data
 junit.xml
+/client/webpack-stats.json

@@ -3,7 +3,7 @@
   "editor.tabSize": 4,
   "editor.useTabStops": true,
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "ms-vscode.vscode-typescript-tslint-plugin",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "emmet.includeLanguages": {
     "javascript": "javascriptreact"
   },

@@ -7,7 +7,7 @@
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "start": "node dist/app.js",
-    "client": "npm start --prefix client",
+    "client": "npm run dev --prefix client",
     "silent-client": "npm run silent-start --prefix client",
     "server": "nodemon --config nodemon.json src/app.ts",
     "server:debug": "nodemon --config nodemon.json --inspect-brk src/app.ts",

@@ -95,15 +95,7 @@ app.use(apiPath, mainRouter);
 
 // serve react front end
 app.get("*", (req, res) => {
-  try {
-    res.sendFile(path.resolve("client/build/index.html"));
-  } catch (e) {
-    const err =
-      "Error: react app not built, in order to access the app either run 'npm run build' in the client folder or go to port 3000 to work on the app with live changes";
-    // tslint:disable-next-line: no-console
-    console.log(err);
-    res.send(err);
-  }
+  res.render("index");
 });
 
 export default app;

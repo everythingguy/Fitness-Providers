@@ -1,6 +1,5 @@
 import { ReturnResponse, Response } from "./@types/Response";
-let API_URL = process.env.API_URL;
-if (process.env.NODE_ENV === "production") API_URL = "/api/v1";
+const API_URL = process.env.API_URL;
 let accessToken = "";
 export default class API {
   static async createUser(
