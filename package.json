@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "copyfiles src/views/**/*.ejs dist/views && tsc",
+    "build": "copyfiles -u 2 src/views/**/*.ejs dist/views && tsc",
     "start": "node dist/app.js",
     "client": "npm run dev --prefix client",
     "silent-client": "npm run silent-start --prefix client",

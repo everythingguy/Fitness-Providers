@@ -9,7 +9,7 @@ export default {
   testEnvironment: "node",
   collectCoverage: true,
   verbose: true,
-  modulePathIgnorePatterns: ["dist"],
+  modulePathIgnorePatterns: ["dist", "cypress"],
   setupFiles: ["dotenv/config"],
   testTimeout: 10000,
   collectCoverageFrom: [
