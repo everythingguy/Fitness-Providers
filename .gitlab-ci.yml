@@ -1,28 +1,50 @@
 cache:
-  - key:
+  - &express_cache
+    key:
       files:
         - package-lock.json
     paths:
       - node_modules
     policy: pull-push
-  - key:
+  - &react_cache
+    key:
       files:
         - client/package-lock.json
     paths:
       - client/node_modules
     policy: pull-push
-  - key: $CI_COMMIT_SHA
+  - &build_cache
+    key: $CI_COMMIT_SHA
     paths:
       - dist
-      - client/build
+      - client/dist
+      - client/webpack-stats.json
+      - public/dist
     policy: pull-push
 
 stages:
+  - lint
   - test
-  - build_image
+  - build
   - deploy
 
-test:
+tslint:
+  image: node:latest
+  stage: lint
+  tags:
+    - amd64
+  before_script:
+    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript
+    - npm i -D
+    - cd client
+    - npm i -D
+    - cd ..
+  script:
+    - npm run lint
+    - cd client
+    - npm run lint
+
+test_backend:
   image: node:latest
   stage: test
   needs: []
@@ -30,103 +52,90 @@ test:
     - amd64
   services:
     - mongo
-  script:
+  before_script:
     - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript
     - npm i -D
     - cp .env-sample .env
+  script:
     - npm run test
   artifacts:
     untracked: false
-    expire_in: 30 days
+    expire_in: 14 days
     when: always
     paths:
       - junit.xml
+      - coverage
     reports:
       junit: junit.xml
+      cobertura: coverage/cobertura-coverage.xml
 
-build_jwt_staging:
-  image: docker:latest
-  stage: build_image
-  needs:
-    - test
-  cache: []
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
+test_frontend:
+  image: node:latest
+  stage: test
+  needs: []
   tags:
-    - docker
     - amd64
-  only:
-    - jwt-staging
-  services:
-    - docker:dind
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript
+    - npm i -D
+    - cp .env-sample .env
+    - cd client
+    - npm i -D
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging-jwt .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:staging-jwt
-  after_script:
-    - docker logout $CI_REGISTRY
+    - npm run test
+  artifacts:
+    untracked: false
+    expire_in: 14 days
+    when: always
+    paths:
+      - client/junit.xml
+      - client/coverage
+    reports:
+      junit: client/junit.xml
+      cobertura: client/coverage/cobertura-coverage.xml
 
-build_jwt_branch:
-  image: docker:latest
-  stage: build_image
-  needs:
-    - test
-  cache: []
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
+cypress_chrome:
+  image: cypress/browsers:node16.13.2-chrome97-ff96
+  stage: test
   tags:
-    - docker
     - amd64
-  only:
-    - /^jwt-.*$/
-  except:
-    - jwt-staging
   services:
-    - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-  script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:branch-jwt-$CI_COMMIT_BRANCH .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:branch-jwt-$CI_COMMIT_BRANCH
-  after_script:
-    - docker logout $CI_REGISTRY
-
-build_jwt:
-  image: docker:latest
-  stage: build_image
-  needs:
-    - test
-  cache: []
+    - mongo
+  retry: 2
+  # parallel: 2
   variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
-  tags:
-    - docker
-    - amd64
-  only:
-    - jwt
-  services:
-    - docker:dind
+    CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/client/cache/Cypress"
+  cache:
+    - *express_cache
+    - *react_cache
+    - *build_cache
+    - key: $CI_COMMIT_SHA
+      paths:
+        - client/cache/Cypress
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - npm i -D
+    - npm run build
+    - cd client
+    - npm i -D
+    - npm ci
+    - npm run build
+    - cd ..
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest-jwt .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:latest-jwt
-  after_script:
-    - docker logout $CI_REGISTRY
+    - npm run start & npx wait-on http://localhost
+    - cd client
+    - npx cypress run --browser chrome --spec "$(node cypress/cypress-parallel.js)"
+  artifacts:
+    when: always
+    paths:
+      - client/cypress/videos/**/*.mp4
+      - client/cypress/screenshots/**/*.png
+    expire_in: 1 day
 
 build_staging:
   image: docker:latest
-  stage: build_image
-  needs:
-    - test
+  stage: build
   cache: []
+  dependencies: []
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
@@ -134,7 +143,7 @@ build_staging:
     - docker
     - amd64
   only:
-    - cookieAuth-staging
+    - staging
   services:
     - docker:dind
   before_script:
@@ -146,39 +155,38 @@ build_staging:
   after_script:
     - docker logout $CI_REGISTRY
 
-build_image_branch:
+build_branch:
   image: docker:latest
-  stage: build_image
-  needs:
-    - test
+  stage: build
   cache: []
+  dependencies: []
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
   tags:
     - docker
     - amd64
-  only:
-    - /^cookieAuth-.*$/
   except:
-    - cookieAuth-staging
+    - master
+    - main
+    - staging
+    - dev
+    - tags
   services:
     - docker:dind
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:branch-$CI_COMMIT_BRANCH .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:branch-$CI_COMMIT_BRANCH
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH
   after_script:
     - docker logout $CI_REGISTRY
 
-build_image:
+build_main:
   image: docker:latest
-  stage: build_image
-  needs:
-    - test
+  stage: build
   cache: []
+  dependencies: []
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
@@ -187,6 +195,7 @@ build_image:
     - amd64
   only:
     - master
+    - main
   services:
     - docker:dind
   before_script:
@@ -198,6 +207,90 @@ build_image:
   after_script:
     - docker logout $CI_REGISTRY
 
+build_tags:
+  image: docker:latest
+  stage: build
+  cache: []
+  dependencies: []
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+  tags:
+    - amd64
+    - docker
+  only:
+    - tags
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+  after_script:
+    - docker logout $CI_REGISTRY
+
+deploy_main:
+  stage: deploy
+  needs:
+    - build_main
+  tags:
+    - docker
+    - amd64
+  cache: []
+  variables:
+    GIT_STRATEGY: none
+    CONTAINER_PORT: 80
+    DOCKER_NAME: fitness_prod
+    IMAGE_TAG: staging
+    DOCKER_HOST: 10.0.0.194:2375
+    DB_NAME: fitness_prod
+    SUBDOMAIN: prod
+  environment:
+    name: production
+    url: https://prod.duraken.com
+    on_stop: stop_main
+  only:
+    - main
+    - master
+  before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker stop $DOCKER_NAME || true
+    - docker rm $DOCKER_NAME || true
+    - 'PORT=$(curl -s --location --request POST "http://10.0.0.175:5000/add" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "destIP=10.0.0.194" --data-urlencode "branch=$CI_COMMIT_BRANCH" --data-urlencode "subdomain=$SUBDOMAIN" &> /dev/stdout | cut -d ":" -f 4 | cut -d "}" -f 1)'
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -e DOMAIN="$SUBDOMAIN.duraken.com" -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
+  after_script:
+    - docker logout $CI_REGISTRY
+
+stop_main:
+  stage: deploy
+  tags:
+    - docker
+    - amd64
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_NAME: fitness_prod
+    DOCKER_HOST: 10.0.0.194:2375
+    SUBDOMAIN: prod
+  dependencies: []
+  environment:
+    name: production
+    action: stop
+  only:
+    - main
+    - master
+  when: manual
+  cache: []
+  before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
+  script:
+    - docker stop $DOCKER_NAME
+    - docker rm $DOCKER_NAME
+    - 'curl -s --location --request POST "http://10.0.0.175:5000/delete" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "subdomain=$SUBDOMAIN" --data-urlencode "branch=$CI_COMMIT_BRANCH"'
+
 deploy_staging:
   stage: deploy
   needs:
@@ -208,92 +301,195 @@ deploy_staging:
   cache: []
   variables:
     GIT_STRATEGY: none
-    PORT: 7070
     CONTAINER_PORT: 80
-    DOCKER_NAME: react-express-template-staging
-    CONFIG_DIR: /mnt/user/appdata/react-express-template/cookieAuth
+    DOCKER_NAME: fitness_stage
     IMAGE_TAG: staging
     DOCKER_HOST: 10.0.0.194:2375
-    DB_NAME: cookieAuthStaging
+    DB_NAME: fitness_stage
+    SUBDOMAIN: stage
   environment:
-    name: staging-deployment
-    url: https://jwt.duraken.com
+    name: staging
+    url: https://stage.duraken.com
     on_stop: stop_staging
   only:
-    - cookieAuth-staging
+    - staging
   before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
     - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker create --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - 'PORT=$(curl -s --location --request POST "http://10.0.0.175:5000/add" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "destIP=10.0.0.194" --data-urlencode "branch=$CI_COMMIT_BRANCH" --data-urlencode "subdomain=$SUBDOMAIN" &> /dev/stdout | cut -d ":" -f 4 | cut -d "}" -f 1)'
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -e DOMAIN="$SUBDOMAIN.duraken.com" -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
   after_script:
     - docker logout $CI_REGISTRY
 
 stop_staging:
   stage: deploy
+  tags:
+    - docker
+    - amd64
   variables:
     GIT_STRATEGY: none
-    DOCKER_NAME: react-express-template-staging
+    DOCKER_NAME: fitness_stage
     DOCKER_HOST: 10.0.0.194:2375
+    SUBDOMAIN: stage
+  dependencies: []
   environment:
-    name: staging-deployment
+    name: staging
     action: stop
   only:
-    - cookieAuth-staging
+    - staging
   when: manual
   cache: []
+  before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
+    - 'curl -s --location --request POST "http://10.0.0.175:5000/delete" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "subdomain=$SUBDOMAIN" --data-urlencode "branch=$CI_COMMIT_BRANCH"'
 
-deploy_jwt_staging:
+deploy_dev:
   stage: deploy
   needs:
-    - build_jwt_staging
+    - build_dev
   tags:
     - docker
     - amd64
   cache: []
   variables:
     GIT_STRATEGY: none
-    PORT: 7060
     CONTAINER_PORT: 80
-    DOCKER_NAME: react-express-template-jwt-staging
-    CONFIG_DIR: /mnt/user/appdata/react-express-template/jwt
-    IMAGE_TAG: staging-jwt
+    DOCKER_NAME: fitness_dev
+    IMAGE_TAG: dev
     DOCKER_HOST: 10.0.0.194:2375
-    DB_NAME: jwtStaging
+    DB_NAME: fitness_dev
+    SUBDOMAIN: dev
   environment:
-    name: jwt-staging-deployment
-    url: https://cookie.duraken.com/
-    on_stop: stop_jwt_staging
+    name: dev
+    url: https://dev.duraken.com
+    on_stop: stop_dev
   only:
-    - jwt-staging
+    - dev
   before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
     - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
     - docker stop $DOCKER_NAME || true
     - docker rm $DOCKER_NAME || true
-    - docker create --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -v $CONFIG_DIR:/app/config -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET -e REFRESH_TOKEN_SECRET=$REFRESH_TOKEN_SECRET -e ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - 'PORT=$(curl -s --location --request POST "http://10.0.0.175:5000/add" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "destIP=10.0.0.194" --data-urlencode "branch=$CI_COMMIT_BRANCH" --data-urlencode "subdomain=$SUBDOMAIN" &> /dev/stdout | cut -d ":" -f 4 | cut -d "}" -f 1)'
+    - docker run -d --name $DOCKER_NAME --net="bridge" -p $PORT:$CONTAINER_PORT -e DOMAIN="$SUBDOMAIN.duraken.com" -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
   after_script:
     - docker logout $CI_REGISTRY
 
-stop_jwt_staging:
+stop_dev:
   stage: deploy
+  tags:
+    - docker
+    - amd64
   variables:
     GIT_STRATEGY: none
-    DOCKER_NAME: react-express-template-jwt-staging
+    DOCKER_NAME: fitness_dev
     DOCKER_HOST: 10.0.0.194:2375
+    SUBDOMAIN: dev
+  dependencies: []
   environment:
-    name: jwt-staging-deployment
+    name: dev
     action: stop
   only:
-    - jwt-staging
+    - dev
   when: manual
   cache: []
+  before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
   script:
     - docker stop $DOCKER_NAME
     - docker rm $DOCKER_NAME
+    - 'curl -s --location --request POST "http://10.0.0.175:5000/delete" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "subdomain=$SUBDOMAIN" --data-urlencode "branch=$CI_COMMIT_BRANCH"'
+
+deploy_branch:
+  stage: deploy
+  cache: []
+  needs:
+    - build_branch
+  tags:
+    - docker
+  variables:
+    GIT_STRATEGY: none
+    CONTAINER_PORT: 80
+    IMAGE_TAG: $CI_COMMIT_BRANCH
+    DOCKER_HOST: 10.0.0.194:2375
+    DB_NAME: fitness_branch
+  except:
+    - main
+    - master
+    - staging
+    - dev
+    - tags
+  before_script:
+    #Download curl
+    - apk add --update curl && rm -rf /var/cache/apk/*
+    #Login to the GitLab container registry
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    #pull the docker image
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    #stop and remove any existing container for this environment
+    - docker stop rbcbranch-$CI_COMMIT_BRANCH || true
+    - docker rm rbcbranch-$CI_COMMIT_BRANCH || true
+    #Get the port from the domain api and reserve a domain
+    - 'PORT=$(curl -s --location --request POST "http://10.0.0.175:5000/add" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "destIP=10.0.0.194" --data-urlencode "branch=$CI_COMMIT_BRANCH" &> /dev/stdout | cut -d ":" -f 4 | cut -d "}" -f 1)'
+    - 'ENVIRONMENT_URL=$(curl -s --location --request GET "http://10.0.0.175:5000/suggestedDomain/$PORT" &> /dev/stdout | cut -d "\"" -f 4)'
+    - echo "Using local port $PORT and the domain $ENVIRONMENT_URL"
+    #Give the URL to GitLab
+    - echo "ENVIRONMENT_URL=$ENVIRONMENT_URL" >> deploy.env
+    #Get the subdomain substring from the environment url
+    - SUBDOMAIN=$(echo $ENVIRONMENT_URL | cut -d "/" -f 3 | cut -d "." -f 1)
+    #Create the docker container
+    - docker run -d --name fitness-$CI_COMMIT_BRANCH --net="bridge" -p $PORT:$CONTAINER_PORT -e DOMAIN="$SUBDOMAIN.duraken.com" -e HTTPS=true -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET $CI_REGISTRY_IMAGE:$IMAGE_TAG
+  after_script:
+    - docker logout $CI_REGISTRY
+  artifacts:
+    reports:
+      dotenv: deploy.env
+  environment:
+    name: $CI_COMMIT_BRANCH
+    url: $ENVIRONMENT_URL
+    on_stop: stop_branch
+    auto_stop_in: 5 days
+
+stop_branch:
+  stage: deploy
+  allow_failure: true
+  tags:
+    - docker
+  needs:
+    - deploy_branch
+  dependencies: []
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_HOST: 10.0.0.194:2375
+  environment:
+    name: $CI_COMMIT_BRANCH
+    action: stop
+  except:
+    - main
+    - master
+    - staging
+    - dev
+    - tags
+  when: manual
+  cache: []
+  before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
+  script:
+    - echo "Removing environment for $CI_ENVIRONMENT_URL"
+    #Get the subdomain substring from the environment url
+    - 'SUBDOMAIN=$(echo $CI_ENVIRONMENT_URL | cut -d "/" -f 3 | cut -d "." -f 1)'
+    #stop and remove the docker container
+    - docker stop fitness-$CI_COMMIT_BRANCH
+    - docker rm fitness-$CI_COMMIT_BRANCH
+    #Tell the domain api the domain is no longer needed
+    - 'curl -s --location --request POST "http://10.0.0.175:5000/delete" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "subdomain=$SUBDOMAIN" --data-urlencode "branch=$CI_COMMIT_BRANCH"'

@@ -21,6 +21,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
+    "lint": "tslint -c ../tslint.json -p tsconfig.json",
+    "lint-fix": "tslint -c ../tslint.json -p tsconfig.json --fix",
     "build-scss": "sass scss/style.scss:src/assets/style.css",
     "build-css": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss",
     "start": "react-scripts start",

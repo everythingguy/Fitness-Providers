@@ -4,7 +4,8 @@
   "description": "This is a full scale website for students to find fitness instructors.",
   "main": "app.js",
   "scripts": {
-    "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "start": "node dist/app.js",
     "client": "npm run dev --prefix client",
