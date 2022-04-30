@@ -19,26 +19,52 @@ cache:
       - dist
       - client/dist
       - client/webpack-stats.json
+      - client/src/assets/main.css
+      - client/src/assets/style.css
+      - client/src/assets/style.css.map
       - public/dist
     policy: pull-push
 
 stages:
+  - compile
   - lint
   - test
   - build
   - deploy
+
+tscompile:
+  image: node:latest
+  stage: compile
+  tags:
+    - amd64
+  variables:
+    CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/client/cache/Cypress"
+  cache:
+    - *express_cache
+    - *react_cache
+    - *build_cache
+    - key: $CI_COMMIT_SHA
+      paths:
+        - client/cache/Cypress
+  script:
+    - npm i -g postcss-cli
+    - npm i -g postcss
+    - npm i -g typescript
+    - npm i -D
+    - cp .env-sample .env
+    - npm run build
+    - cd client
+    - npm i -D
+    - npx cypress install
+    - npm run build-css
+    - npm run build
+    - cd ..
 
 tslint:
   image: node:latest
   stage: lint
   tags:
     - amd64
-  before_script:
-    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript
-    - npm i -D
-    - cd client
-    - npm i -D
-    - cd ..
   script:
     - npm run lint
     - cd client
@@ -52,8 +78,6 @@ jest_backend:
   services:
     - mongo
   before_script:
-    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript
-    - npm i -D
     - cp .env-sample .env
   script:
     - npm run test
@@ -74,11 +98,7 @@ jest_frontend:
   tags:
     - amd64
   before_script:
-    - apt update && apt upgrade -y && npm i -g npm && npm i -g typescript
-    - npm i -D
     - cp .env-sample .env
-    - cd client
-    - npm i -D
   script:
     - npm run test
   artifacts:
@@ -111,18 +131,7 @@ cypress_chrome:
       paths:
         - client/cache/Cypress
   before_script:
-    - npm i -g postcss-cli
-    - npm i -g postcss
-    - npm i -g typescript
-    - npm i -D
     - cp .env-sample .env
-    - npm run build
-    - cd client
-    - npm i -D
-    - npx cypress install
-    - npm run build-css
-    - npm run build
-    - cd ..
   script:
     - npm run start & npx wait-on http://localhost
     - cd client
