@@ -5,8 +5,8 @@ import User from "../user";
 import { User as UserType } from "./../../@types/models";
 import connectDB, { getMongoURI } from "./../../utils/db";
 
-var conn: Connection;
-var users: UserType[] = [];
+let conn: Connection;
+const users: UserType[] = [];
 
 function createFakeUser() {
   return {
@@ -28,7 +28,7 @@ afterAll(async () => {
 
 describe("Save some new users", () => {
   it("should save five fake users to the database", async () => {
-    for (var i = 0; i < 5; i++) {
+    for (let i = 0; i < 5; i++) {
       const fakeUser = createFakeUser();
 
       const user = new User(fakeUser);
@@ -49,7 +49,7 @@ describe("Save some new users", () => {
 
 describe("Update a user's username", () => {
   it("should successfully update a user's username", async () => {
-    var user: UserType = await User.findById(users[0]._id);
+    let user: UserType = await User.findById(users[0]._id);
     expect(user).toBeDefined();
     expect(user.username).toBe(users[0].username);
 
@@ -64,10 +64,10 @@ describe("Update a user's username", () => {
 
 describe("Error Checking", () => {
   it("should not save a invalid email", async () => {
-    var fakeUser = createFakeUser();
+    const fakeUser = createFakeUser();
     fakeUser.email = "test@.c";
 
-    var user = new User(fakeUser);
+    let user = new User(fakeUser);
     await expect(user.save()).rejects.toThrowError(/Invalid email address/);
 
     fakeUser.email = "test123";
@@ -84,7 +84,7 @@ describe("Error Checking", () => {
   });
 
   it("should not create two users with the same email", async () => {
-    var fakeUser = createFakeUser();
+    const fakeUser = createFakeUser();
     fakeUser.email = users[0].email;
 
     const user = new User(fakeUser);
@@ -92,7 +92,7 @@ describe("Error Checking", () => {
   });
 
   it("should not create two users with the same username", async () => {
-    var fakeUser = createFakeUser();
+    const fakeUser = createFakeUser();
     fakeUser.username = users[0].username;
 
     const user = new User(fakeUser);
@@ -100,7 +100,7 @@ describe("Error Checking", () => {
   });
 
   it("should not create a user without a name", async () => {
-    var fakeUser = createFakeUser();
+    const fakeUser = createFakeUser();
     fakeUser.name = "";
 
     const user = new User(fakeUser);
@@ -108,7 +108,7 @@ describe("Error Checking", () => {
   });
 
   it("should not create a user without a email", async () => {
-    var fakeUser = createFakeUser();
+    const fakeUser = createFakeUser();
     fakeUser.email = "";
 
     const user = new User(fakeUser);
@@ -116,7 +116,7 @@ describe("Error Checking", () => {
   });
 
   it("should not create a user without a username", async () => {
-    var fakeUser = createFakeUser();
+    const fakeUser = createFakeUser();
     fakeUser.username = "";
 
     const user = new User(fakeUser);
@@ -124,7 +124,7 @@ describe("Error Checking", () => {
   });
 
   it("should not create a user without a password", async () => {
-    var fakeUser = createFakeUser();
+    const fakeUser = createFakeUser();
     fakeUser.password = "";
 
     const user = new User(fakeUser);
@@ -136,13 +136,13 @@ describe("Password Comparing", () => {
   it("should return true for compare", async () => {
     const user: UserType = await User.findById(users[0]._id);
     const compare = await user.isValidPassword(users[0].password);
-    expect(compare).toBeTruthy;
+    expect(compare).toBeTruthy();
   });
 
   it("should return false for compare", async () => {
     const user: UserType = await User.findById(users[0]._id);
     const compare = await user.isValidPassword(faker.internet.password());
-    expect(compare).toBeFalsy;
+    expect(compare).toBeFalsy();
   });
 
   it("should rehash the password if it is changed", async () => {

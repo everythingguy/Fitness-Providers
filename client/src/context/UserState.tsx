@@ -13,7 +13,7 @@ interface Props {
   children: any;
 }
 
-var loadedState: State | null = null;
+let loadedState: State | null = null;
 const storage = sessionStorage.getItem("UserState");
 if (storage) loadedState = JSON.parse(storage);
 

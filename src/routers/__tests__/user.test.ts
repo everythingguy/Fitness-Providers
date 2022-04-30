@@ -5,9 +5,9 @@ import app, { apiPath } from "../../server";
 import { errorResponse, userResponse } from "../../@types/response";
 import connectDB, { getMongoURI } from "./../../utils/db";
 
-var authCookie = "";
-var accessToken = "";
-var conn: Connection;
+let authCookie = "";
+let accessToken = "";
+let conn: Connection;
 
 beforeAll(async () => {
   conn = await connectDB(getMongoURI("-user-router"));
@@ -224,14 +224,14 @@ describe(`GET ${apiPath}/user/login`, () => {
         const dataAny = resp.data as any;
         expect(dataAny.user.password).toBeUndefined();
 
-        //set cookie
+        // set cookie
         expect(res.headers["set-cookie"]).toBeDefined();
         const cookies = res.headers["set-cookie"][0]
           .split(",")
           .map((item: string) => item.split(";")[0]);
         authCookie = cookies.join(";");
 
-        //set access token
+        // set access token
         expect(resp.data.accessToken).toBeDefined();
         accessToken = resp.data.accessToken;
 
@@ -350,14 +350,14 @@ describe(`GET ${apiPath}/user/login`, () => {
         const dataAny = resp.data as any;
         expect(dataAny.user.password).toBeUndefined();
 
-        //set refresh token cookie
+        // set refresh token cookie
         expect(res.headers["set-cookie"]).toBeDefined();
         const cookies = res.headers["set-cookie"][0]
           .split(",")
           .map((item: string) => item.split(";")[0]);
         authCookie = cookies.join(";");
 
-        //set access token
+        // set access token
         expect(resp.data.accessToken).toBeDefined();
         accessToken = resp.data.accessToken;
 

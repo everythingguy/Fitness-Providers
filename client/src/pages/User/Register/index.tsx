@@ -3,18 +3,18 @@ import { Link } from "react-router-dom";
 import API from "../../../API";
 
 export const Register: React.FC = () => {
-  //field state
+  // field state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  //tailwind class names for the button
+  // tailwind class names for the button
   const button =
     "cursor-pointer text-center max-w-full bg-transparent hover:bg-purple-500 text-purple-700 font-semibold hover:text-white py-2 px-4 border border-purple-500 hover:border-transparent rounded";
   const inputStyle = "mb-10 mx-10 bg-purple-200";
 
-  //allows the enter key to submit the form
+  // allows the enter key to submit the form
   const enterSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       e.preventDefault();
@@ -22,36 +22,39 @@ export const Register: React.FC = () => {
     }
   };
 
-  //process the form
+  // process the form
   const submitForm = async () => {
     const error = document.getElementById("error");
 
-    //if the error element was found by id
+    // if the error element was found by id
     if (error) {
       error.innerHTML = "";
 
-      //if all fields are filled in
+      // if all fields are filled in
       if (name && email && username && password) {
-        //ask the api to create the user
-        var data = await API.createUser(name, email, username, password);
+        // ask the api to create the user
+        const data = await API.createUser(name, email, username, password);
 
-        //if success redirect to login
+        // if success redirect to login
         if (data.success) window.location.pathname = "/user/login";
-        //otherwise
+        // otherwise
         else {
-          //print each error
-          for (var i = 0; i < data.error.length; i++) {
+          // print each error
+          // TODO: fix xss vulnerability, display errors like capstone
+          /*
+          for (let i = 0; i < data.error.length; i++) {
             data.error = data.error as { msg: string }[];
             error.innerHTML += "<p>" + data.error[i].msg + "</p>";
           }
+          */
 
-          //display the error in a block
+          // display the error in a block
           error.style.display = "block";
         }
       }
-      //otherwise
+      // otherwise
       else {
-        //tell the user to finish filling the form
+        // tell the user to finish filling the form
         error.innerText = "Please fill in all fields";
         error.style.display = "block";
       }

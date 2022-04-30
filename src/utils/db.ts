@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import "colors";
 
 export function getMongoURI(suffix = "-testing") {
-  var MONGO_URI =
+  let MONGO_URI =
     "mongodb://" +
     process.env.DB_USERNAME +
     ":" +
@@ -16,9 +16,9 @@ export function getMongoURI(suffix = "-testing") {
     "?authSource=" +
     process.env.DB_AUTHSOURCE;
   if (
-    process.env.CI != undefined &&
-    process.env.CI.toLowerCase() == "true" &&
-    process.env.NODE_ENV == "test"
+    process.env.CI !== undefined &&
+    process.env.CI.toLowerCase() === "true" &&
+    process.env.NODE_ENV === "test"
   )
     MONGO_URI =
       "mongodb://mongo:27017/" +
@@ -26,14 +26,14 @@ export function getMongoURI(suffix = "-testing") {
       suffix +
       "?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
   else if (
-    process.env.CI != undefined &&
-    process.env.CI.toLowerCase() == "true"
+    process.env.CI !== undefined &&
+    process.env.CI.toLowerCase() === "true"
   )
     MONGO_URI =
       "mongodb://mongo:27017/" +
       process.env.DB_NAME +
       "?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
-  else if (process.env.NODE_ENV == "test")
+  else if (process.env.NODE_ENV === "test")
     MONGO_URI =
       "mongodb://" +
       process.env.DB_USERNAME +
@@ -52,7 +52,7 @@ export function getMongoURI(suffix = "-testing") {
   return MONGO_URI;
 }
 
-//connect database
+// connect database
 export default async function connectDB(uri: string) {
   try {
     const conn = await mongoose.connect(uri, {
@@ -61,9 +61,11 @@ export default async function connectDB(uri: string) {
       useUnifiedTopology: true,
     });
 
+    // tslint:disable-next-line: no-console
     console.log(`DB Connected: ${conn.connection.host}`.green.underline);
     return conn.connection;
   } catch (err) {
+    // tslint:disable-next-line: no-console
     console.log(err.message.red);
     process.exit(1);
   }

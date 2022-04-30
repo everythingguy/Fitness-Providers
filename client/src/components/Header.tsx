@@ -6,7 +6,7 @@ export const Header: React.FC = () => {
   const { loggedIn } = useContext(UserContext);
 
   const toggleVisability = (id: string) => {
-    var element = document.getElementById(id);
+    const element = document.getElementById(id);
     if (element) {
       element.style.height = "0%";
       if (!element.classList.toggle("invisible")) {
@@ -18,7 +18,6 @@ export const Header: React.FC = () => {
   const growth = (element: HTMLElement, height: number) => {
     element.style.height = height + "px";
     height += 10;
-    console.log(height);
     if (height !== 120) setTimeout(() => growth(element, height), 50);
   };
 

@@ -3,8 +3,8 @@ import bcrypt from "bcryptjs";
 import validator from "validator";
 import { User } from "../@types/models";
 
-//debug
-//mongoose.set('debug', true);
+// debug
+// mongoose.set('debug', true);
 
 const UserSchema = new mongoose.Schema<User>(
   {
@@ -40,7 +40,7 @@ const UserSchema = new mongoose.Schema<User>(
   {
     collection: "users",
     toJSON: {
-      transform: function (_doc, ret) {
+      transform: (_doc, ret) => {
         delete ret.password;
         delete ret.__v;
         delete ret.id;

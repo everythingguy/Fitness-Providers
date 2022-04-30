@@ -4,18 +4,18 @@ import API from "../../../API";
 import { UserContext } from "../../../context/UserState";
 
 export const Login: React.FC = () => {
-  //logged in context
+  // logged in context
   const { loggedIn } = useContext(UserContext);
 
-  //field state
+  // field state
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  //tailwind class names for the button
+  // tailwind class names for the button
   const button =
     "cursor-pointer text-center max-w-full bg-transparent hover:bg-purple-500 text-purple-700 font-semibold hover:text-white py-2 px-4 border border-purple-500 hover:border-transparent rounded";
 
-  //allows the enter key to submit the form
+  // allows the enter key to submit the form
   const enterSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       e.preventDefault();
@@ -23,36 +23,36 @@ export const Login: React.FC = () => {
     }
   };
 
-  //process the form
+  // process the form
   const submitForm = async () => {
     const error = document.getElementById("error");
 
-    //if the error element was found by id
+    // if the error element was found by id
     if (error) {
-      //if the user is logged out and filled in the form
+      // if the user is logged out and filled in the form
       if (username && password && !loggedIn) {
-        //try to login with the provided credientials
-        var data = await API.loginUser(username, password);
+        // try to login with the provided credientials
+        const data = await API.loginUser(username, password);
 
-        //if success redirect home
+        // if success redirect home
         if (data.success) {
           window.location.pathname = "/";
         }
-        //otherwise
+        // otherwise
         else {
-          //tell the user they entered wrong info
+          // tell the user they entered wrong info
           error.innerText = "Incorrect username or password";
           error.style.display = "block";
         }
       }
-      //if the user is already logged in warn them
+      // if the user is already logged in warn them
       else if (loggedIn) {
         error.innerText = "Please logout before logging in";
         error.style.display = "block";
       }
-      //otherwise
+      // otherwise
       else {
-        //tell the user to fill out the form
+        // tell the user to fill out the form
         error.innerText = "Please enter a username and password";
         error.style.display = "block";
       }
