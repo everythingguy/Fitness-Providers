@@ -6,8 +6,6 @@ services:
     container_name: fitness
     ports:
       - 80:80
-    volumes:
-      - ./.env:/app/.env
     environment:
       DB_USERNAME: root
       DB_PASSWORD: rootpassword
