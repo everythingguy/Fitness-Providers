@@ -47,7 +47,7 @@ tscompile:
     - *express_cache
     - *react_cache
     - *build_cache
-    - key: $CI_COMMIT_SHA
+    - key: cypress-$CI_COMMIT_SHA
       paths:
         - cache/Cypress
   script:
@@ -130,7 +130,7 @@ cypress_chrome:
     - *express_cache
     - *react_cache
     - *build_cache
-    - key: $CI_COMMIT_SHA
+    - key: cypress-$CI_COMMIT_SHA
       paths:
         - cache/Cypress
   before_script:
