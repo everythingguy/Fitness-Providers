@@ -119,6 +119,7 @@ cypress_chrome:
     - npm run build
     - cd client
     - npm i -D
+    - npx cypress install
     - npm run build-css
     - npm run build
     - cd ..
