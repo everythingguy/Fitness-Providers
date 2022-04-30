@@ -37,15 +37,13 @@ tscompile:
   stage: compile
   tags:
     - amd64
-  variables:
-    CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/client/cache/Cypress"
   cache:
     - *express_cache
     - *react_cache
     - *build_cache
     - key: $CI_COMMIT_SHA
       paths:
-        - client/cache/Cypress
+        - /root/.cache/Cypress
   script:
     - npm i -g postcss-cli
     - npm i -g postcss
@@ -99,6 +97,7 @@ jest_frontend:
     - amd64
   before_script:
     - cp .env-sample .env
+    - cd client
   script:
     - npm run test
   artifacts:
@@ -121,15 +120,13 @@ cypress_chrome:
     - mongo
   retry: 2
   # parallel: 2
-  variables:
-    CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/client/cache/Cypress"
   cache:
     - *express_cache
     - *react_cache
     - *build_cache
     - key: $CI_COMMIT_SHA
       paths:
-        - client/cache/Cypress
+        - /root/.cache/Cypress
   before_script:
     - cp .env-sample .env
   script:
