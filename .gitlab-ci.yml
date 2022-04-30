@@ -44,7 +44,7 @@ tslint:
     - cd client
     - npm run lint
 
-test_backend:
+jest_backend:
   image: node:latest
   stage: test
   tags:
@@ -68,7 +68,7 @@ test_backend:
       junit: junit.xml
       cobertura: coverage/cobertura-coverage.xml
 
-test_frontend:
+jest_frontend:
   image: node:latest
   stage: test
   tags:
@@ -111,11 +111,15 @@ cypress_chrome:
       paths:
         - client/cache/Cypress
   before_script:
+    - npm i -g postcss-cli
+    - npm i -g postcss
+    - npm i -g typescript
     - npm i -D
     - cp .env-sample .env
     - npm run build
     - cd client
     - npm i -D
+    - npm run build-css
     - npm run build
     - cd ..
   script:
