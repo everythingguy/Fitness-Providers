@@ -47,7 +47,6 @@ tslint:
 test_backend:
   image: node:latest
   stage: test
-  needs: []
   tags:
     - amd64
   services:
@@ -72,7 +71,6 @@ test_backend:
 test_frontend:
   image: node:latest
   stage: test
-  needs: []
   tags:
     - amd64
   before_script:
