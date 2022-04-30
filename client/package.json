@@ -27,7 +27,7 @@
     "build-css": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss",
     "start": "react-scripts start",
     "silent-start": "cross-env BROWSER=none react-scripts start",
-    "build": "webpack --config webpack.config.js --mode production",
+    "build": "tsc && webpack --config webpack.config.js --mode production",
     "dev": "webpack --config webpack.config.js --watch --mode development",
     "test": "jest",
     "eject": "react-scripts eject",

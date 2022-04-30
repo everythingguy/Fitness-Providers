@@ -5,6 +5,7 @@ cache:
         - package-lock.json
     paths:
       - node_modules
+      - .npm
     policy: pull-push
   - &react_cache
     key:
@@ -12,6 +13,7 @@ cache:
         - client/package-lock.json
     paths:
       - client/node_modules
+      - client/.npm
     policy: pull-push
   - &build_cache
     key: $CI_COMMIT_SHA
@@ -32,6 +34,10 @@ stages:
   - build
   - deploy
 
+variables: &global_variables
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
+
 tscompile:
   image: node:latest
   stage: compile
@@ -43,7 +49,7 @@ tscompile:
     - *build_cache
     - key: $CI_COMMIT_SHA
       paths:
-        - /root/.cache/Cypress
+        - cache/Cypress
   script:
     - npm i -g postcss-cli
     - npm i -g postcss
@@ -126,7 +132,7 @@ cypress_chrome:
     - *build_cache
     - key: $CI_COMMIT_SHA
       paths:
-        - /root/.cache/Cypress
+        - cache/Cypress
   before_script:
     - cp .env-sample .env
   script:
