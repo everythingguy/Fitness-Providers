@@ -8,7 +8,7 @@ client/.pnp.js
 
 # production
 **/build
-dist
+**/dist
 
 # misc
 **/.DS_Store
@@ -23,10 +23,13 @@ dist
 
 todo.txt
 
-/client/cypress
-/client/cypress.json
+client/cypress
+client/cypress.json
 nodemon.json
 .env
-.env-sample
 mongodb_data
 junit.xml
+client/webpack-stats.json
+client/src/assets/main.css
+client/src/assets/style.css
+client/src/assets/style.css.map
