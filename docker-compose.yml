@@ -2,23 +2,25 @@ version: "3"
 services:
   web:
     build: .
-    image: template
-    container_name: template
+    image: fitness
+    container_name: fitness
     ports:
       - 80:80
     volumes:
       - ./.env:/app/.env
     environment:
-      - DB_USERNAME=root
-      - DB_PASSWORD=rootpassword
-      - DB_AUTHSOURCE=admin
-      - DB_IP=mongo
-      - DB_PORT=27017
-      - DB_COLLECTION=template
-      - SECRET=PLEASECHANGE2LONG&RANDOMSECRET
+      DB_USERNAME: root
+      DB_PASSWORD: rootpassword
+      DB_AUTHSOURCE: admin
+      DB_IP: mongo
+      DB_PORT: 27017
+      DB_COLLECTION: fitness_local
+      SECRET: PLEASECHANGE2LONG&RANDOMSECRET
+      REFRESH_TOKEN_SECRET: PLEASECHANGE2LONG&RANDOMSECRET
+      ACCESS_TOKEN_SECRET: PLEASECHANGE2LONG&RANDOMSECRET
   mongo:
     image: mongo:latest
-    container_name: template_mongo
+    container_name: fitness_mongo
     ports:
       - 27017:27017
     volumes:
