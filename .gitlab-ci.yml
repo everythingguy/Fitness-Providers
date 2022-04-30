@@ -116,7 +116,6 @@ cypress_chrome:
     - npm run build
     - cd client
     - npm i -D
-    - npm ci
     - npm run build
     - cd ..
   script:
