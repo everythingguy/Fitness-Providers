@@ -9,6 +9,7 @@ COPY . /app
 RUN npm i -g postcss-cli && \
     npm i -g postcss && \
     npm i -g typescript && \
+    cp .env-sample .env && \
     npm i -D && \
     cd client && \
     npm i -D && \
