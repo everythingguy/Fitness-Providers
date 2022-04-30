@@ -29,7 +29,7 @@
     "silent-start": "cross-env BROWSER=none react-scripts start",
     "build": "webpack --config webpack.config.js --mode production",
     "dev": "webpack --config webpack.config.js --watch --mode development",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject",
     "e2e": "cypress open"
   },
