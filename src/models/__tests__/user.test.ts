@@ -30,10 +30,11 @@ describe("Save some new users", () => {
   it("should save five fake users to the database", async () => {
     for (let i = 0; i < 5; i++) {
       const fakeUser = createFakeUser();
-
       const user = new User(fakeUser);
+
       await user.save();
 
+      user.password = fakeUser.password;
       users.push(user);
 
       const dbUser: UserType = await User.findById(user._id);
