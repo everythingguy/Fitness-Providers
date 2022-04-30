@@ -461,8 +461,8 @@ deploy_branch:
     #pull the docker image
     - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
     #stop and remove any existing container for this environment
-    - docker stop rbcbranch-$CI_COMMIT_BRANCH || true
-    - docker rm rbcbranch-$CI_COMMIT_BRANCH || true
+    - docker stop fitness-$CI_COMMIT_BRANCH || true
+    - docker rm fitness-$CI_COMMIT_BRANCH || true
     #Get the port from the domain api and reserve a domain
     - 'PORT=$(curl -s --location --request POST "http://10.0.0.175:5000/add" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "destIP=10.0.0.194" --data-urlencode "branch=$CI_COMMIT_BRANCH" &> /dev/stdout | cut -d ":" -f 4 | cut -d "}" -f 1)'
     - 'ENVIRONMENT_URL=$(curl -s --location --request GET "http://10.0.0.175:5000/suggestedDomain/$PORT" &> /dev/stdout | cut -d "\"" -f 4)'
