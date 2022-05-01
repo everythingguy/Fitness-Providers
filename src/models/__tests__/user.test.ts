@@ -12,7 +12,7 @@ function createFakeUser() {
   return {
     email: faker.internet.email(),
     password: faker.internet.password(),
-    name: faker.name.findName(),
+    name: `${faker.name.firstName()} ${faker.name.lastName()}`,
     username: faker.internet.userName(),
   };
 }
@@ -42,6 +42,8 @@ describe("Save some new users", () => {
       expect(dbUser).toBeDefined();
       expect(dbUser.email).toBe(fakeUser.email);
       expect(dbUser.name).toBe(fakeUser.name);
+      expect(dbUser.firstName).toBe(fakeUser.name.split(" ")[0]);
+      expect(dbUser.lastName).toBe(fakeUser.name.split(" ")[1]);
       expect(dbUser.username).toBe(fakeUser.username);
       expect(dbUser.password).not.toBe(fakeUser.password);
     }
@@ -105,7 +107,9 @@ describe("Error Checking", () => {
     fakeUser.name = "";
 
     const user = new User(fakeUser);
-    await expect(user.save()).rejects.toThrowError(/Missing name/);
+    await expect(user.save()).rejects.toThrowError(
+      /User validation failed: name: Missing name/
+    );
   });
 
   it("should not create a user without a email", async () => {
@@ -168,6 +172,8 @@ describe("toJSON", () => {
     expect(dbUser.toJSON()).toEqual({
       _id: user._id,
       name: user.name,
+      firstName: user.name.split(" ")[0],
+      lastName: user.name.split(" ")[1],
       username: user.username,
       email: user.email,
       tokenVersion: 0,
