@@ -25,8 +25,8 @@ export interface Provider extends Base {
   isEnrolled: boolean;
   phone: string;
   bio?: string;
-  webiste?: string;
-  tags?: Tag[];
+  website?: string;
+  tags: Tag[];
   courses: Course[];
 }
 

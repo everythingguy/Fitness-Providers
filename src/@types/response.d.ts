@@ -1,8 +1,14 @@
+import * as Model from "./models";
+
 export interface ResUser {
   _id: string;
+  firstName: string;
+  lastName: string;
   name: string;
   email: string;
   username: string;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
 }
 
 export interface userResponse {
@@ -10,6 +16,20 @@ export interface userResponse {
   data: {
     user?: ResUser;
     accessToken?: string;
+  };
+}
+
+export interface providerResponse {
+  success: true;
+  data: {
+    provider: Model.Provider;
+  };
+}
+
+export interface providersResponse {
+  success: true;
+  data: {
+    providers: Model.Provider[];
   };
 }
 

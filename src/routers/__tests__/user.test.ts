@@ -160,7 +160,7 @@ describe(`GET ${apiPath}/user/register`, () => {
       .post(`${apiPath}/user/register`)
       .send({
         name: "John Doe",
-        email: "jdoe@doe.com",
+        email: "jdoe22@doe.com",
         username: "john",
         password: "doe21",
       })
@@ -171,7 +171,7 @@ describe(`GET ${apiPath}/user/register`, () => {
         expect(JSON.parse(res.text) as errorResponse).toBeDefined();
         const resp = JSON.parse(res.text) as errorResponse;
         expect(resp.success).toBeFalsy();
-        expect(resp.error).toEqual("Username already in use");
+        expect(resp.error).toEqual("username already exists");
         done();
       });
   });
@@ -194,7 +194,7 @@ describe(`GET ${apiPath}/user/register`, () => {
         expect(JSON.parse(res.text) as errorResponse).toBeDefined();
         const resp = JSON.parse(res.text) as errorResponse;
         expect(resp.success).toBeFalsy();
-        expect(resp.error).toEqual("Email already in use");
+        expect(resp.error).toEqual("email already exists");
         done();
       });
   });

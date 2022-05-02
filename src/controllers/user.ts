@@ -1,30 +1,25 @@
 import express from "express";
 
 import User from "../models/user";
+import { parseValidationErrors } from "../utils/errors";
 import { User as UserType } from "../@types/models";
 import { errorResponse, ResUser } from "../@types/response";
+import { Request, Payload, UserRequest } from "../@types/request";
 import { userResponse as userResponseType } from "../@types/response";
-import { JwtPayload, sign, verify } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import { apiPath } from "../server";
-
-interface Request extends express.Request {
-  user?: ResUser;
-  payload?: Payload;
-  logout: (res: express.Response) => void;
-}
-
-interface Payload extends JwtPayload {
-  userID: string;
-  tokenVersion: number;
-}
 
 const userResponse = (userData: UserType): ResUser => {
   let userRes: ResUser;
   userRes = {
     _id: userData._id,
     name: userData.name,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
     email: userData.email,
     username: userData.username,
+    isAdmin: userData.isAdmin,
+    isSuperAdmin: userData.isSuperAdmin,
   };
 
   return userRes;
@@ -149,32 +144,6 @@ async function revokeRefreshTokensForUser(req: Request) {
   await u.save();
 }
 
-export function isLoggedIn(
-  req: Request,
-  res: express.Response,
-  next: express.NextFunction
-) {
-  if (req.user) next();
-  else
-    res.status(401).json({
-      success: false,
-      error: "Please signin to gain access",
-    } as errorResponse);
-}
-
-export function isLoggedOut(
-  req: Request,
-  res: express.Response,
-  next: express.NextFunction
-) {
-  if (req.user) {
-    res.status(400).json({
-      success: false,
-      error: "Please logout before logging in",
-    } as errorResponse);
-  } else next();
-}
-
 /**
  * @desc Login User
  * @route POST /api/v1/user/login
@@ -262,60 +231,29 @@ export function logoutUser(req: Request, res: express.Response) {
  * @route POST /api/v1/user/register
  * @access Public
  */
-export async function addUser(req: Request, res: express.Response) {
+export async function addUser(req: UserRequest, res: express.Response) {
   try {
-    req.checkBody("name", "Name is required").notEmpty();
-    req.checkBody("email", "Email is required").notEmpty();
-    req.checkBody("email", "Email is not valid").isEmail();
-    req.checkBody("username", "Username is required").notEmpty();
-    req.checkBody("password", "Password is required").notEmpty();
-    req
-      .checkBody("password", "Password must be at least 5 digits long")
-      .isLength({ min: 5 });
-
-    const errors = req.validationErrors();
-
-    if (errors) {
-      // tslint:disable-next-line: no-console
-      console.log(errors);
-      return res.status(400).json({
-        success: false,
-        error: errors,
-      } as errorResponse);
-    } else {
-      let uniqueCheck = await User.findOne({
-        username: req.body.username,
-      });
-      if (uniqueCheck) {
-        return res.status(409).json({
-          success: false,
-          error: "Username already in use",
-        } as errorResponse);
-      }
-
-      uniqueCheck = await User.findOne({ email: req.body.email });
-      if (uniqueCheck) {
-        return res.status(409).json({
-          success: false,
-          error: "Email already in use",
-        } as errorResponse);
-      }
-
-      const user = await User.create(req.body);
-
-      return res.status(201).json({
-        success: true,
-        data: { user: userResponse(user) },
-      } as userResponseType);
+    if (!req.user || (req.user && !req.user.isAdmin)) {
+      delete req.body.isAdmin;
+      delete req.body.isSuperAdmin;
     }
-  } catch (err) {
-    if (err.name === "ValidationError") {
-      const msgs = Object.values(err.errors).map((val: any) => val.message);
+    const user = await User.create(req.body);
 
+    return res.status(201).json({
+      success: true,
+      data: { user: userResponse(user) },
+    } as userResponseType);
+  } catch (error) {
+    if (error.name === "ValidationError") {
       return res.status(400).json({
         success: false,
-        error: msgs,
+        error: parseValidationErrors(error),
       } as errorResponse);
+    } else if (error.name === "UniqueError") {
+      return res.status(409).json({
+        success: false,
+        error: error.message,
+      });
     } else {
       return res.status(500).json({
         success: false,

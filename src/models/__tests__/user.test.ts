@@ -91,7 +91,7 @@ describe("Error Checking", () => {
     fakeUser.email = users[0].email;
 
     const user = new User(fakeUser);
-    await expect(user.save()).rejects.toThrowError(/E11000/);
+    await expect(user.save()).rejects.toThrowError(/email already exists/);
   });
 
   it("should not create two users with the same username", async () => {
@@ -99,7 +99,7 @@ describe("Error Checking", () => {
     fakeUser.username = users[0].username;
 
     const user = new User(fakeUser);
-    await expect(user.save()).rejects.toThrowError(/E11000/);
+    await expect(user.save()).rejects.toThrowError(/username already exists/);
   });
 
   it("should not create a user without a name", async () => {
@@ -108,7 +108,7 @@ describe("Error Checking", () => {
 
     const user = new User(fakeUser);
     await expect(user.save()).rejects.toThrowError(
-      /User validation failed: name: Missing name/
+      /User validation failed: name: Name is required/
     );
   });
 
@@ -117,7 +117,9 @@ describe("Error Checking", () => {
     fakeUser.email = "";
 
     const user = new User(fakeUser);
-    await expect(user.save()).rejects.toThrowError(/Missing email/);
+    await expect(user.save()).rejects.toThrowError(
+      /User validation failed: email: Email is required/
+    );
   });
 
   it("should not create a user without a username", async () => {
@@ -125,7 +127,9 @@ describe("Error Checking", () => {
     fakeUser.username = "";
 
     const user = new User(fakeUser);
-    await expect(user.save()).rejects.toThrowError(/Missing username/);
+    await expect(user.save()).rejects.toThrowError(
+      /User validation failed: username: Username is required/
+    );
   });
 
   it("should not create a user without a password", async () => {
@@ -133,7 +137,9 @@ describe("Error Checking", () => {
     fakeUser.password = "";
 
     const user = new User(fakeUser);
-    await expect(user.save()).rejects.toThrowError(/Missing password/);
+    await expect(user.save()).rejects.toThrowError(
+      /User validation failed: password: Password is required/
+    );
   });
 });
 

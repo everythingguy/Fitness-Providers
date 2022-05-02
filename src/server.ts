@@ -6,12 +6,12 @@ import session from "express-session";
 import path from "path";
 import flash from "connect-flash";
 import cors from "cors";
-import validator from "express-validator";
 import "colors";
 
 // local imports
 import mainRouter from "./routers/main";
-import { isLoggedIn, ReqUser } from "./controllers/user";
+import { ReqUser } from "./controllers/user";
+import { isLoggedIn } from "./utils/permissions";
 import { getMongoURI } from "./utils/db";
 
 // global variables
@@ -51,30 +51,10 @@ app.use(
 
 app.use(ReqUser);
 
-app.use(
-  validator({
-    errorFormatter: (param, msg, value) => {
-      const namespace = param.split(".");
-      let formParam = namespace.shift();
-
-      while (namespace.length) {
-        formParam += "[" + namespace.shift() + "]";
-      }
-
-      return {
-        param: formParam,
-        msg,
-        value,
-      };
-    },
-  })
-);
-
 // serve static files
 app.use(express.static(__dirname + "/../client/build"));
 app.use(express.static(__dirname + "/../public"));
-app.use("/users", isLoggedIn);
-app.use("/users", express.static(__dirname + "/../private"));
+app.use("/users", isLoggedIn, express.static(__dirname + "/../private"));
 
 // ejs
 app.set("view engine", "ejs");

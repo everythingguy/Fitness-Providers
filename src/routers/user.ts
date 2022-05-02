@@ -1,13 +1,13 @@
 import express from "express";
 
+import { isLoggedIn, isLoggedOut } from "../utils/permissions";
+
 import {
   loginUser,
   logoutUser,
   addUser,
   getUser,
   deleteUser,
-  isLoggedIn,
-  isLoggedOut,
   refresh_token,
   authRefreshToken,
 } from "../controllers/user";
