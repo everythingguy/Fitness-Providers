@@ -58,27 +58,13 @@ const UserSchema = new mongoose.Schema<User>(
   }
 );
 
-UserSchema.virtual("firstName")
-  .get(function (this: { name: string }) {
-    return this.name.split(" ")[0];
-  })
-  .set(function (this: { name: string }, value: string) {
-    const split = value.split(" ");
+UserSchema.virtual("firstName").get(function (this: { name: string }) {
+  return this.name.split(" ")[0];
+});
 
-    split[0] = value;
-    this.name = split.join(" ");
-  });
-
-UserSchema.virtual("lastName")
-  .get(function (this: { name: string }) {
-    return this.name.split(" ")[1];
-  })
-  .set(function (this: { name: string }, value: string) {
-    const split = value.split(" ");
-
-    split[1] = value;
-    this.name = split.join(" ");
-  });
+UserSchema.virtual("lastName").get(function (this: { name: string }) {
+  return this.name.split(" ")[1];
+});
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
