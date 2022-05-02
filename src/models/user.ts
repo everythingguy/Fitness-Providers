@@ -77,6 +77,7 @@ UserSchema.virtual("lastName").get(function (this: { name: string }) {
 });
 
 UserSchema.pre("save", async function (next) {
+  if (this.isSuperAdmin) this.isAdmin = true;
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
