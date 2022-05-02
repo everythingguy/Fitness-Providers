@@ -43,9 +43,18 @@ const UserSchema = new mongoose.Schema<User>(
       trim: true,
       default: 0,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isSuperAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     collection: "users",
+    timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
         delete ret.password;

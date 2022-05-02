@@ -22,6 +22,7 @@ const CategorySchema = new mongoose.Schema<Category>(
   },
   {
     collection: "categories",
+    timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
         delete ret.__v;

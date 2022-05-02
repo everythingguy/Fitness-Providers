@@ -176,7 +176,11 @@ describe("toJSON", () => {
       lastName: user.name.split(" ")[1],
       username: user.username,
       email: user.email,
+      isAdmin: false,
+      isSuperAdmin: false,
       tokenVersion: 0,
+      createdAt: dbUser.createdAt,
+      updatedAt: dbUser.updatedAt,
     } as UserType);
   });
 });

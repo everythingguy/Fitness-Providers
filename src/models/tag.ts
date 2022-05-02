@@ -31,6 +31,7 @@ const TagSchema = new mongoose.Schema<Tag>(
   },
   {
     collection: "tags",
+    timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
         delete ret.__v;

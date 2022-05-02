@@ -87,6 +87,7 @@ const ProviderSchema = new mongoose.Schema<Provider>(
   },
   {
     collection: "providers",
+    timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
         delete ret.__v;

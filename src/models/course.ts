@@ -39,6 +39,7 @@ const CourseSchema = new mongoose.Schema<Course>(
   },
   {
     collection: "courses",
+    timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
         delete ret.__v;
