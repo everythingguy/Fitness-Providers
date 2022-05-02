@@ -194,7 +194,7 @@ export async function loginUser(req: Request, res: express.Response) {
 export async function refresh_token(req: Request, res: express.Response) {
   // get user from req.payload, set by the authRefreshToken middleware
   const user = await User.findById(req.payload.userID);
-  // comment out if you do not want users staying longed in forever if they use the site every week
+  // comment out if you do not want users staying logged in forever if they use the site every week
   sendRefreshToken(res, createRefreshToken(user));
 
   return res.status(200).send({
