@@ -1,9 +1,24 @@
 import mongoose, { Model } from "mongoose";
 import validator from "validator";
-import { LiveSession } from "../@types/models";
+import { LiveSession, WeekDays, Recurring } from "../@types/models";
 
 // debug
 // mongoose.set('debug', true);
+
+const RecurringSchema = new mongoose.Schema<Recurring>({
+  weekDays: {
+    type: [String],
+    enum: WeekDays,
+    required: [true, "Missing weekDays"],
+  },
+  frequency: {
+    type: Number,
+    min: [1, "Frequency cannot be less than one"],
+    max: [20, "Frequency cannot be greater than twenty"],
+    validate: [validator.isInt, "Frequency must be an integer"],
+    default: 1,
+  },
+});
 
 const LiveSessionSchema = new mongoose.Schema<LiveSession>(
   {
@@ -22,24 +37,8 @@ const LiveSessionSchema = new mongoose.Schema<LiveSession>(
       required: [true, "Missing endDateTime"],
     },
     recurring: {
-      weekDays: {
-        type: [String],
-        enum: [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-        ],
-      },
-      frequency: {
-        type: Number,
-        min: [1, "Frequency cannot be less than one"],
-        max: [20, "Frequency cannot be greater than twenty"],
-        validate: [validator.isInt, "Frequency must be an integer"],
-      },
+      type: RecurringSchema,
+      default: null,
     },
   },
   {

@@ -15,4 +15,5 @@ export default {
   coverageReporters: ["text", "cobertura", "clover", "json", "lcov"],
   coverageDirectory: "coverage",
   reporters: ["default", "jest-junit"],
+  moduleFileExtensions: ["js", "json", "jsx", "ts", "tsx", "d.ts"],
 };

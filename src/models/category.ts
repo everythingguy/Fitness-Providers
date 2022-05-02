@@ -1,5 +1,6 @@
 import mongoose, { Model } from "mongoose";
 import { Category } from "../@types/models";
+import Tag from "./tag";
 
 // debug
 // mongoose.set('debug', true);
@@ -33,6 +34,13 @@ const CategorySchema = new mongoose.Schema<Category>(
     },
   }
 );
+
+CategorySchema.pre("remove", function (next) {
+  for (const tag of this.tags) {
+    Tag.findByIdAndRemove(tag._id).exec();
+  }
+  next();
+});
 
 const model: Model<Category> = mongoose.model("Category", CategorySchema);
 export default model;

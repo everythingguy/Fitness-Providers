@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import { Course } from "../@types/models";
 import Tag from "./tag";
+import Session from "./session";
 
 // debug
 // mongoose.set('debug', true);
@@ -50,6 +51,15 @@ const CourseSchema = new mongoose.Schema<Course>(
     },
   }
 );
+
+CourseSchema.pre("remove", function (next) {
+  Session.remove({ course: this._id }).exec();
+  next();
+});
+
+CourseSchema.virtual("sessions").get(async function (this: Course) {
+  return await Session.find({ course: this._id });
+});
 
 const model: Model<Course> = mongoose.model("Course", CourseSchema);
 export default model;

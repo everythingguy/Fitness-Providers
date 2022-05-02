@@ -2,6 +2,7 @@ import mongoose, { Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import validator from "validator";
 import { User } from "../@types/models";
+import Provider from "./provider";
 
 // debug
 // mongoose.set('debug', true);
@@ -78,6 +79,11 @@ UserSchema.virtual("lastName").get(function (this: { name: string }) {
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+UserSchema.pre("remove", function (next) {
+  Provider.remove({ user: this._id }).exec();
   next();
 });
 

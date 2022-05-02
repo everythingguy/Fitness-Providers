@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import validator from "validator";
 import { Session } from "../@types/models";
+import LiveSession from "./liveSession";
 
 // debug
 // mongoose.set('debug', true);
@@ -41,6 +42,11 @@ const SessionSchema = new mongoose.Schema<Session>(
     },
   }
 );
+
+SessionSchema.pre("remove", function (next) {
+  LiveSession.findByIdAndRemove(this.liveSession).exec();
+  next();
+});
 
 const model: Model<Session> = mongoose.model("Session", SessionSchema);
 export default model;

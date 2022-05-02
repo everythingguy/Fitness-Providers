@@ -26,6 +26,7 @@ export interface Provider extends Base {
   bio?: string;
   webiste?: string;
   tags?: Tag[];
+  courses: Course[];
 }
 
 export interface Address {
@@ -54,6 +55,7 @@ export interface Course extends Base {
   description: string;
   provider: Provider;
   tags: Tag[];
+  sessions: Session[];
 }
 
 export interface Session extends Base {
@@ -63,11 +65,23 @@ export interface Session extends Base {
   liveSession: LiveSession;
 }
 
+export enum WeekDays {
+  Sunday = "Sunday",
+  Monday = "Monday",
+  Tuesday = "Tuesday",
+  Wednesday = "Wednesday",
+  Thursday = "Thursday",
+  Friday = "Friday",
+  Saturday = "Saturday",
+}
+
+export interface Recurring {
+  weekDays: WeekDays[];
+  frequency: Number;
+}
+
 export interface LiveSession extends Base {
   beginDateTime: Date;
   endDateTime: Date;
-  recurring: {
-    weekDays: string[];
-    frequency: Number;
-  };
+  recurring: Recurring;
 }
