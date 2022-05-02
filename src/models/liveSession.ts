@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import validator from "validator";
-import { LiveSession, WeekDays, Recurring } from "../@types/models";
+import { LiveSession, Recurring } from "../@types/models";
+import { WeekDays } from "../@types/enums";
 
 // debug
 // mongoose.set('debug', true);

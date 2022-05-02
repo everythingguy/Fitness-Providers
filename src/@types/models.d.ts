@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { WeekDays } from "./enums";
 
 export interface Base extends Document {
   createdAt: Date;
@@ -63,16 +64,6 @@ export interface Session extends Base {
   URL: string;
   name: string;
   liveSession: LiveSession;
-}
-
-export enum WeekDays {
-  Sunday = "Sunday",
-  Monday = "Monday",
-  Tuesday = "Tuesday",
-  Wednesday = "Wednesday",
-  Thursday = "Thursday",
-  Friday = "Friday",
-  Saturday = "Saturday",
 }
 
 export interface Recurring {
