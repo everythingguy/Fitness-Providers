@@ -1,7 +1,7 @@
 import express from "express";
 
 import Provider from "../models/provider";
-import { parseValidationErrors } from "../utils/errors";
+import { postPatchErrorHandler } from "../utils/errors";
 import { ProviderRequest } from "../@types/request";
 import {
   errorResponse,
@@ -27,16 +27,7 @@ export async function addProvider(req: ProviderRequest, res: express.Response) {
       data: { provider },
     } as providerResponse);
   } catch (error) {
-    if (error.name === "ValidationError") {
-      res.status(400).json({
-        success: false,
-        error: parseValidationErrors(error),
-      } as errorResponse);
-    } else
-      res.status(500).json({
-        success: false,
-        error: "Server Error",
-      });
+    postPatchErrorHandler(res, error);
   }
 }
 
@@ -136,15 +127,6 @@ export async function modifyProvider(
       data: { provider },
     } as providerResponse);
   } catch (error) {
-    if (error.name === "ValidationError")
-      res.status(400).json({
-        success: false,
-        error: parseValidationErrors(error),
-      } as errorResponse);
-    else
-      res.status(500).json({
-        success: false,
-        error: "Server Error",
-      });
+    postPatchErrorHandler(res, error);
   }
 }

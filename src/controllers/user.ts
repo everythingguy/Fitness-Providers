@@ -1,7 +1,7 @@
 import express from "express";
 
 import User from "../models/user";
-import { parseValidationErrors } from "../utils/errors";
+import { postPatchErrorHandler } from "../utils/errors";
 import { User as UserType } from "../@types/models";
 import { errorResponse, ResUser } from "../@types/response";
 import { Request, Payload, UserRequest } from "../@types/request";
@@ -244,22 +244,7 @@ export async function addUser(req: UserRequest, res: express.Response) {
       data: { user: userResponse(user) },
     } as userResponseType);
   } catch (error) {
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        error: parseValidationErrors(error),
-      } as errorResponse);
-    } else if (error.name === "UniqueError") {
-      return res.status(409).json({
-        success: false,
-        error: error.message,
-      });
-    } else {
-      return res.status(500).json({
-        success: false,
-        error: "Server Error",
-      } as errorResponse);
-    }
+    postPatchErrorHandler(res, error);
   }
 }
 
