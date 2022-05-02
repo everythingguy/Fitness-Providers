@@ -146,7 +146,7 @@ cypress_chrome:
   before_script:
     - cp .env-sample .env
   script:
-    - npm run start & npx wait-on http://localhost
+    - npm run start & npx wait-on -t 300000 http://localhost
     - cd client
     - npx cypress run --browser chrome --spec "$(node cypress/cypress-parallel.js)"
   artifacts:
