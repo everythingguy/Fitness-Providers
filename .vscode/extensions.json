@@ -22,6 +22,7 @@
     "stevencl.adddoccomments",
     "auchenberg.vscode-browser-preview",
     "hashicorp.terraform",
+    "markis.code-coverage",
     "ms-vscode.vscode-typescript-tslint-plugin"
   ]
 }
