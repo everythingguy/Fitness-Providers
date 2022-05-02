@@ -1,5 +1,6 @@
 import mongoose, { Model } from "mongoose";
 import { Tag } from "../@types/models";
+import { UniqueErrorRaiser } from "../utils/errors";
 
 // debug
 // mongoose.set('debug', true);
@@ -42,6 +43,8 @@ const TagSchema = new mongoose.Schema<Tag>(
     },
   }
 );
+
+TagSchema.post("save", UniqueErrorRaiser);
 
 const model: Model<Tag> = mongoose.model("Tag", TagSchema);
 export default model;

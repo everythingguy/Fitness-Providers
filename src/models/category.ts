@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import { Category } from "../@types/models";
 import Tag from "./tag";
+import { UniqueErrorRaiser } from "../utils/errors";
 
 // debug
 // mongoose.set('debug', true);
@@ -41,6 +42,8 @@ CategorySchema.pre("remove", function (next) {
   }
   next();
 });
+
+CategorySchema.post("save", UniqueErrorRaiser);
 
 const model: Model<Category> = mongoose.model("Category", CategorySchema);
 export default model;

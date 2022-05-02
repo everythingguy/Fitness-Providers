@@ -3,6 +3,7 @@ import validator from "validator";
 import { Provider, Address } from "../@types/models";
 import Tag from "./tag";
 import Course from "./course";
+import { UniqueErrorRaiser } from "../utils/errors";
 
 // debug
 // mongoose.set('debug', true);
@@ -109,6 +110,8 @@ ProviderSchema.pre("remove", function (next) {
   Course.remove({ provider: this._id }).exec();
   next();
 });
+
+ProviderSchema.post("save", UniqueErrorRaiser);
 
 ProviderSchema.virtual("courses").get(async function (this: Provider) {
   return await Course.find({ provider: this._id });
