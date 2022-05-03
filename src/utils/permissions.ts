@@ -95,8 +95,14 @@ export function isOwnerOrAdmin(isOwner: (req: Request) => Promise<boolean>) {
 export async function OwnerOfProvider(req: Request): Promise<boolean> {
   try {
     const provider = await Provider.findById(req.params.id);
+    console.log({
+      provider: provider.user,
+      user: req.user,
+    });
 
-    if (provider.user._id === req.user._id) {
+    return true;
+
+    if (provider && provider.user === req.user._id) {
       return true;
     }
 

@@ -20,14 +20,14 @@ export interface User extends Base {
 }
 
 export interface Provider extends Base {
-  user: User;
+  user: User | string;
   address: Address;
   isEnrolled: boolean;
   phone: string;
   bio?: string;
   website?: string;
-  tags: Tag[];
-  courses: Course[];
+  tags: Tag[] | string[];
+  courses: Course[] | string[];
 }
 
 export interface Address {
@@ -41,11 +41,11 @@ export interface Address {
 
 export interface Category extends Base {
   name: string;
-  tags: Tag[];
+  tags: Tag[] | string[];
 }
 
 export interface Tag extends Base {
-  category: Category;
+  category: Category | string;
   value: string;
   appliesToProvider: boolean;
   appliesToCourse: boolean;
@@ -54,16 +54,16 @@ export interface Tag extends Base {
 export interface Course extends Base {
   name: string;
   description: string;
-  provider: Provider;
-  tags: Tag[];
-  sessions: Session[];
+  provider: Provider | string;
+  tags: Tag[] | string[];
+  sessions: Session[] | string[];
 }
 
 export interface Session extends Base {
-  course: Course;
+  course: Course | string;
   URL: string;
   name: string;
-  liveSession: LiveSession;
+  liveSession: LiveSession | string;
 }
 
 export interface Recurring {

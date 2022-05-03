@@ -1,5 +1,6 @@
 import mongoose, { Model } from "mongoose";
 import validator from "validator";
+import { refValidator } from "../utils/validators";
 import { Provider, Address } from "../@types/models";
 import Tag from "./tag";
 import Course from "./course";
@@ -36,7 +37,6 @@ const AddressSchema = new mongoose.Schema<Address>({
     type: String,
     trim: true,
     required: [true, "Missing zip"],
-    validate: [validator.isPostalCode, "Invalid zip"],
   },
   country: {
     type: String,
@@ -53,6 +53,10 @@ const ProviderSchema = new mongoose.Schema<Provider>(
       ref: "User",
       required: [true, "Missing user"],
       unique: [true, "That user is already a provider"],
+      validate: {
+        validator: async (value: string) => await refValidator(model, value),
+        message: ({ value }: { value: string }) => `User (${value}) not found`,
+      },
     },
     address: {
       type: AddressSchema,
@@ -61,7 +65,6 @@ const ProviderSchema = new mongoose.Schema<Provider>(
     isEnrolled: {
       type: Boolean,
       default: false,
-      required: [true, "Missing isEnrolled"],
     },
     phone: {
       type: String,
@@ -82,13 +85,15 @@ const ProviderSchema = new mongoose.Schema<Provider>(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tag",
-        validate: [
-          async (value: string) => {
+        validate: {
+          validator: async (value: string) => {
             const tag = await Tag.findById(value);
-            return tag.appliesToProvider;
+            if (!tag) throw new Error(`Tag (${value}) not found`);
+            if (tag && !tag.appliesToProvider)
+              throw new Error("That tag does not apply to providers");
+            return true;
           },
-          "That tag does not apply to providers",
-        ],
+        },
       },
     ],
   },

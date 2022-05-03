@@ -1,8 +1,9 @@
 import express from "express";
 
+import User from "../models/user";
 import Provider from "../models/provider";
 import { postPatchErrorHandler } from "../utils/errors";
-import { ProviderRequest } from "../@types/request";
+import { FullProviderRequest, ProviderRequest } from "../@types/request";
 import {
   errorResponse,
   providerResponse,
@@ -113,15 +114,28 @@ export async function deleteProvider(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function modifyProvider(
-  req: ProviderRequest,
+  req: FullProviderRequest,
   res: express.Response
 ) {
   if (!req.user.isAdmin) {
     delete req.body.isEnrolled;
-    req.body.user = req.user._id;
+    delete req.body.user;
+    delete req.body._id;
   }
   try {
-    const provider = await Provider.create(req.body);
+    await Provider.updateOne({ _id: req.params.id }, req.body, {
+      runValidators: true,
+    });
+
+    const provider = await Provider.findById(req.params.id);
+
+    if (!provider) {
+      return res.status(404).json({
+        success: false,
+        error: "Provider not found",
+      } as errorResponse);
+    }
+
     res.status(200).json({
       success: true,
       data: { provider },

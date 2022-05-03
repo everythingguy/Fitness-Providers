@@ -1,3 +1,4 @@
+import { refValidator } from "../utils/validators";
 import mongoose, { Model } from "mongoose";
 import { Tag } from "../@types/models";
 import { UniqueErrorRaiser } from "../utils/errors";
@@ -11,6 +12,11 @@ const TagSchema = new mongoose.Schema<Tag>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: [true, "Missing category"],
+      validate: {
+        validator: async (value: string) => await refValidator(model, value),
+        message: ({ value }: { value: string }) =>
+          `Category (${value}) not found`,
+      },
     },
     value: {
       type: String,

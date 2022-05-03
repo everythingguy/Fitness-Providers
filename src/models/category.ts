@@ -2,6 +2,7 @@ import mongoose, { Model } from "mongoose";
 import { Category } from "../@types/models";
 import Tag from "./tag";
 import { UniqueErrorRaiser } from "../utils/errors";
+import { refValidator } from "../utils/validators";
 
 // debug
 // mongoose.set('debug', true);
@@ -19,6 +20,10 @@ const CategorySchema = new mongoose.Schema<Category>(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tag",
+        validate: {
+          validator: async (value: string) => await refValidator(model, value),
+          message: ({ value }: { value: string }) => `Tag (${value}) not found`,
+        },
       },
     ],
   },
@@ -38,7 +43,7 @@ const CategorySchema = new mongoose.Schema<Category>(
 
 CategorySchema.pre("remove", function (next) {
   for (const tag of this.tags) {
-    Tag.findByIdAndRemove(tag._id).exec();
+    Tag.findByIdAndRemove(tag).exec();
   }
   next();
 });

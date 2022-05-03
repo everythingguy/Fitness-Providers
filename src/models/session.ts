@@ -1,3 +1,4 @@
+import { refValidator } from "../utils/validators";
 import mongoose, { Model } from "mongoose";
 import validator from "validator";
 import { Session } from "../@types/models";
@@ -12,6 +13,11 @@ const SessionSchema = new mongoose.Schema<Session>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
       required: [true, "Missing course"],
+      validate: {
+        validator: async (value: string) => await refValidator(model, value),
+        message: ({ value }: { value: string }) =>
+          `Course (${value}) not found`,
+      },
     },
     URL: {
       type: String,
@@ -27,6 +33,11 @@ const SessionSchema = new mongoose.Schema<Session>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "LiveSession",
       default: null,
+      validate: {
+        validator: async (value: string) => await refValidator(model, value),
+        message: ({ value }: { value: string }) =>
+          `Live Session (${value}) not found`,
+      },
     },
   },
   {

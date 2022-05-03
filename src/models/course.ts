@@ -2,6 +2,7 @@ import mongoose, { Model } from "mongoose";
 import { Course } from "../@types/models";
 import Tag from "./tag";
 import Session from "./session";
+import { refValidator } from "../utils/validators";
 
 // debug
 // mongoose.set('debug', true);
@@ -23,18 +24,25 @@ const CourseSchema = new mongoose.Schema<Course>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Provider",
       required: [true, "Missing provider"],
+      validate: {
+        validator: async (value: string) => await refValidator(model, value),
+        message: ({ value }: { value: string }) =>
+          `Provider (${value}) not found`,
+      },
     },
     tags: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tag",
-        validate: [
-          async (value: string) => {
+        validate: {
+          validator: async (value: string) => {
             const tag = await Tag.findById(value);
-            return tag.appliesToCourse;
+            if (!tag) throw new Error(`Tag (${value}) not found`);
+            if (tag && !tag.appliesToCourse)
+              throw new Error("That tag does not apply to courses");
+            return true;
           },
-          "That tag does not apply to courses",
-        ],
+        },
       },
     ],
   },

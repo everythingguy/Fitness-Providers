@@ -23,3 +23,7 @@ interface ProviderRequest extends Request {
     user: string;
   };
 }
+
+interface FullProviderRequest extends Request {
+  body: Provider;
+}
