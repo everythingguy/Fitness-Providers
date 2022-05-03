@@ -38,15 +38,9 @@ variables: &global_variables
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
   DB_USERNAME: everythingguy
-  # TODO: add the commented out fields to GitLab secrets
-  # TODO: add the env variables to docker run
-  # DB_PASSWORD: rootpassword
   DB_AUTHSOURCE: dashboard
   DB_IP: 10.0.0.44
   DB_PORT: 27017
-  # SECRET: PLEASECHANGE2LONG&RANDOMSECRET
-  # REFRESH_TOKEN_SECRET:
-  # ACCESS_TOKEN_SECRET:
 
 tscompile:
   image: node:latest
