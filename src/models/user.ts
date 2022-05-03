@@ -78,14 +78,14 @@ UserSchema.virtual("lastName").get(function (this: User) {
   return this.name.split(" ")[1];
 });
 
-UserSchema.pre("save", async function (next: mongoose.HookNextFunction) {
+UserSchema.pre("save", async function (next) {
   if (this.isSuperAdmin) this.isAdmin = true;
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-UserSchema.pre("remove", function (next: mongoose.HookNextFunction) {
+UserSchema.pre("remove", function (next) {
   Provider.remove({ user: this._id }).exec();
   next();
 });
@@ -96,5 +96,5 @@ UserSchema.methods.isValidPassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-const model: Model<User> = mongoose.model("User", UserSchema);
+const model: Model<User> = mongoose.model<User>("User", UserSchema);
 export default model;

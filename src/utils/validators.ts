@@ -5,7 +5,7 @@ export async function refValidator(
   value: string
 ): Promise<boolean> {
   try {
-    const found = model.findById(value);
+    const found = await model.findById(value);
     if (found) return true;
     else return false;
   } catch (e) {

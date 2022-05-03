@@ -59,5 +59,5 @@ SessionSchema.pre("remove", function (next) {
   next();
 });
 
-const model: Model<Session> = mongoose.model("Session", SessionSchema);
+const model: Model<Session> = mongoose.model<Session>("Session", SessionSchema);
 export default model;

@@ -55,11 +55,7 @@ export function getMongoURI(suffix = "-testing") {
 // connect database
 export default async function connectDB(uri: string) {
   try {
-    const conn = await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(uri);
 
     // tslint:disable-next-line: no-console
     console.log(`DB Connected: ${conn.connection.host}`.green.underline);

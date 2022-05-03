@@ -1,6 +1,5 @@
 import express from "express";
 
-import User from "../models/user";
 import Provider from "../models/provider";
 import { postPatchErrorHandler } from "../utils/errors";
 import { FullProviderRequest, ProviderRequest } from "../@types/request";

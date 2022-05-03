@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Types, Document } from "mongoose";
 import { WeekDays } from "./enums";
 
 export interface Base extends Document {
@@ -20,7 +20,7 @@ export interface User extends Base {
 }
 
 export interface Provider extends Base {
-  user: User | string;
+  user: User | Types.ObjectId;
   address: Address;
   isEnrolled: boolean;
   phone: string;
@@ -41,11 +41,11 @@ export interface Address {
 
 export interface Category extends Base {
   name: string;
-  tags: Tag[] | string[];
+  tags: Tag[] | Types.ObjectId[];
 }
 
 export interface Tag extends Base {
-  category: Category | string;
+  category: Category | Types.ObjectId;
   value: string;
   appliesToProvider: boolean;
   appliesToCourse: boolean;
@@ -54,16 +54,16 @@ export interface Tag extends Base {
 export interface Course extends Base {
   name: string;
   description: string;
-  provider: Provider | string;
-  tags: Tag[] | string[];
-  sessions: Session[] | string[];
+  provider: Provider | Types.ObjectId;
+  tags: Tag[] | Types.ObjectId[];
+  sessions: Session[] | Types.ObjectId[];
 }
 
 export interface Session extends Base {
-  course: Course | string;
+  course: Course | Types.ObjectId;
   URL: string;
   name: string;
-  liveSession: LiveSession | string;
+  liveSession: LiveSession | Types.ObjectId;
 }
 
 export interface Recurring {

@@ -69,5 +69,5 @@ CourseSchema.virtual("sessions").get(async function (this: Course) {
   return await Session.find({ course: this._id });
 });
 
-const model: Model<Course> = mongoose.model("Course", CourseSchema);
+const model: Model<Course> = mongoose.model<Course>("Course", CourseSchema);
 export default model;

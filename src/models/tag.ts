@@ -23,7 +23,7 @@ const TagSchema = new mongoose.Schema<Tag>(
       maxLength: [30, "Value has max length of 30"],
       trim: true,
       required: [true, "Missing value"],
-      unique: [true, "Tag value already exists"],
+      unique: true,
     },
     appliesToProvider: {
       type: Boolean,
@@ -52,5 +52,5 @@ const TagSchema = new mongoose.Schema<Tag>(
 
 TagSchema.post("save", UniqueErrorRaiser);
 
-const model: Model<Tag> = mongoose.model("Tag", TagSchema);
+const model: Model<Tag> = mongoose.model<Tag>("Tag", TagSchema);
 export default model;

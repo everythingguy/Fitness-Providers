@@ -52,9 +52,11 @@ const ProviderSchema = new mongoose.Schema<Provider>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "Missing user"],
-      unique: [true, "That user is already a provider"],
+      unique: true,
       validate: {
-        validator: async (value: string) => await refValidator(model, value),
+        validator: async (value: string): Promise<boolean> => {
+          return await refValidator(model, value);
+        },
         message: ({ value }: { value: string }) => `User (${value}) not found`,
       },
     },
@@ -122,5 +124,8 @@ ProviderSchema.virtual("courses").get(async function (this: Provider) {
   return await Course.find({ provider: this._id });
 });
 
-const model: Model<Provider> = mongoose.model("Provider", ProviderSchema);
+const model: Model<Provider> = mongoose.model<Provider>(
+  "Provider",
+  ProviderSchema
+);
 export default model;

@@ -62,7 +62,7 @@ LiveSessionSchema.pre("validate", function (this: LiveSession, next) {
   else next();
 });
 
-const model: Model<LiveSession> = mongoose.model(
+const model: Model<LiveSession> = mongoose.model<LiveSession>(
   "LiveSession",
   LiveSessionSchema
 );

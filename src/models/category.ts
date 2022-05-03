@@ -14,7 +14,7 @@ const CategorySchema = new mongoose.Schema<Category>(
       trim: true,
       maxLength: [30, "Name has max length of 30"],
       required: [true, "Missing name"],
-      unique: [true, "Category already exists"],
+      unique: true,
     },
     tags: [
       {
@@ -50,5 +50,8 @@ CategorySchema.pre("remove", function (next) {
 
 CategorySchema.post("save", UniqueErrorRaiser);
 
-const model: Model<Category> = mongoose.model("Category", CategorySchema);
+const model: Model<Category> = mongoose.model<Category>(
+  "Category",
+  CategorySchema
+);
 export default model;

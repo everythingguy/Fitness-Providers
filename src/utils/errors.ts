@@ -18,11 +18,7 @@ export function parseValidationErrors(error: any) {
   return errors;
 }
 
-export function UniqueErrorRaiser(
-  error: any,
-  doc: any,
-  next: mongoose.HookNextFunction
-) {
+export function UniqueErrorRaiser(error: any, doc: any, next: any) {
   let message: string;
 
   if (error.code === 11000) {
@@ -44,7 +40,14 @@ export function postPatchErrorHandler(res: express.Response, error: any) {
       success: false,
       error: error.message,
     });
+  } else if (error.name === "CastError") {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid ObjectId",
+    } as errorResponse);
   } else {
+    // tslint:disable-next-line: no-console
+    console.log(error);
     return res.status(500).json({
       success: false,
       error: "Server Error",
