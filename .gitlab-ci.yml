@@ -16,7 +16,7 @@ cache:
       - client/.npm
     policy: pull-push
   - &build_cache
-    key: build-$CI_COMMIT_SHA
+    key: build-$CI_PIPELINE_ID
     paths:
       - dist
       - client/dist
