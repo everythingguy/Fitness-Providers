@@ -48,6 +48,20 @@ export interface coursesResponse {
   };
 }
 
+export interface sessionResponse {
+  success: true;
+  data: {
+    session: Model.Session;
+  };
+}
+
+export interface sessionsResponse {
+  success: true;
+  data: {
+    sessions: Model.Session[];
+  };
+}
+
 export interface errorResponse {
   success: false;
   error: string[] | string;
