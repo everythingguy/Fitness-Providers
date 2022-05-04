@@ -1,10 +1,9 @@
 import express from "express";
-import { Types } from "mongoose";
 import { errorResponse } from "../@types/response";
 import { Request } from "../@types/request";
-import Provider from "../models/provider";
 import Course from "../models/course";
 import Session from "../models/session";
+import LiveSession from "../models/liveSession";
 import { NotFoundError } from "./errors";
 
 export function isLoggedIn(
@@ -181,7 +180,9 @@ export async function OwnerOfLiveSession(
   req: Request,
   id = req.params.id
 ): Promise<boolean> {
-  // TODO:
+  const liveSession = LiveSession.findById(id);
 
-  return false;
+  if (!liveSession) throw new NotFoundError("Live session not found");
+
+  return OwnerOfSession(req, liveSession.session.toString());
 }
