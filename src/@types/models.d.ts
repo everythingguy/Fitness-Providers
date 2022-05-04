@@ -73,6 +73,7 @@ export interface Recurring {
 }
 
 export interface LiveSession extends Base {
+  session: Session | Types.ObjectId;
   beginDateTime: Date;
   endDateTime: Date;
   recurring: Recurring;

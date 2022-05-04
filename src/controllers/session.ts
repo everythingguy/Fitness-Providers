@@ -17,38 +17,6 @@ import { Request } from "../@types/request";
  * @access Restricted
  */
 export async function addSession(req: SessionRequest, res: express.Response) {
-  if (!req.user.isAdmin) {
-    try {
-      if (req.body.course) {
-        const course = await Course.findById(req.body.course);
-        if (!course) {
-          return res.status(404).json({
-            success: false,
-            error: "Course not found",
-          });
-        }
-
-        if (course.provider._id.toString() !== req.provider._id.toString()) {
-          return res.status(401).json({
-            success: false,
-            error: "You can only add sessions to courses you own",
-          });
-        }
-      }
-    } catch (error) {
-      if (error.name === "CastError") {
-        return res.status(400).json({
-          success: false,
-          error: "Invalid ObjectId for Course",
-        } as errorResponse);
-      }
-
-      return res.status(500).json({
-        success: false,
-        error: "Server Error",
-      } as errorResponse);
-    }
-  }
   try {
     const session = await Session.create(req.body);
     res.status(201).json({
@@ -71,37 +39,6 @@ export async function modifySession(
 ) {
   if (!req.user.isAdmin) {
     delete req.body._id;
-
-    try {
-      if (req.body.course) {
-        const course = await Course.findById(req.body.course);
-        if (!course) {
-          return res.status(404).json({
-            success: false,
-            error: "Course not found",
-          });
-        }
-
-        if (course.provider._id.toString() !== req.provider._id.toString()) {
-          return res.status(401).json({
-            success: false,
-            error: "You can only add sessions to courses you own",
-          });
-        }
-      }
-    } catch (error) {
-      if (error.name === "CastError") {
-        return res.status(400).json({
-          success: false,
-          error: "Invalid ObjectId for Course",
-        } as errorResponse);
-      }
-
-      return res.status(500).json({
-        success: false,
-        error: "Server Error",
-      } as errorResponse);
-    }
   }
   try {
     await Session.updateOne({ _id: req.params.id }, req.body, {
@@ -195,6 +132,13 @@ export async function deleteSession(req: Request, res: express.Response) {
       data: { session },
     } as sessionResponse);
   } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid ObjectId",
+      } as errorResponse);
+    }
+
     return res.status(500).json({
       success: false,
       error: "Server Error",

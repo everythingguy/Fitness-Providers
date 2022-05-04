@@ -62,6 +62,20 @@ export interface sessionsResponse {
   };
 }
 
+export interface liveSessionResponse {
+  success: true;
+  data: {
+    liveSession: Model.LiveSession;
+  };
+}
+
+export interface liveSessionsResponse {
+  success: true;
+  data: {
+    liveSessions: Model.LiveSession[];
+  };
+}
+
 export interface errorResponse {
   success: false;
   error: string[] | string;

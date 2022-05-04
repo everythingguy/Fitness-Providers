@@ -37,7 +37,6 @@ export async function ReqProvider(
 export async function addProvider(req: ProviderRequest, res: express.Response) {
   if (!req.user.isAdmin) {
     delete req.body.isEnrolled;
-    req.body.user = req.user._id;
   }
   try {
     const provider = await Provider.create(req.body);
@@ -118,7 +117,14 @@ export async function deleteProvider(req: Request, res: express.Response) {
       success: true,
       data: { provider },
     } as providerResponse);
-  } catch (e) {
+  } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid ObjectId",
+      } as errorResponse);
+    }
+
     return res.status(500).json({
       success: false,
       error: "Server Error",
@@ -137,7 +143,6 @@ export async function modifyProvider(
 ) {
   if (!req.user.isAdmin) {
     delete req.body.isEnrolled;
-    delete req.body.user;
     delete req.body._id;
   }
   try {

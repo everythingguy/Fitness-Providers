@@ -2,6 +2,7 @@ import mongoose, { Model } from "mongoose";
 import validator from "validator";
 import { LiveSession, Recurring } from "../@types/models";
 import { WeekDays } from "../@types/enums";
+import { refValidator } from "../utils/validators";
 
 // debug
 // mongoose.set('debug', true);
@@ -23,6 +24,16 @@ const RecurringSchema = new mongoose.Schema<Recurring>({
 
 const LiveSessionSchema = new mongoose.Schema<LiveSession>(
   {
+    session: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Session",
+      required: [true, "Missing session"],
+      validate: {
+        validator: async (value: string) => await refValidator(model, value),
+        message: ({ value }: { value: string }) =>
+          `Session (${value}) not found`,
+      },
+    },
     beginDateTime: {
       type: Date,
       required: [true, "Missing beginDateTime"],

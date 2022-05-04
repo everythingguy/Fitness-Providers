@@ -16,9 +16,6 @@ import { Request } from "../@types/request";
  * @access Restricted
  */
 export async function addCourse(req: CourseRequest, res: express.Response) {
-  if (!req.user.isAdmin) {
-    req.body.provider = req.provider._id;
-  }
   try {
     const course = await Course.create(req.body);
     res.status(201).json({
@@ -37,7 +34,6 @@ export async function addCourse(req: CourseRequest, res: express.Response) {
  */
 export async function modifyCourse(req: CourseRequest, res: express.Response) {
   if (!req.user.isAdmin) {
-    delete req.body.provider;
     delete req.body._id;
   }
   try {
@@ -132,6 +128,13 @@ export async function deleteCourse(req: Request, res: express.Response) {
       data: { course },
     } as courseResponse);
   } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid ObjectId",
+      } as errorResponse);
+    }
+
     return res.status(500).json({
       success: false,
       error: "Server Error",

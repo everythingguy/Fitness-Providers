@@ -8,7 +8,11 @@ const router = express.Router();
 router
   .route("/")
   .get(Controller.getCourses)
-  .post(Permission.isLoggedInAsProvider, Controller.addCourse);
+  .post(
+    Permission.isLoggedInAsProvider,
+    Permission.isOwnerOrAdmin(Permission.OwnerOfProvider, false, "provider"),
+    Controller.addCourse
+  );
 
 router
   .route("/:id")
@@ -16,6 +20,7 @@ router
   .patch(
     Permission.isLoggedInAsProvider,
     Permission.isOwnerOrAdmin(Permission.OwnerOfCourse),
+    Permission.isOwnerOrAdmin(Permission.OwnerOfProvider, true, "provider"),
     Controller.modifyCourse
   )
   .delete(

@@ -30,3 +30,7 @@ interface CourseRequest extends Request {
 interface SessionRequest extends Request {
   body: Model.Session;
 }
+
+interface LiveSessionRequest extends Request {
+  body: Model.LiveSession;
+}

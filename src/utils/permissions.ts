@@ -87,7 +87,9 @@ export function isSuperAdmin(
 }
 
 export function isOwnerOrAdmin(
-  isOwner: (req: Request, id?: string) => Promise<boolean>
+  isOwner: (req: Request, id?: string) => Promise<boolean>,
+  isPatch = false,
+  id?: string
 ) {
   return async (
     req: Request,
@@ -97,7 +99,16 @@ export function isOwnerOrAdmin(
     if (req.user) {
       try {
         if (req.user.isAdmin) next();
-        else if (await isOwner(req)) next();
+        else if (
+          id && req.body[id]
+            ? await isOwner(req, req.body[id])
+            : isPatch
+            ? await isOwner(req) // TODO: we need the id from mongo
+            : !id
+            ? await isOwner(req)
+            : false
+        )
+          next();
         else {
           res.status(401).json({
             success: false,
@@ -130,13 +141,20 @@ export function isOwnerOrAdmin(
   };
 }
 
+export async function OwnerOfUser(
+  req: Request,
+  id = req.params.id
+): Promise<boolean> {
+  if (req.user && req.user._id.toString() === id) return true;
+
+  return false;
+}
+
 export async function OwnerOfProvider(
   req: Request,
   id = req.params.id
 ): Promise<boolean> {
-  if (req.provider && req.provider._id.toString() === id) {
-    return true;
-  }
+  if (req.provider && req.provider._id.toString() === id) return true;
 
   return false;
 }
@@ -163,4 +181,13 @@ export async function OwnerOfSession(
   if (!session) throw new NotFoundError("Session not found");
 
   return OwnerOfCourse(req, session.course.toString());
+}
+
+export async function OwnerOfLiveSession(
+  req: Request,
+  id = req.params.id
+): Promise<boolean> {
+  // TODO:
+
+  return false;
 }
