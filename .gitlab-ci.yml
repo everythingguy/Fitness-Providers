@@ -1,4 +1,4 @@
-cache:
+cache: &global_cache
   - &express_cache
     key:
       files:
@@ -6,7 +6,7 @@ cache:
     paths:
       - node_modules
       - .npm
-    policy: pull-push
+    policy: pull
   - &react_cache
     key:
       files:
@@ -14,7 +14,7 @@ cache:
     paths:
       - client/node_modules
       - client/.npm
-    policy: pull-push
+    policy: pull
   - &build_cache
     key: build-$CI_PIPELINE_ID
     paths:
@@ -25,7 +25,14 @@ cache:
       - client/src/assets/style.css
       - client/src/assets/style.css.map
       - public/dist
-    policy: pull-push
+    policy: pull
+
+.other-caches:
+  - &cypress_cache
+    key: cypress-$CI_COMMIT_SHA
+    paths:
+      - cache/Cypress
+    policy: pull
 
 stages:
   - compile
@@ -48,12 +55,34 @@ tscompile:
   tags:
     - amd64
   cache:
-    - *express_cache
-    - *react_cache
-    - *build_cache
+    - key:
+        files:
+          - package-lock.json
+      paths:
+        - node_modules
+        - .npm
+      policy: pull-push
+    - key:
+        files:
+          - client/package-lock.json
+      paths:
+        - client/node_modules
+        - client/.npm
+      policy: pull-push
+    - key: build-$CI_PIPELINE_ID
+      paths:
+        - dist
+        - client/dist
+        - client/webpack-stats.json
+        - client/src/assets/main.css
+        - client/src/assets/style.css
+        - client/src/assets/style.css.map
+        - public/dist
+      policy: pull-push
     - key: cypress-$CI_COMMIT_SHA
       paths:
         - cache/Cypress
+      policy: pull-push
   script:
     - npm i -g postcss-cli
     - npm i -g postcss
@@ -134,9 +163,7 @@ cypress_chrome:
     - *express_cache
     - *react_cache
     - *build_cache
-    - key: cypress-$CI_COMMIT_SHA
-      paths:
-        - cache/Cypress
+    - *cypress_cache
   before_script:
     - cp .env-sample .env
   script:
