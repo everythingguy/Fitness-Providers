@@ -14,10 +14,12 @@ router
   .route("/:id")
   .get(Controller.getProvider)
   .patch(
+    Permission.isLoggedInAsProvider,
     Permission.isOwnerOrAdmin(Permission.OwnerOfProvider),
     Controller.modifyProvider
   )
   .delete(
+    Permission.isLoggedInAsProvider,
     Permission.isOwnerOrAdmin(Permission.OwnerOfProvider),
     Controller.deleteProvider
   );

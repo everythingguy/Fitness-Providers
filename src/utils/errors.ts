@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import express from "express";
 import { errorResponse } from "../@types/response";
 
@@ -6,6 +5,13 @@ export class UniqueError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "UniqueError";
+  }
+}
+
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
   }
 }
 
