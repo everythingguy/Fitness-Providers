@@ -28,7 +28,7 @@ export interface Provider extends Base {
   bio?: string;
   website?: string;
   tags: Tag[] | Types.ObjectId[];
-  courses: Course[] | Types.ObjectId[];
+  courses: Course[];
 }
 
 export interface Address {
@@ -57,7 +57,7 @@ export interface Course extends Base {
   description: string;
   provider: Provider | Types.ObjectId;
   tags: Tag[] | Types.ObjectId[];
-  sessions: Session[] | Types.ObjectId[];
+  sessions: Session[];
 }
 
 export interface Session extends Base {
