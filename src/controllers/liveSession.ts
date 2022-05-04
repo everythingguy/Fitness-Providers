@@ -19,9 +19,6 @@ export async function addLiveSession(
   req: LiveSessionRequest,
   res: express.Response
 ) {
-  if (!req.user.isAdmin) {
-    // TODO:
-  }
   try {
     const liveSession = await LiveSession.create(req.body);
     res.status(201).json({
@@ -44,7 +41,6 @@ export async function modifyLiveSession(
 ) {
   if (!req.user.isAdmin) {
     delete req.body._id;
-    // TODO:
   }
   try {
     await LiveSession.updateOne({ _id: req.params.id }, req.body, {
