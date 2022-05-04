@@ -1,10 +1,11 @@
 import { ResUser } from "./response";
-import { User, Provider } from "./models";
+import { User, Provider, Course } from "./models";
 import { JwtPayload } from "jsonwebtoken";
 import express from "express";
 
 interface Request extends express.Request {
   user?: ResUser;
+  provider?: Provider;
   payload?: Payload;
   logout: (res: express.Response) => void;
 }
@@ -19,11 +20,9 @@ interface UserRequest extends Request {
 }
 
 interface ProviderRequest extends Request {
-  body: Omit<Provider, "user" | "tags" | "courses"> & {
-    user: string;
-  };
+  body: Provider;
 }
 
-interface FullProviderRequest extends Request {
-  body: Provider;
+interface CourseRequest extends Request {
+  body: Course;
 }

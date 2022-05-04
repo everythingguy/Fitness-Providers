@@ -11,6 +11,7 @@ import "colors";
 // local imports
 import mainRouter from "./routers/main";
 import { ReqUser } from "./controllers/user";
+import { ReqProvider } from "./controllers/provider";
 import { isLoggedIn } from "./utils/permissions";
 import { getMongoURI } from "./utils/db";
 
@@ -50,6 +51,7 @@ app.use(
 );
 
 app.use(ReqUser);
+app.use(ReqProvider);
 
 // serve static files
 app.use(express.static(__dirname + "/../client/build"));

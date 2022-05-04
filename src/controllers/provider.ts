@@ -2,7 +2,7 @@ import express from "express";
 
 import Provider from "../models/provider";
 import { postPatchErrorHandler } from "../utils/errors";
-import { FullProviderRequest, ProviderRequest } from "../@types/request";
+import { ProviderRequest } from "../@types/request";
 import {
   errorResponse,
   providerResponse,
@@ -10,9 +10,28 @@ import {
 } from "../@types/response";
 import { Request } from "../@types/request";
 
+// middleware
+// attach provider to req
+export async function ReqProvider(
+  req: Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  if (req.user) {
+    try {
+      const provider = await Provider.findOne({ user: req.user._id });
+      if (provider) req.provider = provider;
+    } catch (e) {
+      req.provider = undefined;
+    }
+  }
+
+  next();
+}
+
 /**
  * @desc Add Provider
- * @route POST /api/v1/provider
+ * @route POST /api/v1/providers
  * @access Restricted
  */
 export async function addProvider(req: ProviderRequest, res: express.Response) {
@@ -33,7 +52,7 @@ export async function addProvider(req: ProviderRequest, res: express.Response) {
 
 /**
  * @desc Get Provider
- * @route GET /api/v1/provider/:id
+ * @route GET /api/v1/providers/:id
  * @access Public
  */
 export async function getProvider(req: Request, res: express.Response) {
@@ -53,14 +72,14 @@ export async function getProvider(req: Request, res: express.Response) {
   } catch (e) {
     return res.status(400).json({
       success: false,
-      error: "Invalid ID format",
+      error: "Invalid ObjectId",
     } as errorResponse);
   }
 }
 
 /**
  * @desc Get Providers
- * @route GET /api/v1/provider
+ * @route GET /api/v1/providers
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
@@ -80,7 +99,7 @@ export async function getProviders(req: Request, res: express.Response) {
 
 /**
  * @desc Delete Provider
- * @route DELETE /api/v1/provider/:id
+ * @route DELETE /api/v1/providers/:id
  * @access Restricted
  */
 export async function deleteProvider(req: Request, res: express.Response) {
@@ -109,11 +128,11 @@ export async function deleteProvider(req: Request, res: express.Response) {
 
 /**
  * @desc Modify Provider
- * @route PATCH /api/v1/provider/:id
+ * @route PATCH /api/v1/providers/:id
  * @access Restricted
  */
 export async function modifyProvider(
-  req: FullProviderRequest,
+  req: ProviderRequest,
   res: express.Response
 ) {
   if (!req.user.isAdmin) {

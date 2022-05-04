@@ -26,8 +26,8 @@ export interface Provider extends Base {
   phone: string;
   bio?: string;
   website?: string;
-  tags: Tag[] | string[];
-  courses: Course[] | string[];
+  tags: Tag[] | Types.ObjectId[];
+  courses: Course[] | Types.ObjectId[];
 }
 
 export interface Address {

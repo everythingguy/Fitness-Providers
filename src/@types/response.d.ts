@@ -1,7 +1,8 @@
 import * as Model from "./models";
+import { Types } from "mongoose";
 
 export interface ResUser {
-  _id: string;
+  _id: Types.ObjectId;
   firstName: string;
   lastName: string;
   name: string;
@@ -30,6 +31,20 @@ export interface providersResponse {
   success: true;
   data: {
     providers: Model.Provider[];
+  };
+}
+
+export interface courseResponse {
+  success: true;
+  data: {
+    course: Model.Course;
+  };
+}
+
+export interface coursesResponse {
+  success: true;
+  data: {
+    courses: Model.Course[];
   };
 }
 
