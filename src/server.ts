@@ -14,6 +14,7 @@ import { ReqUser } from "./controllers/user";
 import { ReqProvider } from "./controllers/provider";
 import { isLoggedIn } from "./utils/permissions";
 import { getMongoURI } from "./utils/db";
+import { Request } from "./@types/request";
 
 // global variables
 // tslint:disable-next-line: no-var-requires
@@ -63,13 +64,15 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // logger
-app.use(async (req: any, res, next) => {
-  // tslint:disable-next-line: no-console
-  if (req.user) console.log(`${req.user.username} ${req.method} ${req.url}`);
-  // tslint:disable-next-line: no-console
-  else console.log(`${req.method} ${req.url}`);
-  next();
-});
+app.use(
+  async (req: Request, res: express.Response, next: express.NextFunction) => {
+    // tslint:disable-next-line: no-console
+    if (req.user) console.log(`${req.user.username} ${req.method} ${req.url}`);
+    // tslint:disable-next-line: no-console
+    else console.log(`${req.method} ${req.url}`);
+    next();
+  }
+);
 
 // router
 export let apiPath = "/api/v1";
