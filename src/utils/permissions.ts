@@ -1,8 +1,10 @@
 import express from "express";
+import { Types } from "mongoose";
 import { errorResponse } from "../@types/response";
 import { Request } from "../@types/request";
 import Provider from "../models/provider";
 import Course from "../models/course";
+import Session from "../models/session";
 import { NotFoundError } from "./errors";
 
 export function isLoggedIn(
@@ -84,7 +86,9 @@ export function isSuperAdmin(
     } as errorResponse);
 }
 
-export function isOwnerOrAdmin(isOwner: (req: Request) => Promise<boolean>) {
+export function isOwnerOrAdmin(
+  isOwner: (req: Request, id?: string) => Promise<boolean>
+) {
   return async (
     req: Request,
     res: express.Response,
@@ -126,21 +130,37 @@ export function isOwnerOrAdmin(isOwner: (req: Request) => Promise<boolean>) {
   };
 }
 
-export async function OwnerOfProvider(req: Request): Promise<boolean> {
-  if (req.provider && req.provider._id.toString() === req.params.id) {
+export async function OwnerOfProvider(
+  req: Request,
+  id = req.params.id
+): Promise<boolean> {
+  if (req.provider && req.provider._id.toString() === id) {
     return true;
   }
 
   return false;
 }
 
-export async function OwnerOfCourse(req: Request): Promise<boolean> {
-  const course = await Course.findById(req.params.id);
+export async function OwnerOfCourse(
+  req: Request,
+  id = req.params.id
+): Promise<boolean> {
+  const course = await Course.findById(id);
 
   if (!course) throw new NotFoundError("Course not found");
 
-  if (req.provider._id.toString() === course.provider._id.toString())
-    return true;
+  if (req.provider._id.toString() === course.provider.toString()) return true;
 
   return false;
+}
+
+export async function OwnerOfSession(
+  req: Request,
+  id = req.params.id
+): Promise<boolean> {
+  const session = await Session.findById(id);
+
+  if (!session) throw new NotFoundError("Session not found");
+
+  return OwnerOfCourse(req, session.course.toString());
 }
