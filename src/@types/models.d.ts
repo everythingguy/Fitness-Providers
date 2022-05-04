@@ -2,6 +2,7 @@ import { Types, Document } from "mongoose";
 import { WeekDays } from "./enums";
 
 export interface Base extends Document {
+  _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
