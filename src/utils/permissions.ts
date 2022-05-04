@@ -99,16 +99,10 @@ export function isOwnerOrAdmin(
     if (req.user) {
       try {
         if (req.user.isAdmin) next();
-        else if (
-          id && req.body[id]
-            ? await isOwner(req, req.body[id])
-            : isPatch
-            ? await isOwner(req) // TODO: we need the id from mongo
-            : !id
-            ? await isOwner(req)
-            : false
-        )
+        else if (id && req.body[id] && (await isOwner(req, req.body[id])))
           next();
+        else if (id && !req.body[id] && isPatch) next();
+        else if (!id && (await isOwner(req))) next();
         else {
           res.status(401).json({
             success: false,
