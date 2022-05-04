@@ -10,7 +10,12 @@ router
   .get(Controller.getSessions)
   .post(
     Permission.isLoggedInAsProvider,
-    Permission.isOwnerOrAdmin(Permission.OwnerOfCourse, false, "course"),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfCourse,
+      false,
+      "course",
+      "You cannot create a session for another provider's course"
+    ),
     Controller.addSession
   );
 
@@ -20,7 +25,12 @@ router
   .patch(
     Permission.isLoggedInAsProvider,
     Permission.isOwnerOrAdmin(Permission.OwnerOfSession),
-    Permission.isOwnerOrAdmin(Permission.OwnerOfCourse, true, "course"),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfCourse,
+      true,
+      "course",
+      "You cannot give your session to another provider's course"
+    ),
     Controller.modifySession
   )
   .delete(

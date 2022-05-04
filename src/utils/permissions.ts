@@ -37,12 +37,12 @@ export function isLoggedOut(
   res: express.Response,
   next: express.NextFunction
 ) {
-  if (req.user) {
+  if (req.user)
     res.status(400).json({
       success: false,
       error: "Please logout before logging in",
     } as errorResponse);
-  } else next();
+  else next();
 }
 
 export function isAdmin(
@@ -52,12 +52,11 @@ export function isAdmin(
 ) {
   if (req.user) {
     if (req.user.isAdmin) next();
-    else {
+    else
       res.status(401).json({
         success: false,
         error: "Only a admin can perform that action",
       } as errorResponse);
-    }
   } else
     res.status(401).json({
       success: false,
@@ -72,12 +71,11 @@ export function isSuperAdmin(
 ) {
   if (req.user) {
     if (req.user.isSuperAdmin) next();
-    else {
+    else
       res.status(401).json({
         success: false,
         error: "Only a super admin can perform that action",
       } as errorResponse);
-    }
   } else
     res.status(401).json({
       success: false,
@@ -88,7 +86,8 @@ export function isSuperAdmin(
 export function isOwnerOrAdmin(
   isOwner: (req: Request, id?: string) => Promise<boolean>,
   isPatch = false,
-  id?: string
+  id?: string,
+  error?: string
 ) {
   return async (
     req: Request,
@@ -102,13 +101,17 @@ export function isOwnerOrAdmin(
           next();
         else if (id && !req.body[id] && isPatch) next();
         else if (!id && (await isOwner(req))) next();
-        else {
+        else if (id && req.body[id])
+          res.status(401).json({
+            success: false,
+            error,
+          });
+        else
           res.status(401).json({
             success: false,
             error:
               "Only a admin or owner of the record can perform that action",
           } as errorResponse);
-        }
       } catch (error) {
         if (error.name === "NotFoundError")
           res.status(404).json({

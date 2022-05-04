@@ -10,7 +10,12 @@ router
   .get(Controller.getProviders)
   .post(
     Permission.isLoggedIn,
-    Permission.isOwnerOrAdmin(Permission.OwnerOfUser, false, "user"),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfUser,
+      false,
+      "user",
+      "You cannot create a provider account for another user"
+    ),
     Controller.addProvider
   );
 
@@ -20,7 +25,12 @@ router
   .patch(
     Permission.isLoggedInAsProvider,
     Permission.isOwnerOrAdmin(Permission.OwnerOfProvider),
-    Permission.isOwnerOrAdmin(Permission.OwnerOfUser, true, "user"),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfUser,
+      true,
+      "user",
+      "You cannot give your provider account to another user"
+    ),
     Controller.modifyProvider
   )
   .delete(

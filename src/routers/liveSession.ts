@@ -10,7 +10,12 @@ router
   .get(Controller.getLiveSessions)
   .post(
     Permission.isLoggedInAsProvider,
-    Permission.isOwnerOrAdmin(Permission.OwnerOfSession, false, "session"),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfSession,
+      false,
+      "session",
+      "You cannot create a live session for another provider's session"
+    ),
     Controller.addLiveSession
   );
 
@@ -20,7 +25,12 @@ router
   .patch(
     Permission.isLoggedInAsProvider,
     Permission.isOwnerOrAdmin(Permission.OwnerOfLiveSession),
-    Permission.isOwnerOrAdmin(Permission.OwnerOfSession, true, "session"),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfSession,
+      true,
+      "session",
+      "You cannot give your live session to another provider's session"
+    ),
     Controller.modifyLiveSession
   )
   .delete(
