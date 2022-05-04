@@ -10,27 +10,11 @@ interface Request extends express.Request {
   logout: (res: express.Response) => void;
 }
 
+interface RequestBody<T extends Model.Base> extends Request {
+  body: T;
+}
+
 interface Payload extends JwtPayload {
   userID: string;
   tokenVersion: number;
-}
-
-interface UserRequest extends Request {
-  body: Model.User;
-}
-
-interface ProviderRequest extends Request {
-  body: Model.Provider;
-}
-
-interface CourseRequest extends Request {
-  body: Model.Course;
-}
-
-interface SessionRequest extends Request {
-  body: Model.Session;
-}
-
-interface LiveSessionRequest extends Request {
-  body: Model.LiveSession;
 }

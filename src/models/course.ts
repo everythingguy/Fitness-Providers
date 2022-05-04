@@ -3,6 +3,7 @@ import { Course } from "../@types/models";
 import Tag from "./tag";
 import Session from "./session";
 import { refValidator } from "../utils/validators";
+import Provider from "./provider";
 
 // debug
 // mongoose.set('debug', true);
@@ -25,7 +26,7 @@ const CourseSchema = new mongoose.Schema<Course>(
       ref: "Provider",
       required: [true, "Missing provider"],
       validate: {
-        validator: async (value: string) => await refValidator(model, value),
+        validator: async (value: string) => await refValidator(Provider, value),
         message: ({ value }: { value: string }) =>
           `Provider (${value}) not found`,
       },
@@ -65,7 +66,7 @@ CourseSchema.pre("remove", function (next) {
   next();
 });
 
-CourseSchema.virtual("sessions").get(async function (this: Course) {
+CourseSchema.virtual("getSessions", async function (this: Course) {
   return await Session.find({ course: this._id });
 });
 

@@ -78,6 +78,12 @@ UserSchema.virtual("lastName").get(function (this: User) {
   return this.name.split(" ")[1];
 });
 
+UserSchema.method("getProvider", async function (this: User) {
+  const provider = await Provider.findOne({ user: this._id });
+  if (provider) return provider;
+  else return null;
+});
+
 UserSchema.pre("save", async function (next) {
   if (this.isSuperAdmin) this.isAdmin = true;
   if (!this.isModified("password")) return next();
@@ -91,6 +97,7 @@ UserSchema.pre("remove", function (next) {
 });
 
 UserSchema.post("save", UniqueErrorRaiser);
+UserSchema.post("updateOne", UniqueErrorRaiser);
 
 UserSchema.methods.isValidPassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);

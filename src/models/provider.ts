@@ -5,6 +5,7 @@ import { Provider, Address } from "../@types/models";
 import Tag from "./tag";
 import Course from "./course";
 import { UniqueErrorRaiser } from "../utils/errors";
+import User from "./user";
 
 // debug
 // mongoose.set('debug', true);
@@ -55,7 +56,7 @@ const ProviderSchema = new mongoose.Schema<Provider>(
       unique: true,
       validate: {
         validator: async (value: string): Promise<boolean> => {
-          return await refValidator(model, value);
+          return await refValidator(User, value);
         },
         message: ({ value }: { value: string }) => `User (${value}) not found`,
       },
@@ -119,8 +120,9 @@ ProviderSchema.pre("remove", function (next) {
 });
 
 ProviderSchema.post("save", UniqueErrorRaiser);
+ProviderSchema.post("updateOne", UniqueErrorRaiser);
 
-ProviderSchema.virtual("courses").get(async function (this: Provider) {
+ProviderSchema.method("getCourses", async function (this: Provider) {
   return await Course.find({ provider: this._id });
 });
 

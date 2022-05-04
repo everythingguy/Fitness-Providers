@@ -17,6 +17,7 @@ export interface User extends Base {
   tokenVersion: number;
   isAdmin: boolean;
   isSuperAdmin: boolean;
+  getProvider: () => Promise<Provider>;
   isValidPassword: (password: string) => Promise<boolean>;
 }
 
@@ -28,7 +29,7 @@ export interface Provider extends Base {
   bio?: string;
   website?: string;
   tags: Tag[] | Types.ObjectId[];
-  courses: Course[];
+  getCourses: () => Promise<Course[]>;
 }
 
 export interface Address {
@@ -57,7 +58,7 @@ export interface Course extends Base {
   description: string;
   provider: Provider | Types.ObjectId;
   tags: Tag[] | Types.ObjectId[];
-  sessions: Session[];
+  getSessions: () => Promise<Session[]>;
 }
 
 export interface Session extends Base {

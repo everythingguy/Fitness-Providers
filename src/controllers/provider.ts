@@ -2,13 +2,14 @@ import express from "express";
 
 import Provider from "../models/provider";
 import { postPatchErrorHandler } from "../utils/errors";
-import { ProviderRequest } from "../@types/request";
 import {
   errorResponse,
   providerResponse,
   providersResponse,
 } from "../@types/response";
-import { Request } from "../@types/request";
+import { Request, RequestBody } from "../@types/request";
+import { Provider as ProviderType } from "../@types/models";
+import * as Crud from "../utils/crud";
 
 // middleware
 // attach provider to req
@@ -34,19 +35,23 @@ export async function ReqProvider(
  * @route POST /api/v1/providers
  * @access Restricted
  */
-export async function addProvider(req: ProviderRequest, res: express.Response) {
-  if (!req.user.isAdmin) {
-    delete req.body.isEnrolled;
-  }
-  try {
-    const provider = await Provider.create(req.body);
-    res.status(201).json({
-      success: true,
-      data: { provider },
-    } as providerResponse);
-  } catch (error) {
-    postPatchErrorHandler(res, error);
-  }
+export async function addProvider(
+  req: RequestBody<ProviderType>,
+  res: express.Response
+) {
+  Crud.create<ProviderType>(
+    req,
+    res,
+    "provider",
+    Provider,
+    ["isEnrolled"],
+    [
+      {
+        source: "user",
+        value: "user",
+      },
+    ]
+  );
 }
 
 /**
@@ -55,25 +60,7 @@ export async function addProvider(req: ProviderRequest, res: express.Response) {
  * @access Public
  */
 export async function getProvider(req: Request, res: express.Response) {
-  try {
-    const provider = await Provider.findById(req.params.id);
-
-    if (!provider)
-      return res.status(404).json({
-        success: false,
-        error: "No provider found by that id",
-      } as errorResponse);
-
-    return res.status(200).json({
-      success: true,
-      data: { provider },
-    } as providerResponse);
-  } catch (e) {
-    return res.status(400).json({
-      success: false,
-      error: "Invalid ObjectId",
-    } as errorResponse);
-  }
+  Crud.read<ProviderType>(req, res, "provider", Provider);
 }
 
 /**
@@ -82,18 +69,7 @@ export async function getProvider(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
-  try {
-    const providers = await Provider.find({});
-    return res.status(200).json({
-      success: true,
-      data: { providers },
-    } as providersResponse);
-  } catch (e) {
-    return res.status(500).json({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
+  Crud.readAll<ProviderType>(req, res, "provider", Provider);
 }
 
 /**
@@ -102,34 +78,7 @@ export async function getProviders(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteProvider(req: Request, res: express.Response) {
-  try {
-    const provider = await Provider.findById(req.params.id);
-
-    if (!provider)
-      return res.status(404).json({
-        success: false,
-        error: "No provider found by that id",
-      } as errorResponse);
-
-    await Provider.deleteOne({ _id: req.params.id });
-
-    return res.status(200).json({
-      success: true,
-      data: { provider },
-    } as providerResponse);
-  } catch (error) {
-    if (error.name === "CastError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid ObjectId",
-      } as errorResponse);
-    }
-
-    return res.status(500).json({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
+  Crud.del(req, res, "provider", Provider);
 }
 
 /**
@@ -138,32 +87,8 @@ export async function deleteProvider(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function modifyProvider(
-  req: ProviderRequest,
+  req: RequestBody<ProviderType>,
   res: express.Response
 ) {
-  if (!req.user.isAdmin) {
-    delete req.body.isEnrolled;
-    delete req.body._id;
-  }
-  try {
-    await Provider.updateOne({ _id: req.params.id }, req.body, {
-      runValidators: true,
-    });
-
-    const provider = await Provider.findById(req.params.id);
-
-    if (!provider) {
-      return res.status(404).json({
-        success: false,
-        error: "Provider not found",
-      } as errorResponse);
-    }
-
-    res.status(200).json({
-      success: true,
-      data: { provider },
-    } as providerResponse);
-  } catch (error) {
-    postPatchErrorHandler(res, error);
-  }
+  Crud.update(req, res, "provider", Provider, ["isEnrolled"]);
 }

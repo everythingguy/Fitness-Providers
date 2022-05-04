@@ -2,6 +2,7 @@ import { refValidator } from "../utils/validators";
 import mongoose, { Model } from "mongoose";
 import { Tag } from "../@types/models";
 import { UniqueErrorRaiser } from "../utils/errors";
+import Category from "./category";
 
 // debug
 // mongoose.set('debug', true);
@@ -13,7 +14,7 @@ const TagSchema = new mongoose.Schema<Tag>(
       ref: "Category",
       required: [true, "Missing category"],
       validate: {
-        validator: async (value: string) => await refValidator(model, value),
+        validator: async (value: string) => await refValidator(Category, value),
         message: ({ value }: { value: string }) =>
           `Category (${value}) not found`,
       },
@@ -51,6 +52,7 @@ const TagSchema = new mongoose.Schema<Tag>(
 );
 
 TagSchema.post("save", UniqueErrorRaiser);
+TagSchema.post("updateOne", UniqueErrorRaiser);
 
 const model: Model<Tag> = mongoose.model<Tag>("Tag", TagSchema);
 export default model;

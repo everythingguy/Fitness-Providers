@@ -21,7 +21,7 @@ const CategorySchema = new mongoose.Schema<Category>(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tag",
         validate: {
-          validator: async (value: string) => await refValidator(model, value),
+          validator: async (value: string) => await refValidator(Tag, value),
           message: ({ value }: { value: string }) => `Tag (${value}) not found`,
         },
       },
@@ -49,6 +49,7 @@ CategorySchema.pre("remove", function (next) {
 });
 
 CategorySchema.post("save", UniqueErrorRaiser);
+CategorySchema.post("updateOne", UniqueErrorRaiser);
 
 const model: Model<Category> = mongoose.model<Category>(
   "Category",

@@ -10,6 +10,7 @@ export interface ResUser {
   username: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
+  provider?: Model.Provider;
 }
 
 export interface userResponse {

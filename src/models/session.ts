@@ -2,6 +2,7 @@ import { refValidator } from "../utils/validators";
 import mongoose, { Model } from "mongoose";
 import validator from "validator";
 import { Session } from "../@types/models";
+import Course from "./course";
 import LiveSession from "./liveSession";
 
 // debug
@@ -14,7 +15,7 @@ const SessionSchema = new mongoose.Schema<Session>(
       ref: "Course",
       required: [true, "Missing course"],
       validate: {
-        validator: async (value: string) => await refValidator(model, value),
+        validator: async (value: string) => await refValidator(Course, value),
         message: ({ value }: { value: string }) =>
           `Course (${value}) not found`,
       },
@@ -34,7 +35,8 @@ const SessionSchema = new mongoose.Schema<Session>(
       ref: "LiveSession",
       default: null,
       validate: {
-        validator: async (value: string) => await refValidator(model, value),
+        validator: async (value: string) =>
+          await refValidator(LiveSession, value),
         message: ({ value }: { value: string }) =>
           `Live Session (${value}) not found`,
       },

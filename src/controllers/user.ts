@@ -4,12 +4,12 @@ import User from "../models/user";
 import { postPatchErrorHandler } from "../utils/errors";
 import { User as UserType } from "../@types/models";
 import { errorResponse, ResUser } from "../@types/response";
-import { Request, Payload, UserRequest } from "../@types/request";
+import { Request, Payload, RequestBody } from "../@types/request";
 import { userResponse as userResponseType } from "../@types/response";
 import { sign, verify } from "jsonwebtoken";
 import { apiPath } from "../server";
 
-const userResponse = (userData: UserType): ResUser => {
+const userResponse = (req: Request, userData: UserType): ResUser => {
   let userRes: ResUser;
   userRes = {
     _id: userData._id,
@@ -20,6 +20,7 @@ const userResponse = (userData: UserType): ResUser => {
     username: userData.username,
     isAdmin: userData.isAdmin,
     isSuperAdmin: userData.isSuperAdmin,
+    provider: req.provider,
   };
 
   return userRes;
@@ -124,7 +125,7 @@ export async function ReqUser(
       // if user found
       if (user) {
         // set the user to the request
-        req.user = userResponse(user);
+        req.user = userResponse(req, user);
         // create logout function
         req.logout = (resp: express.Response) => {
           sendRefreshToken(resp, "");
@@ -166,7 +167,7 @@ export async function loginUser(req: Request, res: express.Response) {
       return res.status(200).json({
         success: true,
         data: {
-          user: userResponse(user),
+          user: userResponse(req, user),
           accessToken: createAccessToken(user),
         },
       } as userResponseType);
@@ -200,7 +201,7 @@ export async function refresh_token(req: Request, res: express.Response) {
   return res.status(200).send({
     success: true,
     data: {
-      user: userResponse(user),
+      user: userResponse(req, user),
       accessToken: createAccessToken(user),
     },
   } as userResponseType);
@@ -231,7 +232,10 @@ export function logoutUser(req: Request, res: express.Response) {
  * @route POST /api/v1/user/register
  * @access Public
  */
-export async function addUser(req: UserRequest, res: express.Response) {
+export async function addUser(
+  req: RequestBody<UserType>,
+  res: express.Response
+) {
   try {
     if (!req.user || (req.user && !req.user.isAdmin)) {
       delete req.body.isAdmin;
@@ -241,7 +245,7 @@ export async function addUser(req: UserRequest, res: express.Response) {
 
     return res.status(201).json({
       success: true,
-      data: { user: userResponse(user) },
+      data: { user: userResponse(req, user) },
     } as userResponseType);
   } catch (error) {
     postPatchErrorHandler(res, error);
@@ -267,7 +271,7 @@ export async function getUser(req: Request, res: express.Response) {
 
     return res.status(200).json({
       success: true,
-      data: { user: userResponse(user) },
+      data: { user: userResponse(req, user) },
     } as userResponseType);
   } catch (err) {
     return res.status(500).json({
@@ -303,7 +307,7 @@ export async function deleteUser(req: Request, res: express.Response) {
 
       res.status(200).json({
         success: true,
-        data: { user: userResponse(user), accessToken: "" },
+        data: { user: userResponse(req, user), accessToken: "" },
       } as userResponseType);
     });
   } catch (err) {

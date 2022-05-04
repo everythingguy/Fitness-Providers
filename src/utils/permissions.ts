@@ -85,7 +85,7 @@ export function isSuperAdmin(
 
 export function isOwnerOrAdmin(
   isOwner: (req: Request, id?: string) => Promise<boolean>,
-  isPatch = false,
+  allowMissing = false,
   id?: string,
   error?: string
 ) {
@@ -99,12 +99,12 @@ export function isOwnerOrAdmin(
         if (req.user.isAdmin) next();
         else if (id && req.body[id] && (await isOwner(req, req.body[id])))
           next();
-        else if (id && !req.body[id] && isPatch) next();
+        else if (id && !req.body[id] && allowMissing) next();
         else if (!id && (await isOwner(req))) next();
-        else if (id && !req.body[id] && !isPatch)
+        else if (id && !req.body[id] && !allowMissing)
           res.status(400).json({
             success: false,
-            error: `Missing ${id} `,
+            error: `Missing ${id}`,
           } as errorResponse);
         else if (id && req.body[id])
           res.status(401).json({

@@ -3,6 +3,7 @@ import validator from "validator";
 import { LiveSession, Recurring } from "../@types/models";
 import { WeekDays } from "../@types/enums";
 import { refValidator } from "../utils/validators";
+import Session from "./session";
 
 // debug
 // mongoose.set('debug', true);
@@ -29,7 +30,7 @@ const LiveSessionSchema = new mongoose.Schema<LiveSession>(
       ref: "Session",
       required: [true, "Missing session"],
       validate: {
-        validator: async (value: string) => await refValidator(model, value),
+        validator: async (value: string) => await refValidator(Session, value),
         message: ({ value }: { value: string }) =>
           `Session (${value}) not found`,
       },

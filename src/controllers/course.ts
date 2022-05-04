@@ -2,20 +2,23 @@ import express from "express";
 
 import Course from "../models/course";
 import { postPatchErrorHandler } from "../utils/errors";
-import { CourseRequest } from "../@types/request";
 import {
   courseResponse,
   coursesResponse,
   errorResponse,
 } from "../@types/response";
-import { Request } from "../@types/request";
+import { Request, RequestBody } from "../@types/request";
+import { Course as CourseType } from "../@types/models";
 
 /**
  * @desc Add a course to a provider
  * @route POST /api/v1/courses
  * @access Restricted
  */
-export async function addCourse(req: CourseRequest, res: express.Response) {
+export async function addCourse(
+  req: RequestBody<CourseType>,
+  res: express.Response
+) {
   try {
     const course = await Course.create(req.body);
     res.status(201).json({
@@ -32,7 +35,10 @@ export async function addCourse(req: CourseRequest, res: express.Response) {
  * @route PATCH /api/v1/courses/:id
  * @access Restricted
  */
-export async function modifyCourse(req: CourseRequest, res: express.Response) {
+export async function modifyCourse(
+  req: RequestBody<CourseType>,
+  res: express.Response
+) {
   if (!req.user.isAdmin) {
     delete req.body._id;
   }

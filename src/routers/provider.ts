@@ -12,7 +12,7 @@ router
     Permission.isLoggedIn,
     Permission.isOwnerOrAdmin(
       Permission.OwnerOfUser,
-      false,
+      true,
       "user",
       "You cannot create a provider account for another user"
     ),

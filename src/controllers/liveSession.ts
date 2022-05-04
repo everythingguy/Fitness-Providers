@@ -2,13 +2,13 @@ import express from "express";
 
 import LiveSession from "../models/liveSession";
 import { postPatchErrorHandler } from "../utils/errors";
-import { LiveSessionRequest } from "../@types/request";
 import {
   liveSessionResponse,
   liveSessionsResponse,
   errorResponse,
 } from "../@types/response";
-import { Request } from "../@types/request";
+import { Request, RequestBody } from "../@types/request";
+import { LiveSession as LiveSessionType } from "../@types/models";
 
 /**
  * @desc Add a live session to a session
@@ -16,7 +16,7 @@ import { Request } from "../@types/request";
  * @access Restricted
  */
 export async function addLiveSession(
-  req: LiveSessionRequest,
+  req: RequestBody<LiveSessionType>,
   res: express.Response
 ) {
   try {
@@ -36,7 +36,7 @@ export async function addLiveSession(
  * @access Restricted
  */
 export async function modifyLiveSession(
-  req: LiveSessionRequest,
+  req: RequestBody<LiveSessionType>,
   res: express.Response
 ) {
   if (!req.user.isAdmin) {

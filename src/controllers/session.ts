@@ -1,22 +1,24 @@
 import express from "express";
 
 import Session from "../models/session";
-import Course from "../models/course";
 import { postPatchErrorHandler } from "../utils/errors";
-import { SessionRequest } from "../@types/request";
 import {
   sessionResponse,
   sessionsResponse,
   errorResponse,
 } from "../@types/response";
-import { Request } from "../@types/request";
+import { Request, RequestBody } from "../@types/request";
+import { Session as SessionType } from "../@types/models";
 
 /**
  * @desc Add a session to a course
  * @route POST /api/v1/sessions
  * @access Restricted
  */
-export async function addSession(req: SessionRequest, res: express.Response) {
+export async function addSession(
+  req: RequestBody<SessionType>,
+  res: express.Response
+) {
   try {
     const session = await Session.create(req.body);
     res.status(201).json({
@@ -34,7 +36,7 @@ export async function addSession(req: SessionRequest, res: express.Response) {
  * @access Restricted
  */
 export async function modifySession(
-  req: SessionRequest,
+  req: RequestBody<SessionType>,
   res: express.Response
 ) {
   if (!req.user.isAdmin) {
