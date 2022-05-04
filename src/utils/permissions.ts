@@ -101,6 +101,11 @@ export function isOwnerOrAdmin(
           next();
         else if (id && !req.body[id] && isPatch) next();
         else if (!id && (await isOwner(req))) next();
+        else if (id && !req.body[id] && !isPatch)
+          res.status(400).json({
+            success: false,
+            error: `Missing ${id} `,
+          } as errorResponse);
         else if (id && req.body[id])
           res.status(401).json({
             success: false,
