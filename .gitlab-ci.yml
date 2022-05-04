@@ -29,7 +29,7 @@ cache: &global_cache
 
 .other-caches:
   - &cypress_cache
-    key: cypress-$CI_COMMIT_SHA
+    key: cypress
     paths:
       - cache/Cypress
     policy: pull
@@ -79,7 +79,7 @@ tscompile:
         - client/src/assets/style.css.map
         - public/dist
       policy: pull-push
-    - key: cypress-$CI_COMMIT_SHA
+    - key: cypress
       paths:
         - cache/Cypress
       policy: pull-push
