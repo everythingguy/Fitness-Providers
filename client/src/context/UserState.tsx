@@ -1,6 +1,6 @@
 import { createContext, useReducer } from "react";
 import UserReducer from "./UserReducer";
-import API from "../API";
+import API from "../API/User";
 
 import User from "../@types/User";
 
@@ -28,11 +28,11 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
 
   async function setLogin() {
     if (!state.loggedIn) {
-      const user = await API.getUserData();
-      if (user.success)
+      const body = await API.getUserData();
+      if (body.success && body.data.user)
         dispatch({
           action: "SET_LOGIN",
-          payload: user as { success: true; user: User },
+          payload: { success: body.success, user: body.data.user },
         });
     }
   }

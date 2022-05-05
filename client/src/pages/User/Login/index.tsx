@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import API from "../../../API";
+import API from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
 
 export const Login: React.FC = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import API from "../../../API";
+import API from "../../../API/User";
 
 export const Register: React.FC = () => {
   // field state

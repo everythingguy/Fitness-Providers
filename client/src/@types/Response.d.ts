@@ -1,30 +1,26 @@
 import User from "./User";
 
-interface error {
-  msg: string;
+export interface BaseResponse {
+  success: boolean;
+  data?: { [key: any]: any };
+  error?: string | string[];
 }
 
-export type Response =
-  | {
-      success: true;
-      data: {
-        user?: User;
-        accessToken?: string;
-      };
-      [other: string]: any;
-    }
-  | {
-      success: false;
-      error: error[] | string;
-      [other: string]: any;
-    };
+export interface SuccessfulResponse extends BaseResponse {
+  success: true;
+  data: { [key: any]: any };
+  error?: undefined;
+}
 
-export type ReturnResponse =
-  | {
-      success: true;
-      user: User;
-    }
-  | {
-      success: false;
-      error: error[] | string;
-    };
+export interface UserResponse extends SuccessfulResponse {
+  data: {
+    user?: User;
+    accessToken?: string;
+  };
+}
+
+export interface ErrorResponse extends BaseResponse {
+  success: false;
+  data?: undefined;
+  error: string | string[];
+}

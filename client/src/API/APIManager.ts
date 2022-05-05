@@ -1,5 +1,6 @@
+import { BaseResponse, ErrorResponse } from "../@types/Response";
+import User from "./User";
 const API_URL = process.env.API_URL;
-let accessToken = "";
 
 export class DataRequest {
   requestType: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -49,6 +50,8 @@ export class DataRequest {
 }
 
 export class APIManager {
+  static accessToken = "";
+
   /**
    * Sends an API request based on the DataRequest passed in.
    * Can optionally include onSuccess and onFail methods that will be executed depending on if the request succeeded.
@@ -57,12 +60,12 @@ export class APIManager {
    * @param onFail A callback method that will be called with an error object if the request failed.
    * @returns The API response of the request succeeded.
    */
-  static async sendRequest(
+  static async sendRequest<T extends BaseResponse>(
     dataRequest: DataRequest,
-    onSuccess?: (body: any) => any,
-    onFail?: (error: any) => any,
+    onSuccess?: (body: T) => void,
+    onFail?: (error: ErrorResponse) => void,
     first = true
-  ): Promise<any> {
+  ): Promise<T | ErrorResponse> {
     try {
       let paramString = "";
       let firstParam = true;
@@ -82,7 +85,7 @@ export class APIManager {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: accessToken,
+            Authorization: this.accessToken,
           },
           credentials: "include",
           method: dataRequest.requestType,
@@ -91,31 +94,23 @@ export class APIManager {
       );
 
       if (!res.ok && first) {
-        const authed = await this.refresh_token();
+        const authed = await User.refresh_token();
         if (authed)
           return this.sendRequest(dataRequest, onSuccess, onFail, false);
       }
 
-      const body = await res.json();
+      const body: T = await res.json();
 
-      if (body.error) throw body.error;
-      if (onSuccess) onSuccess(body);
+      if (body.error && onFail) {
+        const errorBody = body as ErrorResponse;
+        onFail(errorBody);
+      } else if (!body.error && onSuccess) onSuccess(body);
 
       return body;
     } catch (error) {
-      if (onFail) onFail(error);
-      return error;
+      const body: ErrorResponse = { success: false, error: "" };
+      if (onFail) onFail(body);
+      return body;
     }
-  }
-
-  static async refresh_token(): Promise<boolean> {
-    const request = new DataRequest("POST", "user/refresh_token");
-    const resp = await this.sendRequest(request, undefined, undefined, false);
-    if (resp && resp.success && resp.data && resp.data.accessToken) {
-      accessToken = "bearer " + resp.data.accessToken;
-      return true;
-    }
-
-    return false;
   }
 }
