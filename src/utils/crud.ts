@@ -1,5 +1,5 @@
 import express from "express";
-import mongoose, { UpdateQuery } from "mongoose";
+import mongoose from "mongoose";
 import { postPatchErrorHandler } from "./errors";
 import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
