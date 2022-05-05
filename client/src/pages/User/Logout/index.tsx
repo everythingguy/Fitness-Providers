@@ -1,8 +1,8 @@
-import API from "../../../API/User";
+import User from "../../../API/User";
 
 export const Logout: React.FC = () => {
   const logoutUser = async () => {
-    await API.logoutUser();
+    await User.logoutUser();
 
     sessionStorage.clear();
 

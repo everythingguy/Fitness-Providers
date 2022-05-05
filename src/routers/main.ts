@@ -9,7 +9,7 @@ import tagRouter from "./tag";
 
 const router = express.Router();
 
-router.use("/user", userRouter);
+router.use("/users", userRouter);
 router.use("/providers", providerRouter);
 router.use("/courses", courseRouter);
 router.use("/sessions", sessionRouter);

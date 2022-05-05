@@ -55,7 +55,6 @@ app.use(ReqUser);
 app.use(ReqProvider);
 
 // serve static files
-app.use(express.static(__dirname + "/../client/build"));
 app.use(express.static(__dirname + "/../public"));
 app.use("/users", isLoggedIn, express.static(__dirname + "/../private"));
 

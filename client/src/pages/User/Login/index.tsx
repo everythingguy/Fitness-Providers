@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import API from "../../../API/User";
+import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
 
 export const Login: React.FC = () => {
@@ -32,7 +32,7 @@ export const Login: React.FC = () => {
       // if the user is logged out and filled in the form
       if (username && password && !loggedIn) {
         // try to login with the provided credientials
-        const data = await API.loginUser(username, password);
+        const data = await User.loginUser(username, password);
 
         // if success redirect home
         if (data.success) {

@@ -93,7 +93,14 @@ export class APIManager {
         }
       );
 
-      if (!res.ok && first) {
+      const tryAgainErrorCodes = [401, 403];
+
+      if (
+        !res.ok &&
+        first &&
+        this.accessToken.length > 0 &&
+        tryAgainErrorCodes.includes(res.status)
+      ) {
         const authed = await User.refresh_token();
         if (authed)
           return this.sendRequest(dataRequest, onSuccess, onFail, false);

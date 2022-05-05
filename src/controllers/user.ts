@@ -149,7 +149,7 @@ async function revokeRefreshTokensForUser(req: Request) {
 
 /**
  * @desc Login User
- * @route POST /api/v1/user/login
+ * @route POST /api/v1/users/login
  * @access Public
  */
 export async function loginUser(req: Request, res: express.Response) {
@@ -191,7 +191,7 @@ export async function loginUser(req: Request, res: express.Response) {
 
 /**
  * @desc Create new access token
- * @route POST /api/v1/user/refresh_token
+ * @route POST /api/v1/users/refresh_token
  * @access Restricted
  */
 export async function refresh_token(req: Request, res: express.Response) {
@@ -211,7 +211,7 @@ export async function refresh_token(req: Request, res: express.Response) {
 
 /**
  * @desc Logout User
- * @route POST /api/v1/user/logout
+ * @route POST /api/v1/users/logout
  * @access Public
  */
 export function logoutUser(req: Request, res: express.Response) {
@@ -231,7 +231,7 @@ export function logoutUser(req: Request, res: express.Response) {
 
 /**
  * @desc Add User
- * @route POST /api/v1/user/register
+ * @route POST /api/v1/users/register
  * @access Public
  */
 export async function addUser(
@@ -256,7 +256,7 @@ export async function addUser(
 
 /**
  * @desc Get User
- * @route GET /api/v1/user
+ * @route GET /api/v1/users
  * @access Restricted
  */
 export async function getUser(req: Request, res: express.Response) {
@@ -285,7 +285,7 @@ export async function getUser(req: Request, res: express.Response) {
 
 /**
  * @desc Delete User
- * @route DELETE /api/v1/user
+ * @route DELETE /api/v1/users
  * @access Restricted
  */
 export async function deleteUser(req: Request, res: express.Response) {

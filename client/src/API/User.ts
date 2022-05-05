@@ -8,7 +8,7 @@ export default class API {
     username: string,
     password: string
   ): Promise<UserResponse | ErrorResponse> {
-    const request = new DataRequest("POST", "user/register");
+    const request = new DataRequest("POST", "users/register");
     request.setBody({ name, email, username, password });
 
     return new Promise((res) => {
@@ -28,7 +28,7 @@ export default class API {
     username: string,
     password: string
   ): Promise<UserResponse | ErrorResponse> {
-    const request = new DataRequest("POST", "user/login");
+    const request = new DataRequest("POST", "users/login");
     request.setBody({ username, password });
 
     return new Promise((res) => {
@@ -47,7 +47,7 @@ export default class API {
   }
 
   static async logoutUser(first = true): Promise<UserResponse | ErrorResponse> {
-    const request = new DataRequest("POST", "user/logout");
+    const request = new DataRequest("POST", "users/logout");
 
     return new Promise((res) => {
       APIManager.sendRequest<UserResponse>(
@@ -67,7 +67,7 @@ export default class API {
   static async getUserData(
     first = true
   ): Promise<UserResponse | ErrorResponse> {
-    const request = new DataRequest("POST", "user");
+    const request = new DataRequest("GET", "users");
 
     return new Promise((res) => {
       APIManager.sendRequest(
