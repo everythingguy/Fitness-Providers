@@ -1,14 +1,9 @@
 import express from "express";
 
 import Course from "../models/course";
-import { postPatchErrorHandler } from "../utils/errors";
-import {
-  courseResponse,
-  coursesResponse,
-  errorResponse,
-} from "../@types/response";
 import { Request, RequestBody } from "../@types/request";
 import { Course as CourseType } from "../@types/models";
+import * as CRUD from "../utils/crud";
 
 /**
  * @desc Add a course to a provider
@@ -19,15 +14,19 @@ export async function addCourse(
   req: RequestBody<CourseType>,
   res: express.Response
 ) {
-  try {
-    const course = await Course.create(req.body);
-    res.status(201).json({
-      success: true,
-      data: { course },
-    } as courseResponse);
-  } catch (error) {
-    postPatchErrorHandler(res, error);
-  }
+  CRUD.create<CourseType>(
+    req,
+    res,
+    "course",
+    Course,
+    [],
+    [
+      {
+        source: "provider",
+        value: "provider",
+      },
+    ]
+  );
 }
 
 /**
@@ -39,30 +38,7 @@ export async function modifyCourse(
   req: RequestBody<CourseType>,
   res: express.Response
 ) {
-  if (!req.user.isAdmin) {
-    delete req.body._id;
-  }
-  try {
-    await Course.updateOne({ _id: req.params.id }, req.body, {
-      runValidators: true,
-    });
-
-    const course = await Course.findById(req.params.id);
-
-    if (!course) {
-      return res.status(404).json({
-        success: false,
-        error: "Course not found",
-      } as errorResponse);
-    }
-
-    res.status(200).json({
-      success: true,
-      data: { course },
-    } as courseResponse);
-  } catch (error) {
-    postPatchErrorHandler(res, error);
-  }
+  CRUD.update<CourseType>(req, res, "course", Course);
 }
 
 /**
@@ -71,25 +47,7 @@ export async function modifyCourse(
  * @access Public
  */
 export async function getCourse(req: Request, res: express.Response) {
-  try {
-    const course = await Course.findById(req.params.id);
-
-    if (!course)
-      return res.status(404).json({
-        success: false,
-        error: "No course found by that id",
-      } as errorResponse);
-
-    return res.status(200).json({
-      success: true,
-      data: { course },
-    } as courseResponse);
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      error: "Invalid ObjectId",
-    } as errorResponse);
-  }
+  CRUD.read<CourseType>(req, res, "course", Course);
 }
 
 /**
@@ -98,18 +56,7 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
-  try {
-    const courses = await Course.find({});
-    return res.status(200).json({
-      success: true,
-      data: { courses },
-    } as coursesResponse);
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
+  CRUD.readAll(req, res, "course", Course);
 }
 
 /**
@@ -118,32 +65,5 @@ export async function getCourses(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteCourse(req: Request, res: express.Response) {
-  try {
-    const course = await Course.findById(req.params.id);
-
-    if (!course)
-      return res.status(404).json({
-        success: false,
-        error: "No course found by that id",
-      } as errorResponse);
-
-    await Course.deleteOne({ _id: req.params.id });
-
-    return res.status(200).json({
-      success: true,
-      data: { course },
-    } as courseResponse);
-  } catch (error) {
-    if (error.name === "CastError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid ObjectId",
-      } as errorResponse);
-    }
-
-    return res.status(500).json({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
+  CRUD.del(req, res, "course", Course);
 }

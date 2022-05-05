@@ -1,15 +1,9 @@
 import express from "express";
 
 import Provider from "../models/provider";
-import { postPatchErrorHandler } from "../utils/errors";
-import {
-  errorResponse,
-  providerResponse,
-  providersResponse,
-} from "../@types/response";
 import { Request, RequestBody } from "../@types/request";
 import { Provider as ProviderType } from "../@types/models";
-import * as Crud from "../utils/crud";
+import * as CRUD from "../utils/crud";
 
 // middleware
 // attach provider to req
@@ -39,7 +33,7 @@ export async function addProvider(
   req: RequestBody<ProviderType>,
   res: express.Response
 ) {
-  Crud.create<ProviderType>(
+  CRUD.create<ProviderType>(
     req,
     res,
     "provider",
@@ -60,7 +54,7 @@ export async function addProvider(
  * @access Public
  */
 export async function getProvider(req: Request, res: express.Response) {
-  Crud.read<ProviderType>(req, res, "provider", Provider);
+  CRUD.read<ProviderType>(req, res, "provider", Provider);
 }
 
 /**
@@ -69,7 +63,7 @@ export async function getProvider(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
-  Crud.readAll<ProviderType>(req, res, "provider", Provider);
+  CRUD.readAll<ProviderType>(req, res, "provider", Provider);
 }
 
 /**
@@ -78,7 +72,7 @@ export async function getProviders(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteProvider(req: Request, res: express.Response) {
-  Crud.del(req, res, "provider", Provider);
+  CRUD.del(req, res, "provider", Provider);
 }
 
 /**
@@ -90,5 +84,5 @@ export async function modifyProvider(
   req: RequestBody<ProviderType>,
   res: express.Response
 ) {
-  Crud.update(req, res, "provider", Provider, ["isEnrolled"]);
+  CRUD.update(req, res, "provider", Provider, ["isEnrolled"]);
 }
