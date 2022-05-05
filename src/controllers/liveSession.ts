@@ -14,7 +14,7 @@ export async function addLiveSession(
   req: RequestBody<LiveSessionType>,
   res: express.Response
 ) {
-  CRUD.create(req, res, "liveSession", LiveSession);
+  CRUD.create<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 
 /**
@@ -26,7 +26,7 @@ export async function modifyLiveSession(
   req: RequestBody<LiveSessionType>,
   res: express.Response
 ) {
-  CRUD.update(req, res, "liveSession", LiveSession);
+  CRUD.update<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 
 /**
@@ -35,7 +35,7 @@ export async function modifyLiveSession(
  * @access Public
  */
 export async function getLiveSession(req: Request, res: express.Response) {
-  CRUD.read(req, res, "liveSession", LiveSession);
+  CRUD.read<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 
 /**
@@ -44,7 +44,7 @@ export async function getLiveSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getLiveSessions(req: Request, res: express.Response) {
-  CRUD.readAll(req, res, "liveSession", LiveSession);
+  CRUD.readAll<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 
 /**
@@ -53,5 +53,5 @@ export async function getLiveSessions(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteLiveSession(req: Request, res: express.Response) {
-  CRUD.del(req, res, "liveSession", LiveSession);
+  CRUD.del<LiveSessionType>(req, res, "liveSession", LiveSession);
 }

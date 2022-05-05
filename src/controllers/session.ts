@@ -14,7 +14,7 @@ export async function addSession(
   req: RequestBody<SessionType>,
   res: express.Response
 ) {
-  CRUD.create(req, res, "session", Session);
+  CRUD.create<SessionType>(req, res, "session", Session);
 }
 
 /**
@@ -26,7 +26,7 @@ export async function modifySession(
   req: RequestBody<SessionType>,
   res: express.Response
 ) {
-  CRUD.update(req, res, "session", Session);
+  CRUD.update<SessionType>(req, res, "session", Session);
 }
 
 /**
@@ -35,7 +35,7 @@ export async function modifySession(
  * @access Public
  */
 export async function getSession(req: Request, res: express.Response) {
-  CRUD.read(req, res, "session", Session);
+  CRUD.read<SessionType>(req, res, "session", Session);
 }
 
 /**
@@ -44,7 +44,7 @@ export async function getSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getSessions(req: Request, res: express.Response) {
-  CRUD.readAll(req, res, "session", Session);
+  CRUD.readAll<SessionType>(req, res, "session", Session);
 }
 
 /**
@@ -53,5 +53,5 @@ export async function getSessions(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteSession(req: Request, res: express.Response) {
-  CRUD.del(req, res, "session", Session);
+  CRUD.del<SessionType>(req, res, "session", Session);
 }
