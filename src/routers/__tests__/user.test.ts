@@ -51,10 +51,10 @@ describe("env", () => {
   });
 });
 
-describe(`GET ${apiPath}/user/login`, () => {
+describe(`GET ${apiPath}/users/login`, () => {
   it("should reject the incorrect login", (done) => {
     request(app)
-      .post(`${apiPath}/user/login`)
+      .post(`${apiPath}/users/login`)
       .send({
         username: "john",
         password: "doe21",
@@ -72,10 +72,10 @@ describe(`GET ${apiPath}/user/login`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user`, () => {
+describe(`GET ${apiPath}/users`, () => {
   it("should fail to return the user's info", (done) => {
     request(app)
-      .get(`${apiPath}/user`)
+      .get(`${apiPath}/users`)
       .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
@@ -90,10 +90,10 @@ describe(`GET ${apiPath}/user`, () => {
   });
 });
 
-describe(`POST ${apiPath}/user/logout`, () => {
+describe(`POST ${apiPath}/users/logout`, () => {
   it("should fail to logout the user", (done) => {
     request(app)
-      .post(`${apiPath}/user/logout`)
+      .post(`${apiPath}/users/logout`)
       .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
@@ -108,10 +108,10 @@ describe(`POST ${apiPath}/user/logout`, () => {
   });
 });
 
-describe(`DELETE ${apiPath}/user`, () => {
+describe(`DELETE ${apiPath}/users`, () => {
   it("should fail to delete the user", (done) => {
     request(app)
-      .del(`${apiPath}/user`)
+      .del(`${apiPath}/users`)
       .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
@@ -126,10 +126,10 @@ describe(`DELETE ${apiPath}/user`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user/register`, () => {
+describe(`GET ${apiPath}/users/register`, () => {
   it("should register a new user named john doe", (done) => {
     request(app)
-      .post(`${apiPath}/user/register`)
+      .post(`${apiPath}/users/register`)
       .send({
         name: "John Doe",
         email: "jdoe@doe.com",
@@ -154,10 +154,10 @@ describe(`GET ${apiPath}/user/register`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user/register`, () => {
+describe(`GET ${apiPath}/users/register`, () => {
   it("should fail to register the same username", (done) => {
     request(app)
-      .post(`${apiPath}/user/register`)
+      .post(`${apiPath}/users/register`)
       .send({
         name: "John Doe",
         email: "jdoe22@doe.com",
@@ -177,10 +177,10 @@ describe(`GET ${apiPath}/user/register`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user/register`, () => {
+describe(`GET ${apiPath}/users/register`, () => {
   it("should fail to register the same email", (done) => {
     request(app)
-      .post(`${apiPath}/user/register`)
+      .post(`${apiPath}/users/register`)
       .send({
         name: "John Doe",
         email: "jdoe@doe.com",
@@ -200,10 +200,10 @@ describe(`GET ${apiPath}/user/register`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user/login`, () => {
+describe(`GET ${apiPath}/users/login`, () => {
   it("should successfully login", (done) => {
     request(app)
-      .post(`${apiPath}/user/login`)
+      .post(`${apiPath}/users/login`)
       .set("Authorization", "bearer " + accessToken)
       .send({
         username: "john",
@@ -240,10 +240,10 @@ describe(`GET ${apiPath}/user/login`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user/login`, () => {
+describe(`GET ${apiPath}/users/login`, () => {
   it("should fail to login twice", (done) => {
     request(app)
-      .post(`${apiPath}/user/login`)
+      .post(`${apiPath}/users/login`)
       .set("Authorization", "bearer " + accessToken)
       .send({
         username: "john",
@@ -262,10 +262,10 @@ describe(`GET ${apiPath}/user/login`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user`, () => {
+describe(`GET ${apiPath}/users`, () => {
   it("should return the user's info", (done) => {
     request(app)
-      .get(`${apiPath}/user`)
+      .get(`${apiPath}/users`)
       .set("Authorization", "bearer " + accessToken)
       .expect(200)
       .expect("Content-Type", /json/)
@@ -286,10 +286,10 @@ describe(`GET ${apiPath}/user`, () => {
   });
 });
 
-describe(`POST ${apiPath}/user/logout`, () => {
+describe(`POST ${apiPath}/users/logout`, () => {
   it("should logout the user", (done) => {
     request(app)
-      .post(`${apiPath}/user/logout`)
+      .post(`${apiPath}/users/logout`)
       .set("Authorization", "bearer " + accessToken)
       .expect(200)
       .expect("Content-Type", /json/)
@@ -308,10 +308,10 @@ describe(`POST ${apiPath}/user/logout`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user`, () => {
+describe(`GET ${apiPath}/users`, () => {
   it("should fail to return the user's info", (done) => {
     request(app)
-      .get(`${apiPath}/user`)
+      .get(`${apiPath}/users`)
       .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
@@ -326,10 +326,10 @@ describe(`GET ${apiPath}/user`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user/login`, () => {
+describe(`GET ${apiPath}/users/login`, () => {
   it("should successfully login", (done) => {
     request(app)
-      .post(`${apiPath}/user/login`)
+      .post(`${apiPath}/users/login`)
       .set("Authorization", "bearer " + accessToken)
       .send({
         username: "john",
@@ -366,10 +366,10 @@ describe(`GET ${apiPath}/user/login`, () => {
   });
 });
 
-describe(`DELETE ${apiPath}/user`, () => {
+describe(`DELETE ${apiPath}/users`, () => {
   it("should delete the user", (done) => {
     request(app)
-      .del(`${apiPath}/user`)
+      .del(`${apiPath}/users`)
       .set("Authorization", "bearer " + accessToken)
       .set("Cookie", authCookie)
       .expect(200)
@@ -391,10 +391,10 @@ describe(`DELETE ${apiPath}/user`, () => {
   });
 });
 
-describe(`GET ${apiPath}/user`, () => {
+describe(`GET ${apiPath}/users`, () => {
   it("should fail to return the user's info", (done) => {
     request(app)
-      .get(`${apiPath}/user`)
+      .get(`${apiPath}/users`)
       .set("Authorization", "bearer " + accessToken)
       .expect(401)
       .expect("Content-Type", /json/)
