@@ -1,7 +1,7 @@
 import express from "express";
 import { Types, Model } from "mongoose";
 import { postPatchErrorHandler } from "./errors";
-import { Base, Provider, User } from "../@types/models";
+import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
 import { errorResponse } from "../@types/response";
 import { KeysOfMultiType } from "../@types/misc";
