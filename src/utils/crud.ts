@@ -1,26 +1,31 @@
 import express from "express";
-import mongoose from "mongoose";
+import { Types, Model } from "mongoose";
 import { postPatchErrorHandler } from "./errors";
-import { Base } from "../@types/models";
+import { Base, Provider, User } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
 import { errorResponse } from "../@types/response";
+import { KeysOfMultiType } from "../@types/misc";
 
 export async function create<T extends Base>(
   req: RequestBody<any>, // for some reason I had to set to any instead of T
   res: express.Response,
   modelName: string,
-  model: mongoose.Model<T>,
-  ignoreFields: string[] = [],
-  assumptions: { value: keyof T; source: "user" | "provider" }[] = []
+  model: Model<T>,
+  ignoreFields: (keyof T)[] = [],
+  assumptions: {
+    value: KeysOfMultiType<T, Types.ObjectId>;
+    source: "user" | "provider";
+  }[] = []
 ) {
   try {
     if (!req.user.isAdmin)
       for (const field of ignoreFields) delete req.body[field];
 
-    for (const assumption of assumptions)
+    for (const assumption of assumptions) {
       if (!req.body[assumption.value])
         req.body[assumption.value] =
           assumption.source === "user" ? req.user._id : req.provider._id;
+    }
 
     const obj = await model.create(req.body);
     res.status(201).json({
@@ -36,7 +41,7 @@ export async function read<T extends Base>(
   req: Request,
   res: express.Response,
   modelName: string,
-  model: mongoose.Model<T>
+  model: Model<T>
 ) {
   try {
     const obj = await model.findById(req.params.id);
@@ -63,7 +68,7 @@ export async function readAll<T extends Base>(
   req: Request,
   res: express.Response,
   modelName: string,
-  model: mongoose.Model<T>
+  model: Model<T>
 ) {
   try {
     const objs = await model.find({});
@@ -80,18 +85,18 @@ export async function readAll<T extends Base>(
 }
 
 export async function update<T extends Base>(
-  req: RequestBody<any>, // for some reason I had to set to any instead of T
+  req: RequestBody<T>,
   res: express.Response,
   modelName: string,
-  model: mongoose.Model<T>,
-  ignoreFields: string[] = []
+  model: Model<T>,
+  ignoreFields: (keyof T)[] = []
 ) {
   if (!req.user.isAdmin) {
     delete req.body._id;
     for (const field of ignoreFields) delete req.body[field];
   }
   try {
-    await model.updateOne({ _id: req.params.id }, req.body, {
+    await model.updateOne({ _id: req.params.id }, req.body as any, {
       runValidators: true,
     });
 
@@ -117,7 +122,7 @@ export async function del<T extends Base>(
   req: Request,
   res: express.Response,
   modelName: string,
-  model: mongoose.Model<T>
+  model: Model<T>
 ) {
   try {
     const obj = await model.findById(req.params.id);
