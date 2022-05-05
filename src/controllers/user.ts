@@ -21,6 +21,8 @@ const userResponse = (req: Request, userData: UserType): ResUser => {
     isAdmin: userData.isAdmin,
     isSuperAdmin: userData.isSuperAdmin,
     provider: req.provider,
+    createdAt: userData.createdAt,
+    updatedAt: userData.updatedAt,
   };
 
   return userRes;

@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 
 export interface ResUser {
   _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
   firstName: string;
   lastName: string;
   name: string;
