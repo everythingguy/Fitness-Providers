@@ -3,9 +3,11 @@ import { Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
 
 import { Home } from "./pages/Home";
-import { Register } from "./pages/User/Register";
-import { Login } from "./pages/User/Login";
-import { Logout } from "./pages/User/Logout";
+import { Directory } from "./pages/Directory";
+import { Calendar } from "./pages/Calendar";
+import { Course } from "./pages/Course";
+import { Profile, Management, MyProfile } from "./pages/Profile";
+import * as UserPages from "./pages/User";
 
 import { Footer } from "./components/Footer";
 
@@ -18,9 +20,26 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/user/register" element={<Register />} />
-          <Route path="/user/login" element={<Login />} />
-          <Route path="/user/logout" element={<Logout />} />
+
+          <Route path="/directory" element={<Directory />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/course/:id" element={<Course />} />
+          <Route path="/provider/profile/me" element={<MyProfile />} />
+          <Route path="/provider/profile/:id" element={<Profile />} />
+          <Route path="/provider/management" element={<Management />} />
+
+          <Route path="/user/register" element={<UserPages.Register />} />
+          <Route path="/user/login" element={<UserPages.Login />} />
+          <Route path="/user/logout" element={<UserPages.Logout />} />
+          <Route
+            path="/user/password/forgot"
+            element={<UserPages.ForgotPassword />}
+          />
+          <Route
+            path="/user/password/reset"
+            element={<UserPages.ResetPassword />}
+          />
+          <Route path="/user/settings" element={<UserPages.Settings />} />
         </Routes>
       </UserProvider>
       <Footer />

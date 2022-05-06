@@ -1,3 +1,5 @@
+import { Navigate } from "react-router-dom";
+
 export const Home: React.FC = () => {
-  return <></>;
+  return <Navigate to="/directory" />;
 };
