@@ -1,15 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
-import "./assets/main.css";
-import "./assets/style.css";
+import { BrowserRouter as Router } from "react-router-dom";
+
 import App from "./App";
 
+// import "./assets/tailwind.css";
+import "./assets/style.css";
+import "./assets/bootstrap.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 ReactDOM.render(
-  <BrowserRouter>
+  <Router>
     <React.StrictMode>
       <App />
     </React.StrictMode>
-  </BrowserRouter>,
+  </Router>,
   document.getElementById("app")
 );

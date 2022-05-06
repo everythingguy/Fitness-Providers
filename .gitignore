@@ -28,15 +28,10 @@ client/.pnp.js
 
 todo.txt
 
-client/src/assets/main.css
-client/src/assets/style.css
-client/src/assets/style.css.map
+client/src/assets/*
 .env
 mongodb_data
 junit.xml
 client/webpack-stats.json
 client/cypress/screenshots
 client/cypress/videos
-client/src/assets/main.css
-client/src/assets/style.css
-client/src/assets/style.css.map

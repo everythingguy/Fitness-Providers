@@ -46,7 +46,7 @@ export default class API {
     });
   }
 
-  static async logoutUser(first = true): Promise<UserResponse | ErrorResponse> {
+  static async logoutUser(): Promise<UserResponse | ErrorResponse> {
     const request = new DataRequest("POST", "users/logout");
 
     return new Promise((res) => {
@@ -64,9 +64,7 @@ export default class API {
     });
   }
 
-  static async getUserData(
-    first = true
-  ): Promise<UserResponse | ErrorResponse> {
+  static async getUserData(): Promise<UserResponse | ErrorResponse> {
     const request = new DataRequest("GET", "users");
 
     return new Promise((res) => {
