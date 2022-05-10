@@ -47,7 +47,7 @@ const createAccessToken = (user: UserType) => {
 const sendRefreshToken = (res: express.Response, token: string) => {
   res.cookie("jid", token, {
     httpOnly: true,
-    path: apiPath + "/user/refresh_token",
+    path: apiPath + "/users/refresh_token",
   });
 };
 

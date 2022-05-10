@@ -15,35 +15,39 @@ import { UserProvider } from "./context/UserState";
 
 function App() {
   return (
-    <div className="pt-3 bg-light">
+    <>
       <UserProvider>
         <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
+        <div id="main" className="bg-light">
+          <div className="container">
+            <Routes>
+              <Route path="/" element={<Home />} />
 
-          <Route path="/directory" element={<Directory />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/course/:id" element={<Course />} />
-          <Route path="/provider/profile/me" element={<MyProfile />} />
-          <Route path="/provider/profile/:id" element={<Profile />} />
-          <Route path="/provider/management" element={<Management />} />
+              <Route path="/directory" element={<Directory />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/course/:id" element={<Course />} />
+              <Route path="/provider/profile/me" element={<MyProfile />} />
+              <Route path="/provider/profile/:id" element={<Profile />} />
+              <Route path="/provider/management" element={<Management />} />
 
-          <Route path="/user/register" element={<UserPages.Register />} />
-          <Route path="/user/login" element={<UserPages.Login />} />
-          <Route path="/user/logout" element={<UserPages.Logout />} />
-          <Route
-            path="/user/password/forgot"
-            element={<UserPages.ForgotPassword />}
-          />
-          <Route
-            path="/user/password/reset"
-            element={<UserPages.ResetPassword />}
-          />
-          <Route path="/user/settings" element={<UserPages.Settings />} />
-        </Routes>
+              <Route path="/user/register" element={<UserPages.Register />} />
+              <Route path="/user/login" element={<UserPages.Login />} />
+              <Route path="/user/logout" element={<UserPages.Logout />} />
+              <Route
+                path="/user/password/forgot"
+                element={<UserPages.ForgotPassword />}
+              />
+              <Route
+                path="/user/password/reset"
+                element={<UserPages.ResetPassword />}
+              />
+              <Route path="/user/settings" element={<UserPages.Settings />} />
+            </Routes>
+          </div>
+        </div>
+        <Footer />
       </UserProvider>
-      <Footer />
-    </div>
+    </>
   );
 }
 

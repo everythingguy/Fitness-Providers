@@ -1,96 +1,119 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
+import Mail from "../../../API/Mail";
 
 export const Login: React.FC = () => {
   // logged in context
   const { loggedIn } = useContext(UserContext);
 
-  // field state
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const createInstructor = params.get("createInstructor") || false;
 
-  // tailwind class names for the button
-  const button =
-    "cursor-pointer text-center max-w-full bg-transparent hover:bg-purple-500 text-purple-700 font-semibold hover:text-white py-2 px-4 border border-purple-500 hover:border-transparent rounded";
+  // field state
+  const [isAuth, setAuth] = useState(false);
+  const [wasInvalidLogin, setWasInvalidLogin] = useState(false);
+  const [emailConfirmed, setEmailConfirmed] = useState(true);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+  const { username, password } = formData;
+
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setWasInvalidLogin(false);
+    setEmailConfirmed(true);
+  };
 
   // allows the enter key to submit the form
   const enterSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       e.preventDefault();
-      await submitForm();
+      await onSubmit();
     }
   };
 
-  // process the form
-  const submitForm = async () => {
-    const error = document.getElementById("error");
-
-    // if the error element was found by id
-    if (error) {
-      // if the user is logged out and filled in the form
-      if (username && password && !loggedIn) {
-        // try to login with the provided credientials
-        const data = await User.loginUser(username, password);
-
-        // if success redirect home
-        if (data.success) {
-          window.location.pathname = "/";
-        }
-        // otherwise
-        else {
-          // tell the user they entered wrong info
-          error.innerText = "Incorrect username or password";
-          error.style.display = "block";
-        }
-      }
-      // if the user is already logged in warn them
-      else if (loggedIn) {
-        error.innerText = "Please logout before logging in";
-        error.style.display = "block";
-      }
-      // otherwise
-      else {
-        // tell the user to fill out the form
-        error.innerText = "Please enter a username and password";
-        error.style.display = "block";
-      }
+  const onSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
+    // TODO: email not confirmed
+    if (e) e.preventDefault();
+    const auth = await User.loginUser(username, password);
+    if (auth.success) {
+      setAuth(true);
+    } else {
+      setWasInvalidLogin(true);
     }
   };
+
+  if ((isAuth || loggedIn) && createInstructor)
+    return <Navigate to="/user/settings?createInstructor=true" />;
+  if (isAuth || loggedIn) return <Navigate to="/" />;
 
   return (
     <>
-      <div
-        className="mx-auto w-1/4 border border-purple-500 text-purple-700 hidden"
-        id="error"
-      ></div>
-      <div className="grid grid-cols-2 text-purple-500 mx-auto my-20 sm:w-3/4 lg:w-1/2">
-        <label>Username</label>
-        <input
-          className="mx-10 bg-purple-200"
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          onKeyUp={(e) => enterSubmit(e)}
-        />
-        <label className="my-10">Password</label>
-        <input
-          className="my-10 mx-10 bg-purple-200"
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyUp={(e) => enterSubmit(e)}
-        />
-        <Link to="/user/register" className={button + " mr-10"}>
-          Register
-        </Link>
-        <button className={button} onClick={(e) => submitForm()}>
-          Login
+      <div className="h3">Login to your account</div>
+      <div className="divider-border"></div>
+
+      <form onSubmit={onSubmit}>
+        <div className="form-group mb-4">
+          <label className="form-label">Username:</label>
+          <input
+            className={
+              wasInvalidLogin ? "form-control is-invalid" : "form-control"
+            }
+            type="text"
+            placeholder="Username"
+            name="username"
+            value={username}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+          <div className="invalid-feedback">
+            {!emailConfirmed ? (
+              <p>
+                Please confirm your email -
+                <button
+                  type="button"
+                  className="btn btn-link"
+                  onClick={() => Mail.resendConfirmation(username)}
+                >
+                  Resend?
+                </button>
+              </p>
+            ) : (
+              "Incorrect username or password"
+            )}
+          </div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Password:</label>
+          <input
+            className={
+              wasInvalidLogin ? "form-control is-invalid" : "form-control"
+            }
+            type="password"
+            placeholder="Password"
+            name="password"
+            value={password}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+        </div>
+        <button className="btn btn-primary mb-4" type="submit">
+          Sign In
         </button>
-      </div>
+      </form>
+      <p>
+        Don't have an account? <Link to="/user/register">Sign Up</Link>
+      </p>
+      <p>
+        Forgot your password?{" "}
+        <Link to="/user/password/forgot">Reset Password</Link>
+      </p>
     </>
   );
 };

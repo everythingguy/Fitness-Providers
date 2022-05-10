@@ -68,7 +68,7 @@ export default class API {
     const request = new DataRequest("GET", "users");
 
     return new Promise((res) => {
-      APIManager.sendRequest(
+      APIManager.sendRequest<UserResponse>(
         request,
         (body) => {
           res({ success: true, data: body.data } as UserResponse);
@@ -81,7 +81,8 @@ export default class API {
   }
 
   static async refresh_token(): Promise<boolean> {
-    const request = new DataRequest("POST", "user/refresh_token");
+    const request = new DataRequest("POST", "users/refresh_token");
+
     return new Promise((res) => {
       APIManager.sendRequest<UserResponse>(
         request,
@@ -91,7 +92,7 @@ export default class API {
             res(true);
           } else res(false);
         },
-        () => res(false),
+        (body) => res(false),
         false
       );
     });

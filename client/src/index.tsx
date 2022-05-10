@@ -7,7 +7,6 @@ import App from "./App";
 // import "./assets/tailwind.css";
 import "./assets/style.css";
 import "./assets/bootstrap.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
 
 ReactDOM.render(
   <Router>

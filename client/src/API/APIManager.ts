@@ -1,5 +1,6 @@
 import { BaseResponse, ErrorResponse } from "../@types/Response";
 import User from "./User";
+import ReqBody from "./../@types/ReqBody.d";
 const API_URL = process.env.API_URL;
 
 export class DataRequest {
@@ -79,28 +80,29 @@ export class APIManager {
         }
       }
 
+      const reqBody: ReqBody = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include",
+        method: dataRequest.requestType,
+      };
+
+      if (Object.keys(dataRequest.body).length !== 0)
+        reqBody.body = JSON.stringify(dataRequest.body);
+
+      if (this.accessToken && this.accessToken.length > 0)
+        reqBody.headers.Authorization = this.accessToken;
+
       const res = await fetch(
         `${API_URL}/${dataRequest.endpoint}${paramString}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: this.accessToken,
-          },
-          credentials: "include",
-          method: dataRequest.requestType,
-          body: JSON.stringify(dataRequest.body),
-        }
+        reqBody
       );
 
       const tryAgainErrorCodes = [401, 403];
 
-      if (
-        !res.ok &&
-        first &&
-        this.accessToken.length > 0 &&
-        tryAgainErrorCodes.includes(res.status)
-      ) {
+      if (!res.ok && first && tryAgainErrorCodes.includes(res.status)) {
         const authed = await User.refresh_token();
         if (authed)
           return this.sendRequest(dataRequest, onSuccess, onFail, false);
@@ -114,8 +116,8 @@ export class APIManager {
       } else if (!body.error && onSuccess) onSuccess(body);
 
       return body;
-    } catch (error) {
-      const body: ErrorResponse = { success: false, error: "" };
+    } catch (error: any) {
+      const body: ErrorResponse = { success: false, error: error.message };
       if (onFail) onFail(body);
       return body;
     }
