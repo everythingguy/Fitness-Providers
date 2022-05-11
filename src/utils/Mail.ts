@@ -22,6 +22,8 @@ export default class Mail {
     vars: { [key: string]: any } = {},
     from: string = process.env.MAIL_FROM_EMAIL
   ): Promise<boolean> {
+    // if jest test simulate the email being sent.
+    if (process.env.CI || process.env.NODE_ENV === "test") return true;
     try {
       const html = await ejs.renderFile(
         __dirname + "/../Email/" + filename + ".ejs",
@@ -35,6 +37,8 @@ export default class Mail {
       });
       return true;
     } catch (error) {
+      // tslint:disable-next-line: no-console
+      console.log(`Mail Error: ${error}`);
       return false;
     }
   }
