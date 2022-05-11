@@ -1,5 +1,7 @@
-import { User } from "../@types/models";
 import mailer from "nodemailer";
+import ejs from "ejs";
+
+import { User } from "../@types/models";
 import { capitalize } from "./string";
 
 export default class Mail {
@@ -16,16 +18,19 @@ export default class Mail {
   private static async sendMail(
     to: string,
     subject: string,
-    text: string,
-    html: string,
+    filename: string,
+    vars: { [key: string]: any } = {},
     from: string = process.env.MAIL_FROM_EMAIL
   ): Promise<boolean> {
     try {
+      const html = await ejs.renderFile(
+        __dirname + "/../Email/" + filename + ".ejs",
+        vars
+      );
       await this.transporter.sendMail({
         from,
         to,
         subject,
-        text,
         html,
       });
       return true;
@@ -36,22 +41,22 @@ export default class Mail {
 
   static async sendConfirmation(user: User): Promise<boolean> {
     // TODO:
-    return this.sendMail(
+    return await this.sendMail(
       user.email,
       `${capitalize(process.env.PROVIDER_TYPE)} Providers: Confirm your email`,
-      "",
-      ""
+      "User/EmailConfirmation",
+      {}
     );
   }
 
   static async forgotPassword(user: User): Promise<boolean> {
     // TODO:
     // use the temporaryCode model to create the temp code for the url
-    return this.sendMail(
+    return await this.sendMail(
       user.email,
       `${capitalize(process.env.PROVIDER_TYPE)} Providers: Reset your password`,
-      "",
-      ""
+      "User/ForgotPassword",
+      {}
     );
   }
 }
