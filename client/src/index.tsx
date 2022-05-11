@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import App from "./App";
 
-// import "./assets/tailwind.css";
+import "./assets/tailwind.css";
 import "./assets/style.css";
 import "./assets/bootstrap.css";
 
