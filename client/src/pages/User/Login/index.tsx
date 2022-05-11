@@ -36,12 +36,12 @@ export const Login: React.FC = () => {
   };
 
   const onSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
-    // TODO: email not confirmed
     if (e) e.preventDefault();
     const auth = await User.loginUser(username, password);
     if (auth.success) {
       setAuth(true);
     } else {
+      if (auth.error === "Email not confirmed") setEmailConfirmed(false);
       setWasInvalidLogin(true);
     }
   };

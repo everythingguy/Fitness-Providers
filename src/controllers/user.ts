@@ -171,6 +171,12 @@ export async function loginUser(req: Request, res: express.Response) {
     }
 
     if (await user.isValidPassword(req.body.password)) {
+      if (!user.emailConfirmed)
+        return res.status(400).json({
+          success: false,
+          error: "Email not confirmed",
+        });
+
       sendRefreshToken(res, createRefreshToken(user));
 
       return res.status(200).json({
