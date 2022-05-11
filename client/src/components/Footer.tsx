@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserState";
 
 export const Footer: React.FC = () => {
-  const contactEmail = "contact@fitnessproviders.net";
+  const contactEmail = process.env.MAIL_CONTACT_EMAIL;
   const { loggedIn, user } = useContext(UserContext);
 
   return (

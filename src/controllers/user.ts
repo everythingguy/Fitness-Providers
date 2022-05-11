@@ -14,7 +14,7 @@ import {
 import { userResponse as userResponseType } from "../@types/response";
 import { sign, verify } from "jsonwebtoken";
 import { apiPath } from "../server";
-import * as Mail from "../utils/Mail";
+import Mail from "../utils/Mail";
 
 const userResponse = (req: Request, userData: UserType): ResUser => {
   let userRes: ResUser;

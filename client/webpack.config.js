@@ -27,7 +27,8 @@ module.exports = () => {
       new webpack.DefinePlugin({
         "process.env.BASE_URL": JSON.stringify(env.BASE_URL),
         "process.env.BASE_API_URL": JSON.stringify(env.BASE_API_URL),
-        "process.env.API_URL": JSON.stringify(env.API_URL)
+        "process.env.API_URL": JSON.stringify(env.API_URL),
+        "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(env.MAIL_CONTACT_EMAIL)
       }),
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: ["./dist/**", "../public/dist/**"],
