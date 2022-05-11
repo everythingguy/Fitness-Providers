@@ -1,3 +1,5 @@
+// TODO: update tests to work with confirmation email and forgot password
+
 import request from "supertest";
 import { Connection } from "mongoose";
 
@@ -51,7 +53,7 @@ describe("env", () => {
   });
 });
 
-describe(`GET ${apiPath}/users/login`, () => {
+describe(`POST ${apiPath}/users/login`, () => {
   it("should reject the incorrect login", (done) => {
     request(app)
       .post(`${apiPath}/users/login`)
@@ -126,7 +128,29 @@ describe(`DELETE ${apiPath}/users`, () => {
   });
 });
 
-describe(`GET ${apiPath}/users/register`, () => {
+describe(`POST ${apiPath}/users/register`, () => {
+  it("should fail to register with mismatch passwords", (done) => {
+    request(app)
+      .post(`${apiPath}/users/register`)
+      .send({
+        name: "John Doe",
+        email: "jdoe@doe.com",
+        username: "john12",
+        password: "doe21",
+        re_password: "doe212121",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        if (err) return done({ err, resError: JSON.parse(res.text).error });
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual("password and re_password do not match");
+        done();
+      });
+  });
+
   it("should register a new user named john doe", (done) => {
     request(app)
       .post(`${apiPath}/users/register`)
@@ -135,6 +159,7 @@ describe(`GET ${apiPath}/users/register`, () => {
         email: "jdoe@doe.com",
         username: "john",
         password: "doe21",
+        re_password: "doe21",
       })
       .expect(201)
       .expect("Content-Type", /json/)
@@ -152,9 +177,7 @@ describe(`GET ${apiPath}/users/register`, () => {
         done();
       });
   });
-});
 
-describe(`GET ${apiPath}/users/register`, () => {
   it("should fail to register the same username", (done) => {
     request(app)
       .post(`${apiPath}/users/register`)
@@ -163,6 +186,7 @@ describe(`GET ${apiPath}/users/register`, () => {
         email: "jdoe22@doe.com",
         username: "john",
         password: "doe21",
+        re_password: "doe21",
       })
       .expect(409)
       .expect("Content-Type", /json/)
@@ -175,9 +199,7 @@ describe(`GET ${apiPath}/users/register`, () => {
         done();
       });
   });
-});
 
-describe(`GET ${apiPath}/users/register`, () => {
   it("should fail to register the same email", (done) => {
     request(app)
       .post(`${apiPath}/users/register`)
@@ -186,6 +208,7 @@ describe(`GET ${apiPath}/users/register`, () => {
         email: "jdoe@doe.com",
         username: "john12",
         password: "doe21",
+        re_password: "doe21",
       })
       .expect(409)
       .expect("Content-Type", /json/)
@@ -200,7 +223,7 @@ describe(`GET ${apiPath}/users/register`, () => {
   });
 });
 
-describe(`GET ${apiPath}/users/login`, () => {
+describe(`POST ${apiPath}/users/login`, () => {
   it("should successfully login", (done) => {
     request(app)
       .post(`${apiPath}/users/login`)
@@ -238,9 +261,7 @@ describe(`GET ${apiPath}/users/login`, () => {
         done();
       });
   });
-});
 
-describe(`GET ${apiPath}/users/login`, () => {
   it("should fail to login twice", (done) => {
     request(app)
       .post(`${apiPath}/users/login`)
@@ -326,7 +347,7 @@ describe(`GET ${apiPath}/users`, () => {
   });
 });
 
-describe(`GET ${apiPath}/users/login`, () => {
+describe(`POST ${apiPath}/users/login`, () => {
   it("should successfully login", (done) => {
     request(app)
       .post(`${apiPath}/users/login`)

@@ -10,6 +10,10 @@ export interface Request extends express.Request {
   logout: (res: express.Response) => void;
 }
 
+export interface SimpleRequestBody<T> extends Request {
+  body: T;
+}
+
 export interface RequestBody<T extends Model.Base> extends Request {
   body: T;
 }

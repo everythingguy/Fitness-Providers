@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
-import Mail from "../../../API/Mail";
 
 export const Login: React.FC = () => {
   // logged in context
@@ -78,7 +77,7 @@ export const Login: React.FC = () => {
                 <button
                   type="button"
                   className="btn btn-link"
-                  onClick={() => Mail.resendConfirmation(username)}
+                  onClick={() => User.resendConfirmation(username)}
                 >
                   Resend?
                 </button>

@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema<User>(
       validate: [validator.isEmail, "Invalid email address"],
       unique: true,
     },
+    emailConfirmed: {
+      type: Boolean,
+      default: false,
+    },
     username: {
       type: String,
       trim: true,

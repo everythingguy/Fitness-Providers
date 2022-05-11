@@ -24,6 +24,25 @@ export default class API {
     });
   }
 
+  static async resendConfirmation(
+    username: string
+  ): Promise<{ success: true } | ErrorResponse> {
+    const request = new DataRequest("POST", "users/resendConfirmation");
+    request.setBody({ username });
+
+    return new Promise((res) => {
+      APIManager.sendRequest<UserResponse>(
+        request,
+        (body) => {
+          res({ success: true });
+        },
+        (body) => {
+          res({ success: false, error: body.error } as ErrorResponse);
+        }
+      );
+    });
+  }
+
   static async loginUser(
     username: string,
     password: string

@@ -1,13 +1,20 @@
 import express from "express";
 
 import User from "../models/user";
+import PasswordResetCode from "../models/passwordResetCode";
 import { postPatchErrorHandler } from "../utils/errors";
 import { User as UserType } from "../@types/models";
 import { errorResponse, ResUser } from "../@types/response";
-import { Request, Payload, RequestBody } from "../@types/request";
+import {
+  Request,
+  Payload,
+  RequestBody,
+  SimpleRequestBody,
+} from "../@types/request";
 import { userResponse as userResponseType } from "../@types/response";
 import { sign, verify } from "jsonwebtoken";
 import { apiPath } from "../server";
+import * as Mail from "../utils/Mail";
 
 const userResponse = (req: Request, userData: UserType): ResUser => {
   let userRes: ResUser;
@@ -235,15 +242,25 @@ export function logoutUser(req: Request, res: express.Response) {
  * @access Public
  */
 export async function addUser(
-  req: RequestBody<UserType>,
+  req: RequestBody<UserType & { re_password: string }>,
   res: express.Response
 ) {
   try {
     if (!req.user || (req.user && !req.user.isAdmin)) {
       delete req.body.isAdmin;
       delete req.body.isSuperAdmin;
+      delete req.body.emailConfirmed;
     }
+
+    if (req.body.password !== req.body.re_password)
+      return res.status(400).json({
+        success: false,
+        error: "password and re_password do not match",
+      });
+
     const user = await User.create(req.body);
+
+    Mail.sendConfirmation(user);
 
     return res.status(201).json({
       success: true,
@@ -251,6 +268,44 @@ export async function addUser(
     } as userResponseType);
   } catch (error) {
     postPatchErrorHandler(res, error);
+  }
+}
+
+/**
+ * @desc Resend Email Confirmation
+ * @route POST /api/v1/users/resendConfirmation
+ * @access Public
+ */
+export async function resendConfirmation(
+  req: SimpleRequestBody<{ username: string }>,
+  res: express.Response
+) {
+  try {
+    const user = await User.findOne({ username: req.body.username });
+
+    if (user) {
+      const confirmation = await Mail.sendConfirmation(user);
+
+      if (!confirmation)
+        return res.status(500).json({
+          success: false,
+          error: "Server was unable to send the email",
+        } as errorResponse);
+
+      return res.status(200).json({
+        success: true,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        error: "No user found by that username",
+      } as errorResponse);
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Server error",
+    } as errorResponse);
   }
 }
 
@@ -317,5 +372,97 @@ export async function deleteUser(req: Request, res: express.Response) {
       success: false,
       error: "Server Error",
     } as errorResponse);
+  }
+}
+
+/**
+ * @desc Request Password Reset
+ * @route POST /api/v1/users/password/forgot
+ * @access Public
+ */
+export async function forgotPassword(
+  req: SimpleRequestBody<{ email: string }>,
+  res: express.Response
+) {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (user) {
+      const confirmation = await Mail.forgotPassword(user);
+
+      if (!confirmation)
+        return res.status(500).json({
+          success: false,
+          error: "Server was unable to send the email",
+        } as errorResponse);
+
+      return res.status(200).json({
+        success: true,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        error: "No user found by that email",
+      } as errorResponse);
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Server error",
+    } as errorResponse);
+  }
+}
+
+/**
+ * @desc Password Reset
+ * @route POST /api/v1/users/password/reset/:code
+ * @access Public
+ */
+export async function resetPassword(
+  req: SimpleRequestBody<{ password: string; re_password: string }>,
+  res: express.Response
+) {
+  try {
+    const { code } = req.params;
+    const { password, re_password } = req.body;
+
+    if (code === null || code === undefined)
+      return res.status(400).json({
+        success: false,
+        error: "Invalid Password Reset Code",
+      } as errorResponse);
+
+    const resetCode = await PasswordResetCode.findOne({ code });
+
+    if (!resetCode || resetCode.code !== code)
+      return res.status(400).json({
+        success: false,
+        error: "Invalid Password Reset Code",
+      } as errorResponse);
+
+    if (password !== re_password)
+      return res.status(400).json({
+        success: false,
+        error: "password and re_password do not match",
+      } as errorResponse);
+
+    const user = await User.findById(resetCode.user);
+
+    if (!user)
+      return res.status(500).json({
+        success: false,
+        error: "Server Error",
+      });
+
+    user.password = password;
+    await user.validate();
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      data: userResponse(req, user),
+    } as userResponseType);
+  } catch (error) {
+    postPatchErrorHandler(res, error);
   }
 }

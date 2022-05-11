@@ -182,6 +182,7 @@ describe("toJSON", () => {
       lastName: user.name.split(" ")[1],
       username: user.username,
       email: user.email,
+      emailConfirmed: false,
       isAdmin: false,
       isSuperAdmin: false,
       tokenVersion: 0,

@@ -7,11 +7,17 @@ export interface Base extends Document {
   updatedAt: Date;
 }
 
+export interface PasswordResetCode extends Base {
+  code: string;
+  user: Types.ObjectId;
+}
+
 export interface User extends Base {
   firstName: string;
   lastName: string;
   name: string;
   email: string;
+  emailConfirmed: boolean;
   username: string;
   password?: string;
   tokenVersion: number;
