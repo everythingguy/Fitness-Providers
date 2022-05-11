@@ -258,6 +258,10 @@ export async function addUser(
       delete req.body.emailConfirmed;
     }
 
+    // automatically confirm email when running jest or the pipeline
+    if (process.env.CI || process.env.NODE_ENV === "test")
+      req.body.emailConfirmed = true;
+
     if (req.body.password !== req.body.re_password)
       return res.status(400).json({
         success: false,
