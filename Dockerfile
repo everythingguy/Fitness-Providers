@@ -28,7 +28,7 @@ RUN npm run build && \
     npm i --only=prod && \
     cd ..
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=45s --retries=3 CMD curl --fail http://localhost || exit 1
+HEALTHCHECK --interval=30s --timeout=30s --start-period=45s --retries=3 CMD curl --fail http://localhost/api/v1/health || exit 1
 
 ENTRYPOINT [ "node", "dist/app.js" ]
 
