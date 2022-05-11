@@ -45,7 +45,7 @@ variables: &global_variables
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
   MAIL_HOST: smtp.mailgun.org
-  MAIL_PORT: 587
+  MAIL_PORT: 465
   MAIL_FROM_EMAIL: noreply@fitnessproviders.net
   MAIL_CONTACT_EMAIL: contact@fitnessproviders.net
   PROVIDER_TYPE: fitness
