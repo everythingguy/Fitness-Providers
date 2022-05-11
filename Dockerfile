@@ -15,6 +15,9 @@ RUN npm i -g postcss-cli && \
     npm i -D && \
     cd ..
 
+ARG API_URL=/api/v1
+ARG MAIL_CONTACT_EMAIL=contact@yourdomain.com
+
 ENV NODE_ENV "production"
 ENV PORT 80
 
