@@ -7,17 +7,14 @@ import User from "../@types/User";
 interface State {
   loggedIn: boolean;
   user?: User;
+  setLogin?: () => void;
 }
 
 interface Props {
   children: any;
 }
 
-let loadedState: State | null = null;
-const storage = sessionStorage.getItem("UserState");
-if (storage) loadedState = JSON.parse(storage);
-
-const initialState: State = loadedState || {
+const initialState: State = {
   loggedIn: false,
 };
 
@@ -44,6 +41,7 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
       value={{
         user: state.user,
         loggedIn: state.loggedIn,
+        setLogin,
       }}
     >
       {children}

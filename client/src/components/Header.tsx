@@ -5,7 +5,7 @@ import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import User from "../API/User";
 
 export const Header: React.FC = () => {
-  const { loggedIn, user } = useContext(UserContext);
+  const { loggedIn, user, setLogin } = useContext(UserContext);
 
   return (
     <Navbar collapseOnSelect expand="lg" fixed="top" bg="white">
@@ -95,7 +95,10 @@ export const Header: React.FC = () => {
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item
-                    onClick={() => User.logoutUser()}
+                    onClick={async () => {
+                      await User.logoutUser();
+                      if (setLogin) await setLogin();
+                    }}
                     role="button"
                     className="text-decoration-none"
                     eventKey="link-10"

@@ -5,7 +5,7 @@ import { UserContext } from "../../../context/UserState";
 
 export const Login: React.FC = () => {
   // logged in context
-  const { loggedIn } = useContext(UserContext);
+  const { loggedIn, setLogin } = useContext(UserContext);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -39,6 +39,7 @@ export const Login: React.FC = () => {
     if (e) e.preventDefault();
     const auth = await User.loginUser(username, password);
     if (auth.success) {
+      if (setLogin) await setLogin();
       setAuth(true);
     } else {
       if (auth.error === "Email not confirmed") setEmailConfirmed(false);

@@ -32,7 +32,6 @@ function App() {
 
               <Route path="/user/register" element={<UserPages.Register />} />
               <Route path="/user/login" element={<UserPages.Login />} />
-              <Route path="/user/logout" element={<UserPages.Logout />} />
               <Route
                 path="/user/password/forgot"
                 element={<UserPages.ForgotPassword />}
