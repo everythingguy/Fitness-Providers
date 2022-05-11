@@ -15,7 +15,6 @@ import { ReqProvider } from "./controllers/provider";
 import { isLoggedIn } from "./utils/permissions";
 import { getMongoURI } from "./utils/db";
 import { Request } from "./@types/request";
-import { capitalize } from "./utils/string";
 
 // global variables
 // tslint:disable-next-line: no-var-requires
@@ -77,12 +76,5 @@ app.use(
 // router
 export let apiPath = "/api/v1";
 app.use(apiPath, mainRouter);
-
-// serve react front end
-app.get("*", (req, res) => {
-  res.render("index", {
-    title: `${capitalize(process.env.PROVIDER_TYPE)} Providers`,
-  });
-});
 
 export default app;
