@@ -96,7 +96,7 @@ export async function update<T extends Base>(
     for (const field of ignoreFields) delete req.body[field];
   }
   try {
-    await model.updateOne({ _id: req.params.id }, req.body as any, {
+    await model.findByIdAndUpdate(req.params.id, req.body as any, {
       runValidators: true,
     });
 
@@ -133,7 +133,7 @@ export async function del<T extends Base>(
         error: `No ${modelName} found by that id`,
       } as errorResponse);
 
-    await model.deleteOne({ _id: req.params.id });
+    await model.findByIdAndDelete(req.params.id);
 
     return res.status(200).json({
       success: true,
