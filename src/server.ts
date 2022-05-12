@@ -52,7 +52,15 @@ app.use(
     store: new MongoStore({ url: getMongoURI() }),
   })
 );
-app.use(mongoSanitize());
+
+app.use(
+  mongoSanitize({
+    onSanitize: ({ req, key }: any) => {
+      // tslint:disable-next-line: no-console
+      console.log(`SANITIZED: This request[${key}] is sanitized`, req[key]);
+    },
+  })
+);
 
 app.use(ReqUser);
 app.use(ReqProvider);
