@@ -3,13 +3,22 @@ import { APIManager, DataRequest } from "./APIManager";
 
 export default class API {
   static async createUser(
-    name: string,
+    firstName: string,
+    lastName: string,
     email: string,
     username: string,
-    password: string
+    password: string,
+    re_password: string
   ): Promise<UserResponse | ErrorResponse> {
     const request = new DataRequest("POST", "users/register");
-    request.setBody({ name, email, username, password });
+    request.setBody({
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      re_password,
+    });
 
     return new Promise((res) => {
       APIManager.sendRequest<UserResponse>(

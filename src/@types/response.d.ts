@@ -81,5 +81,5 @@ export interface liveSessionsResponse {
 
 export interface errorResponse {
   success: false;
-  error: string[] | string;
+  error: string[] | string | { [key: string]: string };
 }

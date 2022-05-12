@@ -12,7 +12,8 @@ function createFakeUser() {
   return {
     email: faker.internet.email(),
     password: faker.internet.password(),
-    name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
     username: faker.internet.userName(),
   };
 }
@@ -41,9 +42,9 @@ describe("Save some new users", () => {
 
       expect(dbUser).toBeDefined();
       expect(dbUser.email).toBe(fakeUser.email);
-      expect(dbUser.name).toBe(fakeUser.name);
-      expect(dbUser.firstName).toBe(fakeUser.name.split(" ")[0]);
-      expect(dbUser.lastName).toBe(fakeUser.name.split(" ")[1]);
+      expect(dbUser.name).toBe(`${fakeUser.firstName} ${fakeUser.lastName}`);
+      expect(dbUser.firstName).toBe(fakeUser.firstName);
+      expect(dbUser.lastName).toBe(fakeUser.lastName);
       expect(dbUser.username).toBe(fakeUser.username);
       expect(dbUser.password).not.toBe(fakeUser.password);
     }
@@ -102,13 +103,23 @@ describe("Error Checking", () => {
     await expect(user.save()).rejects.toThrowError(/username already exists/);
   });
 
-  it("should not create a user without a name", async () => {
+  it("should not create a user without a first name", async () => {
     const fakeUser = createFakeUser();
-    fakeUser.name = "";
+    fakeUser.firstName = "";
 
     const user = new User(fakeUser);
     await expect(user.save()).rejects.toThrowError(
-      /User validation failed: name: Name is required/
+      /User validation failed: firstName: First name is required/
+    );
+  });
+
+  it("should not create a user without a last name", async () => {
+    const fakeUser = createFakeUser();
+    fakeUser.lastName = "";
+
+    const user = new User(fakeUser);
+    await expect(user.save()).rejects.toThrowError(
+      /User validation failed: lastName: Last name is required/
     );
   });
 

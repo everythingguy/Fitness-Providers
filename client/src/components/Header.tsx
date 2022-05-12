@@ -5,7 +5,7 @@ import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import User from "../API/User";
 
 export const Header: React.FC = () => {
-  const { loggedIn, user, setLogin } = useContext(UserContext);
+  const { loggedIn, user, logout } = useContext(UserContext);
 
   return (
     <Navbar collapseOnSelect expand="lg" fixed="top" bg="white">
@@ -97,7 +97,7 @@ export const Header: React.FC = () => {
                   <NavDropdown.Item
                     onClick={async () => {
                       await User.logoutUser();
-                      if (setLogin) await setLogin();
+                      if (logout) await logout();
                     }}
                     role="button"
                     className="text-decoration-none"

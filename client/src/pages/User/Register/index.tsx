@@ -1,116 +1,213 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import API from "../../../API/User";
+import React, { useContext, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import User from "../../../API/User";
+import { UserContext } from "../../../context/UserState";
 
 export const Register: React.FC = () => {
-  // field state
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  // logged in context
+  const { loggedIn, setLogin } = useContext(UserContext);
 
-  // tailwind class names for the button
-  const button =
-    "cursor-pointer text-center max-w-full bg-transparent hover:bg-purple-500 text-purple-700 font-semibold hover:text-white py-2 px-4 border border-purple-500 hover:border-transparent rounded";
-  const inputStyle = "mb-10 mx-10 bg-purple-200";
+  // field state
+  const [errors, setError] = useState({
+    email: null,
+    firstName: null,
+    lastName: null,
+    username: null,
+    password: null,
+  });
+
+  const [wasSuccessful, setSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    re_password: "",
+    instructor: false,
+  });
+  const {
+    email,
+    firstName,
+    lastName,
+    username,
+    password,
+    re_password,
+    instructor,
+  } = formData;
+
+  const onChange = (e) => {
+    if (e.target.type === "checkbox")
+      setFormData({ ...formData, [e.target.name]: e.target.checked });
+    else setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError({ ...errors, [e.target.name]: null });
+  };
 
   // allows the enter key to submit the form
   const enterSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       e.preventDefault();
-      await submitForm();
+      await onSubmit();
     }
   };
 
-  // process the form
-  const submitForm = async () => {
-    const error = document.getElementById("error");
+  const onSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
+    if (e) e.preventDefault();
+    const auth = await User.createUser(
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      re_password
+    );
+    if (auth.success) {
+      setError({
+        email: null,
+        firstName: null,
+        lastName: null,
+        username: null,
+        password: null,
+      });
 
-    // if the error element was found by id
-    if (error) {
-      error.innerHTML = "";
-
-      // if all fields are filled in
-      if (name && email && username && password) {
-        // ask the api to create the user
-        const data = await API.createUser(name, email, username, password);
-
-        // if success redirect to login
-        if (data.success) window.location.pathname = "/user/login";
-        // otherwise
-        else {
-          // print each error
-          // TODO: fix xss vulnerability, display errors like capstone
-          /*
-          for (let i = 0; i < data.error.length; i++) {
-            data.error = data.error as { msg: string }[];
-            error.innerHTML += "<p>" + data.error[i].msg + "</p>";
-          }
-          */
-
-          // display the error in a block
-          error.style.display = "block";
-        }
-      }
-      // otherwise
-      else {
-        // tell the user to finish filling the form
-        error.innerText = "Please fill in all fields";
-        error.style.display = "block";
-      }
+      if (setLogin) await setLogin();
+      setSuccess(true);
+    } else {
+      setError(auth.error as any);
     }
   };
+
+  if (!wasSuccessful && loggedIn) return <Navigate to="/" />;
+  if (wasSuccessful && instructor)
+    return <Navigate to="/user/login?createInstructor=true" />;
+  if (wasSuccessful) return <Navigate to="/user/login" />;
 
   return (
     <>
-      <div
-        className="mx-auto w-1/4 border border-purple-500 text-purple-700 hidden"
-        id="error"
-      ></div>
-      <div className="grid grid-cols-2 text-purple-500 mx-auto my-20 sm:w-3/4 lg:w-1/2">
-        <label>Name</label>
-        <input
-          className={inputStyle}
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyUp={(e) => enterSubmit(e)}
-        />
-        <label>Email</label>
-        <input
-          className={inputStyle}
-          type="text"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onKeyUp={(e) => enterSubmit(e)}
-        />
-        <label>Username</label>
-        <input
-          className={inputStyle}
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          onKeyUp={(e) => enterSubmit(e)}
-        />
-        <label>Password</label>
-        <input
-          className={inputStyle}
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyUp={(e) => enterSubmit(e)}
-        />
-        <Link to="/user/login" className={button + " mr-10"}>
-          Back
-        </Link>
-        <button className={button} onClick={submitForm}>
+      <div className="h3">Create your account</div>
+      <div className="divider-border"></div>
+
+      <form onSubmit={onSubmit}>
+        <div className="form-group mb-4">
+          <label className="form-label">Email:</label>
+          <input
+            className={
+              errors.email ? "form-control is-invalid" : "form-control"
+            }
+            type="text"
+            placeholder="Email"
+            name="email"
+            value={email}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+          <div className="invalid-feedback">{errors.email}</div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">First Name:</label>
+          <input
+            className={
+              errors.firstName ? "form-control is-invalid" : "form-control"
+            }
+            type="text"
+            placeholder="First Name"
+            name="firstName"
+            value={firstName}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+          <div className="invalid-feedback">{errors.firstName}</div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Last Name:</label>
+          <input
+            className={
+              errors.lastName ? "form-control is-invalid" : "form-control"
+            }
+            type="text"
+            placeholder="Last Name"
+            name="lastName"
+            value={lastName}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+          <div className="invalid-feedback">{errors.lastName}</div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Username:</label>
+          <input
+            className={
+              errors.username ? "form-control is-invalid" : "form-control"
+            }
+            type="text"
+            placeholder="Username"
+            name="username"
+            value={username}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+          <div className="invalid-feedback">{errors.username}</div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Password:</label>
+          <input
+            className={
+              errors.password ? "form-control is-invalid" : "form-control"
+            }
+            type="password"
+            placeholder="Password"
+            name="password"
+            value={password}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+          <div className="invalid-feedback">{errors.password}</div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Confirm Password:</label>
+          <input
+            className={
+              errors.password ? "form-control is-invalid" : "form-control"
+            }
+            type="password"
+            placeholder="Confirm Password"
+            name="re_password"
+            value={re_password}
+            onChange={onChange}
+            onKeyUp={(e) => enterSubmit(e)}
+            required
+          />
+          <div className="invalid-feedback">{errors.password}</div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Become a provider?</label>
+          <input
+            className="form-control form-check-input d-inline-block ms-4 p-2"
+            type="checkbox"
+            name="instructor"
+            onChange={onChange}
+          />
+        </div>
+        <div>
+          <p>
+            By registering you are agreeing to the{" "}
+            <a href="/terms" target="_blank">
+              terms and conditions
+            </a>
+          </p>
+        </div>
+        <button className="btn btn-primary mb-4" type="submit">
           Register
         </button>
-      </div>
+      </form>
+      <p>
+        Already have an account? <Link to="/user/login">Sign In</Link>
+      </p>
     </>
   );
 };

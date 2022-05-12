@@ -22,5 +22,5 @@ export interface UserResponse extends SuccessfulResponse {
 export interface ErrorResponse extends BaseResponse {
   success: false;
   data?: undefined;
-  error: string | string[];
+  error: string | string[] | { [key: string]: string };
 }

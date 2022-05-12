@@ -14,33 +14,39 @@ export const Footer: React.FC = () => {
             {!loggedIn && (
               <Link
                 to="/user/register"
-                className="text-decoration-none d-block"
+                className="text-decoration-none d-block text-light"
               >
                 Create an Account
               </Link>
             )}
             {loggedIn && user?.provider && (
-              <Link to="" className="text-decoration-none d-block">
+              <Link to="" className="text-decoration-none d-block text-light">
                 Become a provider
               </Link>
             )}
           </div>
           <div className="col text-center">
             <a
-              className="text-decoration-none d-block"
+              className="text-decoration-none d-block text-light"
               href={`mailto:${contactEmail}`}
             >
               {contactEmail}
             </a>
           </div>
           <div className="col text-end">
-            <Link to="/" className="text-decoration-none d-block">
+            <Link to="/" className="text-decoration-none d-block text-light">
               Home
             </Link>
-            <Link to="/calendar" className="text-decoration-none d-block">
+            <Link
+              to="/calendar"
+              className="text-decoration-none d-block text-light"
+            >
               Calendar
             </Link>
-            <Link to="/directory" className="text-decoration-none d-block">
+            <Link
+              to="/directory"
+              className="text-decoration-none d-block text-light"
+            >
               Directory
             </Link>
           </div>

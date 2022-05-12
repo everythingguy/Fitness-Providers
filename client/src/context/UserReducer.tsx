@@ -3,8 +3,8 @@ import User from "../@types/User";
 type Actions = {
   action: "SET_LOGIN";
   payload: {
-    success: true;
-    user: User;
+    loggedIn: boolean;
+    user?: User;
   };
 };
 
@@ -18,8 +18,8 @@ const UserReducer = (state: State, { action, payload }: Actions) => {
     case "SET_LOGIN":
       return {
         ...state,
-        loggedIn: payload.success,
-        user: payload!.user,
+        loggedIn: payload.loggedIn,
+        user: payload.user,
       };
     default:
       return state;

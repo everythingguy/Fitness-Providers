@@ -265,7 +265,7 @@ export async function addUser(
     if (req.body.password !== req.body.re_password)
       return res.status(400).json({
         success: false,
-        error: "password and re_password do not match",
+        error: { password: "password and confirm password do not match" },
       });
 
     const user = await User.create(req.body);
@@ -439,7 +439,7 @@ export async function resetPassword(
     if (code === null || code === undefined)
       return res.status(400).json({
         success: false,
-        error: "Invalid Password Reset Code",
+        error: { code: "Invalid Password Reset Code" },
       } as errorResponse);
 
     const resetCode = await PasswordResetCode.findOne({ code });
@@ -447,13 +447,13 @@ export async function resetPassword(
     if (!resetCode || resetCode.code !== code)
       return res.status(400).json({
         success: false,
-        error: "Invalid Password Reset Code",
+        error: { code: "Invalid Password Reset Code" },
       } as errorResponse);
 
     if (password !== re_password)
       return res.status(400).json({
         success: false,
-        error: "password and re_password do not match",
+        error: { password: "password and re_password do not match" },
       } as errorResponse);
 
     const user = await User.findById(resetCode.user);

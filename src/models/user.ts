@@ -10,16 +10,17 @@ import { UniqueErrorRaiser } from "../utils/errors";
 
 const UserSchema = new mongoose.Schema<User>(
   {
-    name: {
+    firstName: {
       type: String,
       trim: true,
-      required: [true, "Name is required"],
-      validate: [
-        (value: string) => {
-          return value.split(" ").length === 2;
-        },
-        "Please enter a first and last name",
-      ],
+      required: [true, "First name is required"],
+      minLength: 1,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      required: [true, "Last name is required"],
+      minLength: 1,
     },
     email: {
       type: String,
@@ -74,12 +75,8 @@ const UserSchema = new mongoose.Schema<User>(
   }
 );
 
-UserSchema.virtual("firstName").get(function (this: User) {
-  return this.name.split(" ")[0];
-});
-
-UserSchema.virtual("lastName").get(function (this: User) {
-  return this.name.split(" ")[1];
+UserSchema.virtual("name").get(function (this: User) {
+  return `${this.firstName} ${this.lastName}`;
 });
 
 UserSchema.method("getProvider", async function (this: User) {

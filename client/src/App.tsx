@@ -8,6 +8,7 @@ import { Calendar } from "./pages/Calendar";
 import { Course } from "./pages/Course";
 import { Profile, Management, MyProfile } from "./pages/Profile";
 import * as UserPages from "./pages/User";
+import { Terms } from "./pages/Terms";
 
 import { Footer } from "./components/Footer";
 
@@ -41,6 +42,7 @@ function App() {
                 element={<UserPages.ResetPassword />}
               />
               <Route path="/user/settings" element={<UserPages.Settings />} />
+              <Route path="/terms" element={<Terms />} />
             </Routes>
           </div>
         </div>

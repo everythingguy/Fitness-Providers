@@ -8,6 +8,7 @@ interface State {
   loggedIn: boolean;
   user?: User;
   setLogin?: () => void;
+  logout?: () => void;
 }
 
 interface Props {
@@ -29,9 +30,16 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
       if (body.success && body.data.user)
         dispatch({
           action: "SET_LOGIN",
-          payload: { success: body.success, user: body.data.user },
+          payload: { loggedIn: body.success, user: body.data.user },
         });
     }
+  }
+
+  function logout() {
+    dispatch({
+      action: "SET_LOGIN",
+      payload: { loggedIn: false },
+    });
   }
 
   setLogin();
@@ -42,6 +50,7 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
         user: state.user,
         loggedIn: state.loggedIn,
         setLogin,
+        logout,
       }}
     >
       {children}

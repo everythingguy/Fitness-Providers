@@ -133,7 +133,8 @@ describe(`POST ${apiPath}/users/register`, () => {
     request(app)
       .post(`${apiPath}/users/register`)
       .send({
-        name: "John Doe",
+        firstName: "John",
+        lastName: "Doe",
         email: "jdoe@doe.com",
         username: "john12",
         password: "doe21",
@@ -155,7 +156,8 @@ describe(`POST ${apiPath}/users/register`, () => {
     request(app)
       .post(`${apiPath}/users/register`)
       .send({
-        name: "John Doe",
+        firstName: "John",
+        lastName: "Doe",
         email: "jdoe@doe.com",
         username: "john",
         password: "doe21",
@@ -182,7 +184,8 @@ describe(`POST ${apiPath}/users/register`, () => {
     request(app)
       .post(`${apiPath}/users/register`)
       .send({
-        name: "John Doe",
+        firstName: "John",
+        lastName: "Doe",
         email: "jdoe22@doe.com",
         username: "john",
         password: "doe21",
@@ -204,7 +207,8 @@ describe(`POST ${apiPath}/users/register`, () => {
     request(app)
       .post(`${apiPath}/users/register`)
       .send({
-        name: "John Doe",
+        firstName: "John",
+        lastName: "Doe",
         email: "jdoe@doe.com",
         username: "john12",
         password: "doe21",
