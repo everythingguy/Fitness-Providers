@@ -23,6 +23,7 @@ export default class Mail {
     from: string = process.env.MAIL_FROM_EMAIL
   ): Promise<boolean> {
     // if jest test simulate the email being sent.
+    // TODO: remove || true
     if (process.env.CI || process.env.NODE_ENV === "test" || true) return true;
     try {
       const html = await ejs.renderFile(

@@ -67,7 +67,7 @@ export const Header: React.FC = () => {
                     <>
                       <NavDropdown.Item
                         as={Link}
-                        to="/profile"
+                        to="/provider/profile/me"
                         role="button"
                         className="text-decoration-none btn text-black"
                         eventKey="link-8"
@@ -76,7 +76,7 @@ export const Header: React.FC = () => {
                       </NavDropdown.Item>
                       <NavDropdown.Item
                         as={Link}
-                        to="/content-management"
+                        to="/provider/management"
                         role="button"
                         className="text-decoration-none btn text-black"
                         eventKey="link-8"
@@ -87,7 +87,7 @@ export const Header: React.FC = () => {
                   )}
                   <NavDropdown.Item
                     as={Link}
-                    to="/settings"
+                    to="/user/settings"
                     className="text-decoration-none btn text-black"
                     eventKey="link-9"
                   >
