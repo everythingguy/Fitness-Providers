@@ -200,7 +200,7 @@ describe(`POST ${apiPath}/users/register`, () => {
         expect(JSON.parse(res.text) as errorResponse).toBeDefined();
         const resp = JSON.parse(res.text) as errorResponse;
         expect(resp.success).toBeFalsy();
-        expect(resp.error).toEqual("username already exists");
+        expect(resp.error).toEqual({ username: "username already exists" });
         done();
       });
   });
@@ -223,7 +223,7 @@ describe(`POST ${apiPath}/users/register`, () => {
         expect(JSON.parse(res.text) as errorResponse).toBeDefined();
         const resp = JSON.parse(res.text) as errorResponse;
         expect(resp.success).toBeFalsy();
-        expect(resp.error).toEqual("email already exists");
+        expect(resp.error).toEqual({ email: "email already exists" });
         done();
       });
   });
