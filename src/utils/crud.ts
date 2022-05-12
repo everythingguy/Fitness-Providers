@@ -1,5 +1,5 @@
 import express from "express";
-import { Types, Model } from "mongoose";
+import { Types, Model, FilterQuery } from "mongoose";
 import { postPatchErrorHandler } from "./errors";
 import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
@@ -41,10 +41,11 @@ export async function read<T extends Base>(
   req: Request,
   res: express.Response,
   modelName: string,
-  model: Model<T>
+  model: Model<T>,
+  query: FilterQuery<T> = { _id: req.params.id }
 ) {
   try {
-    const obj = await model.findById(req.params.id);
+    const obj = await model.findOne(query);
 
     if (!obj)
       return res.status(404).json({
@@ -68,10 +69,11 @@ export async function readAll<T extends Base>(
   req: Request,
   res: express.Response,
   modelName: string,
-  model: Model<T>
+  model: Model<T>,
+  query: FilterQuery<T> = {}
 ) {
   try {
-    const objs = await model.find({});
+    const objs = await model.find(query);
     return res.status(200).json({
       success: true,
       data: { [`${modelName}s`]: objs },

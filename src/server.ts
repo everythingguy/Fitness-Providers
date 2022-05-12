@@ -2,6 +2,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import mongoSanitize from "express-mongo-sanitize";
 import session from "express-session";
 import path from "path";
 import flash from "connect-flash";
@@ -51,6 +52,7 @@ app.use(
     store: new MongoStore({ url: getMongoURI() }),
   })
 );
+app.use(mongoSanitize());
 
 app.use(ReqUser);
 app.use(ReqProvider);
