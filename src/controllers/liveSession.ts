@@ -35,6 +35,8 @@ export async function modifyLiveSession(
  * @access Public
  */
 export async function getLiveSession(req: Request, res: express.Response) {
+  // TODO: hide sessions that belong to unenrolled providers
+  // unless the logged in user is admin or the owner of the session
   CRUD.read<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 
@@ -44,6 +46,8 @@ export async function getLiveSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getLiveSessions(req: Request, res: express.Response) {
+  // TODO: hide sessions that belong to unenrolled providers
+  // unless the logged in user is admin or the owner of the session
   CRUD.readAll<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 

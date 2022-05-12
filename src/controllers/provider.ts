@@ -54,6 +54,8 @@ export async function addProvider(
  * @access Public
  */
 export async function getProvider(req: Request, res: express.Response) {
+  // TODO: hide providers that are not enrolled
+  // unless logged in user is admin or the provider they are looking for
   CRUD.read<ProviderType>(req, res, "provider", Provider);
 }
 
@@ -63,6 +65,8 @@ export async function getProvider(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
+  // TODO: hide providers that are not enrolled
+  // unless logged in user is admin
   CRUD.readAll<ProviderType>(req, res, "provider", Provider);
 }
 

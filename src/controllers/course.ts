@@ -47,6 +47,8 @@ export async function modifyCourse(
  * @access Public
  */
 export async function getCourse(req: Request, res: express.Response) {
+  // TODO: hide courses that belong to unenrolled providers
+  // unless the logged in user is admin or the owner of the course
   CRUD.read<CourseType>(req, res, "course", Course);
 }
 
@@ -56,6 +58,8 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
+  // TODO: hide courses that belong to unenrolled providers
+  // unless the logged in user is admin or the owner of the course
   CRUD.readAll(req, res, "course", Course);
 }
 

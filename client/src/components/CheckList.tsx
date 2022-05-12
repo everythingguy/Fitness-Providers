@@ -1,6 +1,6 @@
 import { KeysOfMultiType } from "../@types/misc";
 
-interface item {
+interface Item {
   id: number;
   text?: string;
 }
@@ -12,14 +12,14 @@ export const Checklist = ({
   textProperty = "text",
   id = "",
 }: {
-  items: item[];
+  items: Item[];
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onScrollBottom?: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
-  textProperty?: KeysOfMultiType<item, string>;
+  textProperty?: KeysOfMultiType<Item, string>;
   id?: string;
 }) => {
   const onScroll = (e) => {
-    let ele = e.target;
+    const ele = e.target;
     if (ele.scrollHeight - ele.scrollTop === ele.clientHeight) {
       if (onScrollBottom) onScrollBottom(e);
     }

@@ -2,12 +2,12 @@ import { createContext, useReducer } from "react";
 import UserReducer from "./UserReducer";
 import API from "../API/User";
 
-import User from "../@types/User";
+import User from "../@types/Models";
 
 interface State {
   loggedIn: boolean;
   user?: User;
-  setLogin?: () => void;
+  setLogin?: (relogin?: boolean) => void;
   logout?: () => void;
 }
 
@@ -24,8 +24,8 @@ export const UserContext = createContext(initialState);
 export const UserProvider: React.FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(UserReducer, initialState);
 
-  async function setLogin() {
-    if (!state.loggedIn) {
+  async function setLogin(relogin = false) {
+    if (!state.loggedIn || relogin) {
       const body = await API.getUserData();
       if (body.success && body.data.user)
         dispatch({

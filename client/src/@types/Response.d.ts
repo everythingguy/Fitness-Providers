@@ -1,4 +1,4 @@
-import User from "./User";
+import User, { Provider } from "./Models";
 
 export interface BaseResponse {
   success: boolean;
@@ -16,6 +16,12 @@ export interface UserResponse extends SuccessfulResponse {
   data: {
     user?: User;
     accessToken?: string;
+  };
+}
+
+export interface ProviderResponse extends SuccessfulResponse {
+  data: {
+    provider: Provider;
   };
 }
 

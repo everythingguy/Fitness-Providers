@@ -63,7 +63,6 @@ const ProviderSchema = new mongoose.Schema<Provider>(
     },
     address: {
       type: AddressSchema,
-      required: [true, "Missing address"],
     },
     isEnrolled: {
       type: Boolean,

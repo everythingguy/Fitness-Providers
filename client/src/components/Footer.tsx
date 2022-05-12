@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserState";
+import ProviderApplication from "./ProviderApplication";
 
 export const Footer: React.FC = () => {
   const contactEmail = process.env.MAIL_CONTACT_EMAIL;
@@ -19,10 +20,8 @@ export const Footer: React.FC = () => {
                 Create an Account
               </Link>
             )}
-            {loggedIn && user?.provider && (
-              <Link to="" className="text-decoration-none d-block text-light">
-                Become a provider
-              </Link>
+            {loggedIn && !user?.provider && (
+              <ProviderApplication buttonStyle="text-decoration-none d-block text-light" />
             )}
           </div>
           <div className="col text-center">

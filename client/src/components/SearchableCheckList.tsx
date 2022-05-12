@@ -3,7 +3,7 @@ import CheckList from "./CheckList";
 import { useEffect, useState } from "react";
 import { KeysOfMultiType } from "../@types/misc";
 
-interface item {
+interface Item {
   id: number;
   text?: string;
 }
@@ -16,9 +16,9 @@ export const SearchableChecklist = ({
   id = "",
 }: {
   placeholder: string;
-  items: item[];
+  items: Item[];
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  textProperty?: KeysOfMultiType<item, string>;
+  textProperty?: KeysOfMultiType<Item, string>;
   id?: string;
 }) => {
   const [visibleItems, setVisibleItems] = useState(items);

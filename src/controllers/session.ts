@@ -35,6 +35,8 @@ export async function modifySession(
  * @access Public
  */
 export async function getSession(req: Request, res: express.Response) {
+  // TODO: hide sessions that belong to unenrolled providers
+  // unless the logged in user is admin or the owner of the session
   CRUD.read<SessionType>(req, res, "session", Session);
 }
 
@@ -44,6 +46,8 @@ export async function getSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getSessions(req: Request, res: express.Response) {
+  // TODO: hide sessions that belong to unenrolled providers
+  // unless the logged in user is admin or the owner of the session
   CRUD.readAll<SessionType>(req, res, "session", Session);
 }
 

@@ -13,7 +13,7 @@ interface Address {
   country: string;
 }
 
-interface Provider extends Base {
+export interface Provider extends Base {
   user: Types.ObjectId;
   address: Address;
   isEnrolled: boolean;
