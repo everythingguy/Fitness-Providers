@@ -1,5 +1,5 @@
 import express from "express";
-import { Types, Model, FilterQuery } from "mongoose";
+import { Types, Model, FilterQuery, HydratedDocument } from "mongoose";
 import { postPatchErrorHandler } from "./errors";
 import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
@@ -42,12 +42,16 @@ export async function read<T extends Base>(
   res: express.Response,
   modelName: string,
   model: Model<T>,
+  filter?: (obj: HydratedDocument<T, {}, {}>) => boolean,
   query: FilterQuery<T> = { _id: req.params.id }
 ) {
   try {
     const obj = await model.findOne(query);
 
-    if (!obj)
+    let filterResult = false;
+    if (filter) filterResult = filter(obj);
+
+    if (!obj || filterResult)
       return res.status(404).json({
         success: false,
         error: `No ${modelName} found by that id`,
@@ -70,10 +74,14 @@ export async function readAll<T extends Base>(
   res: express.Response,
   modelName: string,
   model: Model<T>,
+  filter?: (
+    objs: HydratedDocument<T, {}, {}>[]
+  ) => HydratedDocument<T, {}, {}>[],
   query: FilterQuery<T> = {}
 ) {
   try {
-    const objs = await model.find(query);
+    let objs = await model.find(query);
+    if (filter) objs = filter(objs);
     return res.status(200).json({
       success: true,
       data: { [`${modelName}s`]: objs },
