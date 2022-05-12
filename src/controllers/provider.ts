@@ -57,9 +57,11 @@ export async function addProvider(
 export async function getProvider(req: Request, res: express.Response) {
   // hide providers that are not enrolled
   // unless logged in user is admin or the provider they are looking for
-  const query: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
-  if (req.user) query.push({ user: req.user._id });
-  if (req.user && req.user.isAdmin) query.push({});
+  const query: FilterQuery<ProviderType>[] = [
+    { isEnrolled: true, _id: req.params.id },
+  ];
+  if (req.user) query.push({ user: req.user._id, _id: req.params.id });
+  if (req.user && req.user.isAdmin) query.push({ _id: req.params.id });
 
   CRUD.read<ProviderType>(req, res, "provider", Provider, undefined, {
     $or: query,
@@ -75,7 +77,6 @@ export async function getProviders(req: Request, res: express.Response) {
   // hide providers that are not enrolled
   // unless logged in user is admin
   const query: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
-  // if (req.user) query.push({ user: req.user._id });
   if (req.user && req.user.isAdmin) query.push({});
 
   CRUD.readAll<ProviderType>(req, res, "provider", Provider, undefined, {

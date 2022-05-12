@@ -1,9 +1,14 @@
 import express from "express";
 
 import Course from "../models/course";
+import Provider from "../models/provider";
 import { Request, RequestBody } from "../@types/request";
-import { Course as CourseType } from "../@types/models";
+import {
+  Course as CourseType,
+  Provider as ProviderType,
+} from "../@types/models";
 import * as CRUD from "../utils/crud";
+import { FilterQuery } from "mongoose";
 
 /**
  * @desc Add a course to a provider
@@ -47,9 +52,22 @@ export async function modifyCourse(
  * @access Public
  */
 export async function getCourse(req: Request, res: express.Response) {
-  // TODO: hide courses that belong to unenrolled providers
+  // hide courses that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the course
-  CRUD.read<CourseType>(req, res, "course", Course);
+  const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+  if (req.provider) providerFilter.push({ _id: req.provider._id });
+
+  const approvedProviders = await Provider.find({ $or: providerFilter }).select(
+    "_id"
+  );
+
+  let query: FilterQuery<CourseType> = {
+    provider: approvedProviders,
+    _id: req.params.id,
+  };
+  if (req.user && req.user.isAdmin) query = { _id: req.params.id };
+
+  CRUD.read<CourseType>(req, res, "course", Course, undefined, query);
 }
 
 /**
@@ -58,9 +76,19 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
-  // TODO: hide courses that belong to unenrolled providers
+  // hide courses that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the course
-  CRUD.readAll(req, res, "course", Course);
+  const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+  if (req.provider) providerFilter.push({ _id: req.provider._id });
+
+  const approvedProviders = await Provider.find({ $or: providerFilter }).select(
+    "_id"
+  );
+
+  let query: FilterQuery<CourseType> = { provider: approvedProviders };
+  if (req.user && req.user.isAdmin) query = {};
+
+  CRUD.readAll(req, res, "course", Course, undefined, query);
 }
 
 /**

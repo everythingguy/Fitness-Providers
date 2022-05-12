@@ -12,7 +12,7 @@ router
     Permission.isLoggedInAsProvider,
     Permission.isOwnerOrAdmin(
       Permission.OwnerOfProvider,
-      false,
+      true,
       "provider",
       "You cannot create course for another provider"
     ),

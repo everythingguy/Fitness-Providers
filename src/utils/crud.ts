@@ -76,12 +76,12 @@ export async function readAll<T extends Base>(
   model: Model<T>,
   filter?: (
     objs: HydratedDocument<T, {}, {}>[]
-  ) => HydratedDocument<T, {}, {}>[],
+  ) => Promise<HydratedDocument<T, {}, {}>[]>,
   query: FilterQuery<T> = {}
 ) {
   try {
     let objs = await model.find(query);
-    if (filter) objs = filter(objs);
+    if (filter) objs = await filter(objs);
     return res.status(200).json({
       success: true,
       data: { [`${modelName}s`]: objs },
