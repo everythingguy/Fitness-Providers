@@ -1,4 +1,4 @@
-const Searchbar = ({
+export const Searchbar = ({
   placeholder,
   onChange,
   id,

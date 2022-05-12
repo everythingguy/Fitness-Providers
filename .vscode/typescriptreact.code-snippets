@@ -27,7 +27,10 @@
       "",
       "export const $1: React.FC<Props> = () => {",
       "\t\treturn(<>$2</>);",
-      "}"
+      "}",
+      "",
+      "export default $1;",
+      ""
     ],
     "description": "Typescript React Function Component"
   }

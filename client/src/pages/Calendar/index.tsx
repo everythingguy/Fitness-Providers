@@ -5,3 +5,5 @@ interface Props {}
 export const Calendar: React.FC<Props> = () => {
   return <></>;
 };
+
+export default Calendar;

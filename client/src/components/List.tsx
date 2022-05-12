@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const List = ({
+export const List = ({
   title,
   items,
 }: {

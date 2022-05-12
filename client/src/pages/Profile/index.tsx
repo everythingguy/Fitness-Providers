@@ -8,3 +8,4 @@ export const Profile: React.FC<Props> = () => {
 
 export * from "./Management";
 export * from "./MyProfile";
+export default Profile;

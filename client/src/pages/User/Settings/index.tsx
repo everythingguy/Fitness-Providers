@@ -5,3 +5,5 @@ interface Props {}
 export const Settings: React.FC<Props> = () => {
   return <></>;
 };
+
+export default Settings;

@@ -5,7 +5,7 @@ interface item {
   text?: string;
 }
 
-const Checklist = ({
+export const Checklist = ({
   items,
   onChange,
   onScrollBottom,

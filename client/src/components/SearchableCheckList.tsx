@@ -8,7 +8,7 @@ interface item {
   text?: string;
 }
 
-const SearchableChecklist = ({
+export const SearchableChecklist = ({
   placeholder,
   items,
   onChange,
