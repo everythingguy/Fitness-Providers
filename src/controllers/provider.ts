@@ -4,6 +4,7 @@ import Provider from "../models/provider";
 import { Request, RequestBody } from "../@types/request";
 import { Provider as ProviderType } from "../@types/models";
 import * as CRUD from "../utils/crud";
+import { FilterQuery } from "mongoose";
 
 // middleware
 // attach provider to req
@@ -54,9 +55,15 @@ export async function addProvider(
  * @access Public
  */
 export async function getProvider(req: Request, res: express.Response) {
-  // TODO: hide providers that are not enrolled
+  // hide providers that are not enrolled
   // unless logged in user is admin or the provider they are looking for
-  CRUD.read<ProviderType>(req, res, "provider", Provider);
+  const query: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+  if (req.user) query.push({ user: req.user._id });
+  if (req.user && req.user.isAdmin) query.push({});
+
+  CRUD.read<ProviderType>(req, res, "provider", Provider, undefined, {
+    $or: query,
+  });
 }
 
 /**
@@ -65,9 +72,15 @@ export async function getProvider(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
-  // TODO: hide providers that are not enrolled
+  // hide providers that are not enrolled
   // unless logged in user is admin
-  CRUD.readAll<ProviderType>(req, res, "provider", Provider);
+  const query: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+  // if (req.user) query.push({ user: req.user._id });
+  if (req.user && req.user.isAdmin) query.push({});
+
+  CRUD.readAll<ProviderType>(req, res, "provider", Provider, undefined, {
+    $or: query,
+  });
 }
 
 /**
