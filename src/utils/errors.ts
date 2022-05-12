@@ -44,7 +44,7 @@ export function postPatchErrorHandler(res: express.Response, error: any) {
   } else if (error.name === "UniqueError") {
     return res.status(409).json({
       success: false,
-      error: error.message,
+      error: { [error.message.split(" ")[0]]: error.message },
     });
   } else if (error.name === "CastError") {
     return res.status(400).json({

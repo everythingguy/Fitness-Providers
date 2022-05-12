@@ -147,7 +147,9 @@ describe(`POST ${apiPath}/users/register`, () => {
         expect(JSON.parse(res.text) as errorResponse).toBeDefined();
         const resp = JSON.parse(res.text) as errorResponse;
         expect(resp.success).toBeFalsy();
-        expect(resp.error).toEqual("password and re_password do not match");
+        expect(resp.error).toEqual({
+          password: "password and confirm password do not match",
+        });
         done();
       });
   });

@@ -8,7 +8,7 @@ export default class API {
     email: string,
     username: string,
     password: string,
-    re_password: string
+    confirmPassword: string
   ): Promise<UserResponse | ErrorResponse> {
     const request = new DataRequest("POST", "users/register");
     request.setBody({
@@ -17,7 +17,7 @@ export default class API {
       email,
       username,
       password,
-      re_password,
+      re_password: confirmPassword,
     });
 
     return new Promise((res) => {
