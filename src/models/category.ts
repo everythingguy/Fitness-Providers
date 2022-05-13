@@ -53,6 +53,7 @@ CategorySchema.pre("remove", function (next) {
 
 CategorySchema.post("save", UniqueErrorRaiser);
 CategorySchema.post("updateOne", UniqueErrorRaiser);
+CategorySchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
 const model: mongoose.PaginateModel<Category, {}, {}> = mongoose.model<
   Category,

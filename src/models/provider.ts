@@ -123,6 +123,7 @@ ProviderSchema.pre("remove", function (next) {
 
 ProviderSchema.post("save", UniqueErrorRaiser);
 ProviderSchema.post("updateOne", UniqueErrorRaiser);
+ProviderSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
 ProviderSchema.method("getCourses", async function (this: Provider) {
   return await Course.find({ provider: this._id });

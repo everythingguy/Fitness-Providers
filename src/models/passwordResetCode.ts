@@ -57,6 +57,7 @@ PasswordResetCodeSchema.pre("save", function (next) {
 
 PasswordResetCodeSchema.post("save", UniqueErrorRaiser);
 PasswordResetCodeSchema.post("updateOne", UniqueErrorRaiser);
+PasswordResetCodeSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
 const model: mongoose.PaginateModel<PasswordResetCode, {}, {}> = mongoose.model<
   PasswordResetCode,
