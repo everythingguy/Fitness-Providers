@@ -81,7 +81,7 @@ export async function readAll<T extends Base>(
 ) {
   const pageLimit = 50;
   let page = 1;
-  const sort = req.query.sort ? req.query.sort : "createdAt";
+  const sort = req.query.sort ? req.query.sort : "-createdAt";
 
   try {
     page = Math.max(1, parseInt(req.query.page as any, 10));
