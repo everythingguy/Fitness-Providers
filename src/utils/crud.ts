@@ -81,10 +81,10 @@ export async function readAll<T extends Base>(
 ) {
   const pageLimit = 50;
   let page = 1;
-  const sort = req.params.sort ? req.params.sort : "createdAt";
+  const sort = req.query.sort ? req.query.sort : "createdAt";
 
   try {
-    page = Math.max(1, parseInt(req.params.page, 10));
+    page = Math.max(1, parseInt(req.query.page as any, 10));
     if (isNaN(page)) throw new Error();
   } catch (e) {
     page = 1;
