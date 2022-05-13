@@ -8,7 +8,8 @@ import {
   Provider as ProviderType,
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
+import { filterTags } from "./../utils/filter";
 
 /**
  * @desc Add a course to a provider
@@ -76,6 +77,9 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
+  // filter based on tags
+  const tagFilter: Types.ObjectId[] = filterTags(req);
+
   // hide courses that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the course
   let query: FilterQuery<CourseType>;
@@ -89,7 +93,7 @@ export async function getCourses(req: Request, res: express.Response) {
       $or: providerFilter,
     }).select("_id");
 
-    query = { provider: approvedProviders };
+    query = { provider: approvedProviders, tags: tagFilter };
   }
 
   CRUD.readAll(req, res, "course", Course, query);

@@ -4,7 +4,8 @@ import Provider from "../models/provider";
 import { Request, RequestBody } from "../@types/request";
 import { Provider as ProviderType } from "../@types/models";
 import * as CRUD from "../utils/crud";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
+import { filterTags } from "./../utils/filter";
 
 // middleware
 // attach provider to req
@@ -74,11 +75,16 @@ export async function getProvider(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
+  // filter based on tags
+  const tagFilter: Types.ObjectId[] = filterTags(req);
+
   // hide providers that are not enrolled
   // unless logged in user is admin or the provider
-  const query: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
-  if (req.provider) query.push({ _id: req.provider._id });
-  if (req.user && req.user.isAdmin) query.push({});
+  const query: FilterQuery<ProviderType>[] = [
+    { isEnrolled: true, tags: tagFilter },
+  ];
+  if (req.provider) query.push({ _id: req.provider._id, tags: tagFilter });
+  if (req.user && req.user.isAdmin) query.push({ tags: tagFilter });
 
   CRUD.readAll<ProviderType>(req, res, "provider", Provider, {
     $or: query,

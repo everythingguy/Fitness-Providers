@@ -84,7 +84,7 @@ export async function readAll<T extends Base>(
   const sort = req.query.sort ? req.query.sort : "-createdAt";
 
   try {
-    page = Math.max(1, parseInt(req.query.page as any, 10));
+    page = Math.max(1, parseInt(req.query.page as string, 10));
     if (isNaN(page)) throw new Error();
   } catch (e) {
     page = 1;
