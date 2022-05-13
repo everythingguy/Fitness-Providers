@@ -70,6 +70,7 @@
     "express-session": "^1.17.2",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.6.0",
     "mongoose": "^6.3.2",
     "mongoose-paginate-v2": "^1.6.3",
     "nodemailer": "^6.7.5",
