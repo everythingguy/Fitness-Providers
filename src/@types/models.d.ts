@@ -34,6 +34,7 @@ export interface Provider extends Base {
   phone: string;
   bio?: string;
   website?: string;
+  image?: string;
   tags: Tag[] | Types.ObjectId[];
   getCourses: () => Promise<Course[]>;
 }
@@ -64,6 +65,7 @@ export interface Course extends Base {
   description: string;
   provider: Provider | Types.ObjectId;
   tags: Tag[] | Types.ObjectId[];
+  image?: string;
   getSessions: () => Promise<Session[]>;
 }
 
@@ -71,6 +73,7 @@ export interface Session extends Base {
   course: Course | Types.ObjectId;
   URL: string;
   name: string;
+  image?: string;
   liveSession: LiveSession | Types.ObjectId;
 }
 

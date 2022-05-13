@@ -25,7 +25,7 @@ export async function addCourse(
     res,
     "course",
     Course,
-    [],
+    ["image"],
     [
       {
         source: "provider",
@@ -44,7 +44,7 @@ export async function modifyCourse(
   req: RequestBody<CourseType>,
   res: express.Response
 ) {
-  CRUD.update<CourseType>(req, res, "course", Course);
+  CRUD.update<CourseType>(req, res, "course", Course, ["image"]);
 }
 
 /**

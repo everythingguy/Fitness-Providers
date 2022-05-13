@@ -31,6 +31,11 @@ const SessionSchema = new mongoose.Schema<Session>(
       trim: true,
       maxLength: [50, "name has max length of 50"],
     },
+    image: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     liveSession: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "LiveSession",

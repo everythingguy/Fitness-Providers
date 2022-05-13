@@ -20,7 +20,7 @@ export async function addSession(
   req: RequestBody<SessionType>,
   res: express.Response
 ) {
-  CRUD.create<SessionType>(req, res, "session", Session);
+  CRUD.create<SessionType>(req, res, "session", Session, ["image"]);
 }
 
 /**
@@ -32,7 +32,7 @@ export async function modifySession(
   req: RequestBody<SessionType>,
   res: express.Response
 ) {
-  CRUD.update<SessionType>(req, res, "session", Session);
+  CRUD.update<SessionType>(req, res, "session", Session, ["image"]);
 }
 
 /**

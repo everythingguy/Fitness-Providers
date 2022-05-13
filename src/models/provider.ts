@@ -84,6 +84,11 @@ const ProviderSchema = new mongoose.Schema<Provider>(
       trim: true,
       validate: [validator.isURL, "Invalid URL"],
     },
+    image: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     tags: [
       {
         type: mongoose.Schema.Types.ObjectId,

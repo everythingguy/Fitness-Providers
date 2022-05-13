@@ -40,7 +40,7 @@ export async function addProvider(
     res,
     "provider",
     Provider,
-    ["isEnrolled"],
+    ["isEnrolled", "image"],
     [
       {
         source: "user",
@@ -109,5 +109,5 @@ export async function modifyProvider(
   req: RequestBody<ProviderType>,
   res: express.Response
 ) {
-  CRUD.update(req, res, "provider", Provider, ["isEnrolled"]);
+  CRUD.update(req, res, "provider", Provider, ["isEnrolled", "image"]);
 }

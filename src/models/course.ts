@@ -32,6 +32,11 @@ const CourseSchema = new mongoose.Schema<Course>(
           `Provider (${value}) not found`,
       },
     },
+    image: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     tags: [
       {
         type: mongoose.Schema.Types.ObjectId,
