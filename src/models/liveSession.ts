@@ -1,9 +1,10 @@
-import mongoose, { Model } from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import validator from "validator";
 import { LiveSession, Recurring } from "../@types/models";
 import { WeekDays } from "../@types/enums";
 import { refValidator } from "../utils/validators";
 import Session from "./session";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -68,14 +69,17 @@ const LiveSessionSchema = new mongoose.Schema<LiveSession>(
   }
 );
 
-LiveSessionSchema.pre("validate", function (this: LiveSession, next) {
+LiveSessionSchema.plugin(Pagination);
+
+LiveSessionSchema.post("validate", function (this: LiveSession, next) {
   if (this.beginDateTime > this.endDateTime)
     next(new Error("The event must start before it ends"));
   else next();
 });
 
-const model: Model<LiveSession> = mongoose.model<LiveSession>(
-  "LiveSession",
-  LiveSessionSchema
-);
+const model: mongoose.PaginateModel<LiveSession, {}, {}> = mongoose.model<
+  LiveSession,
+  PaginateModel<LiveSession>
+>("LiveSession", LiveSessionSchema);
+
 export default model;

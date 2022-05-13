@@ -1,4 +1,4 @@
-import mongoose, { Model } from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import validator from "validator";
 import { refValidator } from "../utils/validators";
 import { Provider, Address } from "../@types/models";
@@ -6,6 +6,7 @@ import Tag from "./tag";
 import Course from "./course";
 import { UniqueErrorRaiser } from "../utils/errors";
 import User from "./user";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -113,6 +114,8 @@ const ProviderSchema = new mongoose.Schema<Provider>(
   }
 );
 
+ProviderSchema.plugin(Pagination);
+
 ProviderSchema.pre("remove", function (next) {
   Course.remove({ provider: this._id }).exec();
   next();
@@ -125,8 +128,9 @@ ProviderSchema.method("getCourses", async function (this: Provider) {
   return await Course.find({ provider: this._id });
 });
 
-const model: Model<Provider> = mongoose.model<Provider>(
-  "Provider",
-  ProviderSchema
-);
+const model: mongoose.PaginateModel<Provider, {}, {}> = mongoose.model<
+  Provider,
+  PaginateModel<Provider>
+>("Provider", ProviderSchema);
+
 export default model;

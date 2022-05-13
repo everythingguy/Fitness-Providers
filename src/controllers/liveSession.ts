@@ -66,14 +66,7 @@ export async function getLiveSession(req: Request, res: express.Response) {
     query = { session: approvedSessions, _id: req.params.id };
   }
 
-  CRUD.read<LiveSessionType>(
-    req,
-    res,
-    "liveSession",
-    LiveSession,
-    undefined,
-    query
-  );
+  CRUD.read<LiveSessionType>(req, res, "liveSession", LiveSession, query);
 }
 
 /**
@@ -106,14 +99,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
     query = { session: approvedSessions };
   }
 
-  CRUD.readAll<LiveSessionType>(
-    req,
-    res,
-    "liveSession",
-    LiveSession,
-    undefined,
-    query
-  );
+  CRUD.readAll<LiveSessionType>(req, res, "liveSession", LiveSession, query);
 }
 
 /**

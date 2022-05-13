@@ -1,8 +1,9 @@
-import mongoose, { Model } from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import { Category } from "../@types/models";
 import Tag from "./tag";
 import { UniqueErrorRaiser } from "../utils/errors";
 import { refValidator } from "../utils/validators";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -41,6 +42,8 @@ const CategorySchema = new mongoose.Schema<Category>(
   }
 );
 
+CategorySchema.plugin(Pagination);
+
 CategorySchema.pre("remove", function (next) {
   for (const tag of this.tags) {
     Tag.findByIdAndRemove(tag).exec();
@@ -51,8 +54,9 @@ CategorySchema.pre("remove", function (next) {
 CategorySchema.post("save", UniqueErrorRaiser);
 CategorySchema.post("updateOne", UniqueErrorRaiser);
 
-const model: Model<Category> = mongoose.model<Category>(
-  "Category",
-  CategorySchema
-);
+const model: mongoose.PaginateModel<Category, {}, {}> = mongoose.model<
+  Category,
+  PaginateModel<Category>
+>("Category", CategorySchema);
+
 export default model;

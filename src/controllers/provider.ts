@@ -63,7 +63,7 @@ export async function getProvider(req: Request, res: express.Response) {
   if (req.user) query.push({ user: req.user._id, _id: req.params.id });
   if (req.user && req.user.isAdmin) query.push({ _id: req.params.id });
 
-  CRUD.read<ProviderType>(req, res, "provider", Provider, undefined, {
+  CRUD.read<ProviderType>(req, res, "provider", Provider, {
     $or: query,
   });
 }
@@ -80,7 +80,7 @@ export async function getProviders(req: Request, res: express.Response) {
   if (req.provider) query.push({ _id: req.provider._id });
   if (req.user && req.user.isAdmin) query.push({});
 
-  CRUD.readAll<ProviderType>(req, res, "provider", Provider, undefined, {
+  CRUD.readAll<ProviderType>(req, res, "provider", Provider, {
     $or: query,
   });
 }

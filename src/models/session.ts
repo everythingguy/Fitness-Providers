@@ -1,9 +1,10 @@
 import { refValidator } from "../utils/validators";
-import mongoose, { Model } from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import validator from "validator";
 import { Session } from "../@types/models";
 import Course from "./course";
 import LiveSession from "./liveSession";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -56,10 +57,16 @@ const SessionSchema = new mongoose.Schema<Session>(
   }
 );
 
+SessionSchema.plugin(Pagination);
+
 SessionSchema.pre("remove", function (next) {
   LiveSession.findByIdAndRemove(this.liveSession).exec();
   next();
 });
 
-const model: Model<Session> = mongoose.model<Session>("Session", SessionSchema);
+const model: mongoose.PaginateModel<Session, {}, {}> = mongoose.model<
+  Session,
+  PaginateModel<Session>
+>("Session", SessionSchema);
+
 export default model;

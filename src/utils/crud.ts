@@ -1,5 +1,12 @@
 import express from "express";
-import { Types, Model, FilterQuery, HydratedDocument } from "mongoose";
+import {
+  Types,
+  Model,
+  FilterQuery,
+  HydratedDocument,
+  PaginateModel,
+  PaginateResult,
+} from "mongoose";
 import { postPatchErrorHandler } from "./errors";
 import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
@@ -42,16 +49,12 @@ export async function read<T extends Base>(
   res: express.Response,
   modelName: string,
   model: Model<T>,
-  filter?: (obj: HydratedDocument<T, {}, {}>) => boolean,
   query: FilterQuery<T> = { _id: req.params.id }
 ) {
   try {
     const obj = await model.findOne(query);
 
-    let filterResult = false;
-    if (filter) filterResult = filter(obj);
-
-    if (!obj || filterResult)
+    if (!obj)
       return res.status(404).json({
         success: false,
         error: `No ${modelName} found by that id`,
@@ -73,20 +76,37 @@ export async function readAll<T extends Base>(
   req: Request,
   res: express.Response,
   modelName: string,
-  model: Model<T>,
-  filter?: (
-    objs: HydratedDocument<T, {}, {}>[]
-  ) => Promise<HydratedDocument<T, {}, {}>[]>,
+  model: PaginateModel<T, {}, {}>,
   query: FilterQuery<T> = {}
 ) {
+  const pageLimit = 50;
+  let page = 1;
+
   try {
-    let objs = await model.find(query);
-    if (filter) objs = await filter(objs);
-    return res.status(200).json({
-      success: true,
-      data: { [`${modelName}s`]: objs },
+    page = Math.max(1, parseInt(req.params.page, 10));
+    if (isNaN(page)) throw new Error();
+  } catch (e) {
+    page = 1;
+  }
+
+  try {
+    const objs = await model.paginate(query, {
+      page,
+      limit: pageLimit,
+      sort: "createdAt",
     });
+
+    let resJSON: any = {
+      success: true,
+      data: { [`${modelName}s`]: objs.docs },
+    };
+    resJSON = { ...objs, ...resJSON };
+    delete resJSON.docs;
+
+    return res.status(200).json(resJSON);
   } catch (error) {
+    // tslint:disable-next-line: no-console
+    console.log(error);
     return res.status(500).json({
       success: false,
       error: "Server Error",

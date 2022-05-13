@@ -1,9 +1,10 @@
-import mongoose, { Model } from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import bcrypt from "bcryptjs";
 import validator from "validator";
 import { User } from "../@types/models";
 import Provider from "./provider";
 import { UniqueErrorRaiser } from "../utils/errors";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -75,6 +76,8 @@ const UserSchema = new mongoose.Schema<User>(
   }
 );
 
+UserSchema.plugin(Pagination);
+
 UserSchema.virtual("name").get(function (this: User) {
   return `${this.firstName} ${this.lastName}`;
 });
@@ -104,5 +107,9 @@ UserSchema.methods.isValidPassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-const model: Model<User> = mongoose.model<User>("User", UserSchema);
+const model: mongoose.PaginateModel<User, {}, {}> = mongoose.model<
+  User,
+  PaginateModel<User>
+>("User", UserSchema);
+
 export default model;

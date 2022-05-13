@@ -1,8 +1,9 @@
 import { refValidator } from "../utils/validators";
-import mongoose, { Model } from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import { Tag } from "../@types/models";
 import { UniqueErrorRaiser } from "../utils/errors";
 import Category from "./category";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -51,8 +52,14 @@ const TagSchema = new mongoose.Schema<Tag>(
   }
 );
 
+TagSchema.plugin(Pagination);
+
 TagSchema.post("save", UniqueErrorRaiser);
 TagSchema.post("updateOne", UniqueErrorRaiser);
 
-const model: Model<Tag> = mongoose.model<Tag>("Tag", TagSchema);
+const model: mongoose.PaginateModel<Tag, {}, {}> = mongoose.model<
+  Tag,
+  PaginateModel<Tag>
+>("Tag", TagSchema);
+
 export default model;

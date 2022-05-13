@@ -1,9 +1,10 @@
-import mongoose, { Model } from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import { Course } from "../@types/models";
 import Tag from "./tag";
 import Session from "./session";
 import { refValidator } from "../utils/validators";
 import Provider from "./provider";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -61,6 +62,8 @@ const CourseSchema = new mongoose.Schema<Course>(
   }
 );
 
+CourseSchema.plugin(Pagination);
+
 CourseSchema.pre("remove", function (next) {
   Session.remove({ course: this._id }).exec();
   next();
@@ -70,5 +73,9 @@ CourseSchema.virtual("getSessions", async function (this: Course) {
   return await Session.find({ course: this._id });
 });
 
-const model: Model<Course> = mongoose.model<Course>("Course", CourseSchema);
+const model: mongoose.PaginateModel<Course, {}, {}> = mongoose.model<
+  Course,
+  PaginateModel<Course>
+>("Course", CourseSchema);
+
 export default model;

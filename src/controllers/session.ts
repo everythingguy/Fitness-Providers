@@ -61,7 +61,7 @@ export async function getSession(req: Request, res: express.Response) {
     query = { course: approvedCourses, _id: req.params.id };
   }
 
-  CRUD.read<SessionType>(req, res, "session", Session, undefined, query);
+  CRUD.read<SessionType>(req, res, "session", Session, query);
 }
 
 /**
@@ -90,7 +90,7 @@ export async function getSessions(req: Request, res: express.Response) {
     query = { course: approvedCourses };
   }
 
-  CRUD.readAll<SessionType>(req, res, "session", Session, undefined, query);
+  CRUD.readAll<SessionType>(req, res, "session", Session, query);
 }
 
 /**
