@@ -4,6 +4,7 @@ import Category from "../models/category";
 import { Request, RequestBody } from "../@types/request";
 import { Category as CategoryType } from "../@types/models";
 import * as CRUD from "../utils/crud";
+import { errorResponse } from "../@types/response";
 
 /**
  * @desc Add Category
@@ -32,7 +33,59 @@ export async function getCategory(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCategories(req: Request, res: express.Response) {
-  CRUD.readAll<CategoryType>(req, res, "category", Category);
+  try {
+    const {
+      appliesToProvider,
+      appliesToCourse,
+    }: { appliesToProvider?: string; appliesToCourse?: string } = req.query;
+
+    const filter: [{ $eq: (string | boolean)[] }] = [
+      { $eq: ["$$categoryID", "$category"] },
+    ];
+
+    if (appliesToProvider)
+      filter.push({
+        $eq: ["$appliesToProvider", appliesToProvider.toLowerCase() === "true"],
+      });
+
+    if (appliesToCourse)
+      filter.push({
+        $eq: ["$appliesToCourse", appliesToCourse.toLowerCase() === "true"],
+      });
+
+    const categories = await Category.aggregate([
+      {
+        $lookup: {
+          from: "tags",
+          // localField: "_id",
+          // foreignField: "category",
+          let: { categoryID: "$_id" },
+          as: "tags",
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: filter,
+                },
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: { categories },
+    });
+  } catch (error) {
+    // tslint:disable-next-line: no-console
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    } as errorResponse);
+  }
 }
 
 /**

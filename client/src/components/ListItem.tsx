@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const List = ({
+export const ListItem = ({
   title,
   items,
 }: {
@@ -17,7 +17,7 @@ export const List = ({
   ];
 }) => {
   return (
-    <div className="DetailedList">
+    <div className="ListItem">
       <div className="d-grid gap-1 p-2">
         <h4 className="mb-0 ms-4 fw-bold">{title}</h4>
         <div className="list-group rounded-2">
@@ -51,4 +51,4 @@ export const List = ({
   );
 };
 
-export default List;
+export default ListItem;

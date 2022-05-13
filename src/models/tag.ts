@@ -19,6 +19,7 @@ const TagSchema = new mongoose.Schema<Tag>(
         message: ({ value }: { value: string }) =>
           `Category (${value}) not found`,
       },
+      index: true,
     },
     value: {
       type: String,
@@ -29,12 +30,10 @@ const TagSchema = new mongoose.Schema<Tag>(
     },
     appliesToProvider: {
       type: Boolean,
-      required: [true, "Missing appliesToProvider"],
       default: true,
     },
     appliesToCourse: {
       type: Boolean,
-      required: [true, "Missing appliesToCourse"],
       default: true,
     },
   },

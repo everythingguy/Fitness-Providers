@@ -77,7 +77,8 @@ export async function readAll<T extends Base>(
   res: express.Response,
   modelName: string,
   model: PaginateModel<T, {}, {}>,
-  query: FilterQuery<T> = {}
+  query: FilterQuery<T> = {},
+  plural?: string
 ) {
   const pageLimit = 50;
   let page = 1;
@@ -99,7 +100,7 @@ export async function readAll<T extends Base>(
 
     let resJSON: any = {
       success: true,
-      data: { [`${modelName}s`]: objs.docs },
+      data: { [plural ? plural : `${modelName}s`]: objs.docs },
     };
     resJSON = { ...objs, ...resJSON };
     delete resJSON.docs;

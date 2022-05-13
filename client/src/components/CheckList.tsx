@@ -1,15 +1,15 @@
 import { KeysOfMultiType } from "../@types/misc";
 
 interface Item {
-  id: number;
-  text?: string;
+  _id: number;
+  value?: string;
 }
 
 export const Checklist = ({
   items,
   onChange,
   onScrollBottom,
-  textProperty = "text",
+  textProperty = "value",
   id = "",
 }: {
   items: Item[];
@@ -38,7 +38,7 @@ export const Checklist = ({
               className="form-check-input"
               type="checkbox"
               id={item[textProperty] + id}
-              data-id={item.id}
+              data-id={item._id}
               onChange={onChange}
             />
             <label

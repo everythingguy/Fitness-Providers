@@ -6,7 +6,12 @@ import { Home } from "./pages/Home";
 import Directory from "./pages/Directory";
 import Calendar from "./pages/Calendar";
 import Course from "./pages/Course";
-import { Profile, Management, MyProfile } from "./pages/Profile";
+import {
+  Profile,
+  Management,
+  MyProfile,
+  EventManagement,
+} from "./pages/Profile";
 import * as UserPages from "./pages/User";
 import Terms from "./pages/Terms";
 
@@ -30,6 +35,10 @@ function App() {
               <Route path="/provider/profile/me" element={<MyProfile />} />
               <Route path="/provider/profile/:id" element={<Profile />} />
               <Route path="/provider/management" element={<Management />} />
+              <Route
+                path="/provider/management/events"
+                element={<EventManagement />}
+              />
 
               <Route path="/user/register" element={<UserPages.Register />} />
               <Route path="/user/login" element={<UserPages.Login />} />

@@ -1,9 +1,7 @@
-import mongoose, { PaginateModel } from "mongoose";
+import mongoose from "mongoose";
 import { Category } from "../@types/models";
 import Tag from "./tag";
 import { UniqueErrorRaiser } from "../utils/errors";
-import { refValidator } from "../utils/validators";
-import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -17,16 +15,6 @@ const CategorySchema = new mongoose.Schema<Category>(
       required: [true, "Missing name"],
       unique: true,
     },
-    tags: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Tag",
-        validate: {
-          validator: async (value: string) => await refValidator(Tag, value),
-          message: ({ value }: { value: string }) => `Tag (${value}) not found`,
-        },
-      },
-    ],
   },
   {
     collection: "categories",
@@ -42,12 +30,17 @@ const CategorySchema = new mongoose.Schema<Category>(
   }
 );
 
-CategorySchema.plugin(Pagination);
+CategorySchema.method("getTags", async function (this: Category) {
+  return await Tag.find({ category: this._id });
+});
 
-CategorySchema.pre("remove", function (next) {
-  for (const tag of this.tags) {
+CategorySchema.pre("remove", async function (next) {
+  const tags = await this.getTags();
+
+  for (const tag of tags) {
     Tag.findByIdAndRemove(tag).exec();
   }
+
   next();
 });
 
@@ -55,9 +48,9 @@ CategorySchema.post("save", UniqueErrorRaiser);
 CategorySchema.post("updateOne", UniqueErrorRaiser);
 CategorySchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-const model: mongoose.PaginateModel<Category, {}, {}> = mongoose.model<
-  Category,
-  PaginateModel<Category>
->("Category", CategorySchema);
+const model: mongoose.Model<Category> = mongoose.model<Category>(
+  "Category",
+  CategorySchema
+);
 
 export default model;

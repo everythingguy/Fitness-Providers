@@ -50,7 +50,7 @@ export interface Address {
 
 export interface Category extends Base {
   name: string;
-  tags: Tag[] | Types.ObjectId[];
+  getTags: () => Tag[];
 }
 
 export interface Tag extends Base {

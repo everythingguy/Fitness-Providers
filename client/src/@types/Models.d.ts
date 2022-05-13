@@ -23,6 +23,18 @@ export interface Provider extends Base {
   tags: Types.ObjectId[];
 }
 
+export interface Tag extends Base {
+  category: Types.ObjectId;
+  value: string;
+  appliesToProvider: boolean;
+  appliesToCourse: boolean;
+}
+
+export interface Category extends Base {
+  name: string;
+  tags: Tag[];
+}
+
 export default interface User extends Base {
   firstName: string;
   lastName: string;

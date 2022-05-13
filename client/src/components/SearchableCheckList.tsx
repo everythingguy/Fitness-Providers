@@ -4,15 +4,15 @@ import { useEffect, useState } from "react";
 import { KeysOfMultiType } from "../@types/misc";
 
 interface Item {
-  id: number;
-  text?: string;
+  _id: number;
+  value?: string;
 }
 
 export const SearchableChecklist = ({
   placeholder,
   items,
   onChange,
-  textProperty = "text",
+  textProperty = "value",
   id = "",
 }: {
   placeholder: string;
@@ -37,7 +37,7 @@ export const SearchableChecklist = ({
           );
         else
           return item
-            .text!.toLowerCase()
+            .value!.toLowerCase()
             .includes(e.target.value.toLowerCase());
       })
     );
