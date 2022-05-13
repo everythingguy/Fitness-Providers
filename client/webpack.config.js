@@ -8,9 +8,13 @@ const {
 } = require("clean-webpack-plugin");
 
 module.exports = () => {
-  const env = dotenv.config({
-    path: path.resolve(__dirname, "../.env")
+  // eslint-disable-next-line no-unused-expressions
+  dotenv.config({
+    path: path.resolve(__dirname, "../.env"),
+    override: false
   }).parsed;
+
+  console.log(process.env.MAIL_CONTACT_EMAIL);
 
   return {
     entry: "./src/index.tsx",
@@ -25,8 +29,8 @@ module.exports = () => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        "process.env.API_URL": JSON.stringify(env.API_URL),
-        "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(env.MAIL_CONTACT_EMAIL)
+        "process.env.API_URL": JSON.stringify(process.env.API_URL),
+        "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(process.env.MAIL_CONTACT_EMAIL)
       }),
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: ["./dist/**", "../public/dist/**"],
