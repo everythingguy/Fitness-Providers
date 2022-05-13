@@ -20,6 +20,7 @@ ARG MAIL_CONTACT_EMAIL=contact@yourdomain.com
 
 ENV NODE_ENV "production"
 ENV PORT 80
+ENV MAIL_CONTACT_EMAIL ${MAIL_CONTACT_EMAIL}
 
 RUN npm run build && \
     cd client && \
