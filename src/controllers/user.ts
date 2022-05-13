@@ -453,7 +453,7 @@ export async function resetPassword(
     if (password !== re_password)
       return res.status(400).json({
         success: false,
-        error: { password: "password and re_password do not match" },
+        error: { password: "password and confirm password do not match" },
       } as errorResponse);
 
     const user = await User.findById(resetCode.user);

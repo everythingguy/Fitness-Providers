@@ -1,9 +1,15 @@
 import express from "express";
 
+import Provider from "../models/provider";
+import Course from "../models/course";
 import Session from "../models/session";
 import { Request, RequestBody } from "../@types/request";
-import { Session as SessionType } from "../@types/models";
+import {
+  Provider as ProviderType,
+  Session as SessionType,
+} from "../@types/models";
 import * as CRUD from "../utils/crud";
+import { FilterQuery } from "mongoose";
 
 /**
  * @desc Add a session to a course
@@ -35,9 +41,27 @@ export async function modifySession(
  * @access Public
  */
 export async function getSession(req: Request, res: express.Response) {
-  // TODO: hide sessions that belong to unenrolled providers
+  // hide sessions that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the session
-  CRUD.read<SessionType>(req, res, "session", Session);
+  let query: FilterQuery<SessionType>;
+
+  if (req.user && req.user.isAdmin) query = { _id: req.params.id };
+  else {
+    const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+    if (req.provider) providerFilter.push({ _id: req.provider._id });
+
+    const approvedProviders = await Provider.find({
+      $or: providerFilter,
+    }).select("_id");
+
+    const approvedCourses = await Course.find({
+      provider: approvedProviders,
+    }).select("_id");
+
+    query = { course: approvedCourses, _id: req.params.id };
+  }
+
+  CRUD.read<SessionType>(req, res, "session", Session, undefined, query);
 }
 
 /**
@@ -46,9 +70,27 @@ export async function getSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getSessions(req: Request, res: express.Response) {
-  // TODO: hide sessions that belong to unenrolled providers
+  // hide sessions that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the session
-  CRUD.readAll<SessionType>(req, res, "session", Session);
+  let query: FilterQuery<SessionType>;
+
+  if (req.user && req.user.isAdmin) query = {};
+  else {
+    const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+    if (req.provider) providerFilter.push({ _id: req.provider._id });
+
+    const approvedProviders = await Provider.find({
+      $or: providerFilter,
+    }).select("_id");
+
+    const approvedCourses = await Course.find({
+      provider: approvedProviders,
+    }).select("_id");
+
+    query = { course: approvedCourses };
+  }
+
+  CRUD.readAll<SessionType>(req, res, "session", Session, undefined, query);
 }
 
 /**

@@ -75,8 +75,9 @@ export async function getProvider(req: Request, res: express.Response) {
  */
 export async function getProviders(req: Request, res: express.Response) {
   // hide providers that are not enrolled
-  // unless logged in user is admin
+  // unless logged in user is admin or the provider
   const query: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+  if (req.provider) query.push({ _id: req.provider._id });
   if (req.user && req.user.isAdmin) query.push({});
 
   CRUD.readAll<ProviderType>(req, res, "provider", Provider, undefined, {

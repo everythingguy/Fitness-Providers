@@ -78,15 +78,19 @@ export async function getCourse(req: Request, res: express.Response) {
 export async function getCourses(req: Request, res: express.Response) {
   // hide courses that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the course
-  const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
-  if (req.provider) providerFilter.push({ _id: req.provider._id });
+  let query: FilterQuery<CourseType>;
 
-  const approvedProviders = await Provider.find({ $or: providerFilter }).select(
-    "_id"
-  );
-
-  let query: FilterQuery<CourseType> = { provider: approvedProviders };
   if (req.user && req.user.isAdmin) query = {};
+  else {
+    const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+    if (req.provider) providerFilter.push({ _id: req.provider._id });
+
+    const approvedProviders = await Provider.find({
+      $or: providerFilter,
+    }).select("_id");
+
+    query = { provider: approvedProviders };
+  }
 
   CRUD.readAll(req, res, "course", Course, undefined, query);
 }
