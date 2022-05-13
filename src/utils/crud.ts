@@ -81,6 +81,7 @@ export async function readAll<T extends Base>(
 ) {
   const pageLimit = 50;
   let page = 1;
+  const sort = req.params.sort ? req.params.sort : "createdAt";
 
   try {
     page = Math.max(1, parseInt(req.params.page, 10));
@@ -93,7 +94,7 @@ export async function readAll<T extends Base>(
     const objs = await model.paginate(query, {
       page,
       limit: pageLimit,
-      sort: "createdAt",
+      sort,
     });
 
     let resJSON: any = {
