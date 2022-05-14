@@ -11,12 +11,7 @@ export const Header: React.FC = () => {
     <Navbar collapseOnSelect expand="lg" fixed="top" bg="white">
       <Container className="">
         <Navbar.Brand className="w-10 mx-auto mx-0 mx-lg-0 text-center">
-          <Nav.Link
-            as={Link}
-            to="/"
-            className="text-decoration-none text-secondary px-0 mx-0"
-            eventKey="link-1"
-          >
+          <Nav.Link as={Link} to="/" className="px-0 mx-0" eventKey="link-1">
             <img
               src="https://via.placeholder.com/150x40"
               className="text-center"
@@ -28,18 +23,13 @@ export const Header: React.FC = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto mx-lg-4 fw-bold ">
-            <Nav.Link
-              as={Link}
-              to="/"
-              className="text-decoration-none mx-2 my-1"
-              eventKey="link-2"
-            >
+            <Nav.Link as={Link} to="/" className="mx-2 my-1" eventKey="link-2">
               Home
             </Nav.Link>
             <Nav.Link
               as={Link}
               to="/calendar"
-              className="text-decoration-none mx-1 my-1"
+              className="mx-1 my-1"
               eventKey="link-3"
             >
               Calendar
@@ -47,7 +37,7 @@ export const Header: React.FC = () => {
             <Nav.Link
               as={Link}
               to="/directory"
-              className="text-decoration-none mx-1 my-1"
+              className="mx-1 my-1"
               eventKey="link-4"
             >
               Directory
@@ -68,18 +58,16 @@ export const Header: React.FC = () => {
                       <NavDropdown.Item
                         as={Link}
                         to="/provider/profile/me"
-                        role="button"
-                        className="text-decoration-none btn text-black"
                         eventKey="link-8"
+                        active={false}
                       >
                         <i className="bi bi-person-badge me-2"></i>My Profile
                       </NavDropdown.Item>
                       <NavDropdown.Item
                         as={Link}
                         to="/provider/management"
-                        role="button"
-                        className="text-decoration-none btn text-black"
                         eventKey="link-8"
+                        active={false}
                       >
                         <i className="bi bi-text-left me-2"></i>My Content
                       </NavDropdown.Item>
@@ -88,8 +76,8 @@ export const Header: React.FC = () => {
                   <NavDropdown.Item
                     as={Link}
                     to="/user/settings"
-                    className="text-decoration-none btn text-black"
                     eventKey="link-9"
+                    active={false}
                   >
                     <i className="bi bi-gear-wide me-2"></i>Settings
                   </NavDropdown.Item>
@@ -99,9 +87,8 @@ export const Header: React.FC = () => {
                       await User.logoutUser();
                       if (logout) await logout();
                     }}
-                    role="button"
-                    className="text-decoration-none"
                     eventKey="link-10"
+                    active={false}
                   >
                     <i className="bi bi-box-arrow-left me-2"></i>Log Out
                   </NavDropdown.Item>

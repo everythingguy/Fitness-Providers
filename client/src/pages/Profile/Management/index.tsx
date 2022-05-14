@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { Link, Navigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Searchbar from "../../../components/Searchbar";
 import { Category as CategoryType } from "../../../@types/Models";
 import Category from "../../../components/Category";
 import CategoryAPI from "../../../API/Category";
 import { CourseModal, SessionModal } from "./Modals";
+import { UserContext } from "../../../context/UserState";
 
 interface Props {}
 
 export const Management: React.FC<Props> = () => {
+  // logged in context
+  const { loggedIn, user } = useContext(UserContext);
+
   const [showCourseModal, setCourseModal] = useState(false);
   const [showSessionModal, setSessionModal] = useState(false);
   const [searchParams, setSearchParams] = useState<{
@@ -27,6 +31,11 @@ export const Management: React.FC<Props> = () => {
       setCategories(resp.data?.categories || []);
     });
   }, []);
+
+  /*
+  if (!(loggedIn && user && user.provider))
+    return <Navigate to="/user/login" />;
+    */
 
   return (
     <div className="ContentManagement">

@@ -14,8 +14,6 @@ module.exports = () => {
     override: false
   }).parsed;
 
-  console.log(process.env.MAIL_CONTACT_EMAIL);
-
   return {
     entry: "./src/index.tsx",
     devtool: "source-map",

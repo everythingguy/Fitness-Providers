@@ -11,27 +11,15 @@ interface Props {
 export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
   // field state
   const [errors, setError] = useState({
-    bio: null,
-    website: null,
-    phone: null,
-    "address.street1": null,
-    "address.street2": null,
-    "address.city": null,
-    "address.state": null,
-    "address.zip": null,
-    "address.country": null,
+    name: null,
+    description: null,
+    image: null,
   });
 
   const [formData, setFormData] = useState({
-    bio: "",
-    website: "",
-    phone: "",
-    "address.street1": "",
-    "address.street2": "",
-    "address.city": "",
-    "address.state": "",
-    "address.zip": "",
-    "address.country": "",
+    name: "",
+    description: "",
+    image: null,
   });
 
   const onChange = (e) => {
@@ -93,156 +81,32 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
       </Modal.Header>
       <Modal.Body>
         <div className="form-group mb-4">
-          <label className="form-label">Phone Number*:</label>
+          <label className="form-label">Name:</label>
           <input
-            className={
-              errors.phone ? "form-control is-invalid" : "form-control"
-            }
+            className={errors.name ? "form-control is-invalid" : "form-control"}
             type="text"
-            placeholder="Phone Number"
-            name="phone"
+            placeholder="Name"
+            name="name"
             required
             onChange={onChange}
             onKeyUp={enterSubmit}
           />
-          <div className="invalid-feedback">{errors.phone}</div>
+          <div className="invalid-feedback">{errors.name}</div>
         </div>
         <div className="form-group mb-4">
-          <label className="form-label">Website:</label>
-          <input
-            className={
-              errors.website ? "form-control is-invalid" : "form-control"
-            }
-            type="text"
-            placeholder="Website"
-            name="website"
-            required
-            onChange={onChange}
-            onKeyUp={enterSubmit}
-          />
-          <div className="invalid-feedback">
-            {errors.website + " Ex: https://mydomain.com"}
-          </div>
-        </div>
-        <div className="form-group mb-4">
-          <label className="form-label">Bio:</label>
+          <label className="form-label">Description:</label>
           <textarea
-            className={errors.bio ? "form-control is-invalid" : "form-control"}
+            className={
+              errors.description ? "form-control is-invalid" : "form-control"
+            }
             rows={5}
-            placeholder="bio"
-            name="bio"
+            placeholder="description"
+            name="description"
             required
             onChange={onChange}
             onKeyUp={enterSubmit}
           />
-          <div className="invalid-feedback">{errors.bio}</div>
-        </div>
-        <h5>Business Address (Optional):</h5>
-        <div className="form-group mb-4">
-          <label className="form-label">Street 1:</label>
-          <input
-            className={
-              errors["address.street1"]
-                ? "form-control is-invalid"
-                : "form-control"
-            }
-            type="text"
-            placeholder="Street 1"
-            name="address.street1"
-            onChange={onChange}
-            onKeyUp={enterSubmit}
-          />
-          <div className="invalid-feedback">{errors["address.street1"]}</div>
-        </div>
-        <div className="form-group mb-4">
-          <label className="form-label">Street 2:</label>
-          <input
-            className={
-              errors["address.street2"]
-                ? "form-control is-invalid"
-                : "form-control"
-            }
-            type="text"
-            placeholder="Street 2"
-            name="address.street2"
-            onChange={onChange}
-            onKeyUp={enterSubmit}
-          />
-          <div className="invalid-feedback">{errors["address.street2"]}</div>
-        </div>
-        <div className="form-group mb-4 container">
-          <div className="row">
-            <div className="col">
-              <label className="form-label">City:</label>
-              <input
-                className={
-                  errors["address.city"]
-                    ? "form-control is-invalid"
-                    : "form-control"
-                }
-                type="text"
-                placeholder="City"
-                name="address.city"
-                onChange={onChange}
-                onKeyUp={enterSubmit}
-              />
-              <div className="invalid-feedback">{errors["address.city"]}</div>
-            </div>
-            <div className="col">
-              <label className="form-label">State:</label>
-              <input
-                className={
-                  errors["address.state"]
-                    ? "form-control is-invalid"
-                    : "form-control"
-                }
-                type="text"
-                placeholder="State"
-                name="address.state"
-                onChange={onChange}
-                onKeyUp={enterSubmit}
-              />
-              <div className="invalid-feedback">{errors["address.state"]}</div>
-            </div>
-          </div>
-        </div>
-        <div className="form-group mb-4 container">
-          <div className="row">
-            <div className="col">
-              <label className="form-label">Zip Code:</label>
-              <input
-                className={
-                  errors["address.zip"]
-                    ? "form-control is-invalid"
-                    : "form-control"
-                }
-                type="text"
-                placeholder="Zip Code"
-                name="address.zip"
-                onChange={onChange}
-                onKeyUp={enterSubmit}
-              />
-              <div className="invalid-feedback">{errors["address.zip"]}</div>
-            </div>
-            <div className="col">
-              <label className="form-label">Country:</label>
-              <input
-                className={
-                  errors["address.country"]
-                    ? "form-control is-invalid"
-                    : "form-control"
-                }
-                type="text"
-                placeholder="Country"
-                name="address.country"
-                onChange={onChange}
-                onKeyUp={enterSubmit}
-              />
-              <div className="invalid-feedback">
-                {errors["address.country"]}
-              </div>
-            </div>
-          </div>
+          <div className="invalid-feedback">{errors.description}</div>
         </div>
       </Modal.Body>
       <Modal.Footer>

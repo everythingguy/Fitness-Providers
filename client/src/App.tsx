@@ -17,6 +17,8 @@ import Terms from "./pages/Terms";
 
 import Footer from "./components/Footer";
 
+import * as ErrorPages from "./pages/ErrorPages";
+
 import { UserProvider } from "./context/UserState";
 
 function App() {
@@ -52,6 +54,12 @@ function App() {
               />
               <Route path="/user/settings" element={<UserPages.Settings />} />
               <Route path="/terms" element={<Terms />} />
+
+              <Route path="/error/400" element={<ErrorPages.Error400 />} />
+              <Route path="/error/403" element={<ErrorPages.Error403 />} />
+              <Route path="/error/404" element={<ErrorPages.Error404 />} />
+              <Route path="/error/500" element={<ErrorPages.Error500 />} />
+              <Route path="*" element={<ErrorPages.Error404 />} />
             </Routes>
           </div>
         </div>
