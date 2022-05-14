@@ -20,7 +20,7 @@ export async function addCourse(
   req: RequestBody<CourseType>,
   res: express.Response
 ) {
-  CRUD.create<CourseType>(
+  await CRUD.create<CourseType>(
     req,
     res,
     "course",
@@ -44,7 +44,7 @@ export async function modifyCourse(
   req: RequestBody<CourseType>,
   res: express.Response
 ) {
-  CRUD.update<CourseType>(req, res, "course", Course, ["image"]);
+  await CRUD.update<CourseType>(req, res, "course", Course, ["image"]);
 }
 
 /**
@@ -68,7 +68,7 @@ export async function getCourse(req: Request, res: express.Response) {
   };
   if (req.user && req.user.isAdmin) query = { _id: req.params.id };
 
-  CRUD.read<CourseType>(req, res, "course", Course, query);
+  await CRUD.read<CourseType>(req, res, "course", Course, query);
 }
 
 /**
@@ -96,7 +96,7 @@ export async function getCourses(req: Request, res: express.Response) {
     query = { provider: approvedProviders, tags: tagFilter };
   }
 
-  CRUD.readAll(req, res, "course", Course, query);
+  await CRUD.readAll(req, res, "course", Course, query);
 }
 
 /**
@@ -105,5 +105,5 @@ export async function getCourses(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteCourse(req: Request, res: express.Response) {
-  CRUD.del(req, res, "course", Course);
+  await CRUD.del(req, res, "course", Course);
 }

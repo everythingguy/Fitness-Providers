@@ -1,26 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
+import Select from "react-select";
+
+import Tag from "../../../../API/Tag";
+import { Tag as TagType } from "../../../../@types/Models";
 
 interface Props {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   showModal: boolean;
 }
 
-// TODO: change this to the course modal
+// TODO: handle submit form and move location to live session
 
 export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
   // field state
   const [errors, setError] = useState({
     name: null,
     description: null,
+    location: null,
     image: null,
+    tags: null,
   });
 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    location: "",
     image: null,
+    tags: [],
   });
+
+  const [courseTags, setCourseTags] = useState<TagType[]>([]);
+
+  useEffect(() => {
+    Tag.getCourseTags().then((resp) => {
+      if (resp.success) setCourseTags(resp.data.tags);
+    });
+  }, []);
 
   const onChange = (e) => {
     if (e.target.type === "checkbox")
@@ -77,7 +93,7 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
   return (
     <Modal size="lg" show={showModal} onHide={() => setModal(!showModal)}>
       <Modal.Header>
-        <h5>Register as a Provider</h5>
+        <h5>Create a Course</h5>
       </Modal.Header>
       <Modal.Body>
         <div className="form-group mb-4">
@@ -107,6 +123,26 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
             onKeyUp={enterSubmit}
           />
           <div className="invalid-feedback">{errors.description}</div>
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Location:</label>
+          <Select
+            options={[{ value: "online", label: "Online" }]}
+            defaultValue={{ value: "online", label: "Online" }}
+          />
+          {errors.location && (
+            <div className="text-danger">{errors.location}</div>
+          )}
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Tags:</label>
+          <Select
+            options={courseTags.map((tag) => {
+              return { value: tag.value, label: tag.value };
+            })}
+            isMulti
+          />
+          {errors.location && <div className="text-danger">{errors.tags}</div>}
         </div>
       </Modal.Body>
       <Modal.Footer>

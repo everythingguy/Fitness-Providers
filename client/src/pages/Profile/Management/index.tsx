@@ -28,7 +28,7 @@ export const Management: React.FC<Props> = () => {
 
   useEffect(() => {
     CategoryAPI.getCourseCategories().then((resp) => {
-      setCategories(resp.data?.categories || []);
+      if (resp.success) setCategories(resp.data.categories);
     });
   }, []);
 

@@ -21,7 +21,7 @@ export async function addLiveSession(
   req: RequestBody<LiveSessionType>,
   res: express.Response
 ) {
-  CRUD.create<LiveSessionType>(req, res, "liveSession", LiveSession);
+  await CRUD.create<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 
 /**
@@ -33,7 +33,7 @@ export async function modifyLiveSession(
   req: RequestBody<LiveSessionType>,
   res: express.Response
 ) {
-  CRUD.update<LiveSessionType>(req, res, "liveSession", LiveSession);
+  await CRUD.update<LiveSessionType>(req, res, "liveSession", LiveSession);
 }
 
 /**
@@ -66,7 +66,7 @@ export async function getLiveSession(req: Request, res: express.Response) {
     query = { session: approvedSessions, _id: req.params.id };
   }
 
-  CRUD.read<LiveSessionType>(req, res, "liveSession", LiveSession, query);
+  await CRUD.read<LiveSessionType>(req, res, "liveSession", LiveSession, query);
 }
 
 /**
@@ -99,7 +99,13 @@ export async function getLiveSessions(req: Request, res: express.Response) {
     query = { session: approvedSessions };
   }
 
-  CRUD.readAll<LiveSessionType>(req, res, "liveSession", LiveSession, query);
+  await CRUD.readAll<LiveSessionType>(
+    req,
+    res,
+    "liveSession",
+    LiveSession,
+    query
+  );
 }
 
 /**
@@ -108,5 +114,5 @@ export async function getLiveSessions(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteLiveSession(req: Request, res: express.Response) {
-  CRUD.del<LiveSessionType>(req, res, "liveSession", LiveSession);
+  await CRUD.del<LiveSessionType>(req, res, "liveSession", LiveSession);
 }

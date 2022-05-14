@@ -31,6 +31,12 @@ export interface CategoryResponse extends SuccessfulResponse {
   };
 }
 
+export interface TagResponse extends SuccessfulResponse {
+  data: {
+    tags: Tag[];
+  };
+}
+
 export interface ErrorResponse extends BaseResponse {
   success: false;
   data?: undefined;

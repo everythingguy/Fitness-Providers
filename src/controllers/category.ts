@@ -15,7 +15,7 @@ export async function addCategory(
   req: RequestBody<CategoryType>,
   res: express.Response
 ) {
-  CRUD.create<CategoryType>(req, res, "category", Category);
+  await CRUD.create<CategoryType>(req, res, "category", Category);
 }
 
 /**
@@ -24,7 +24,7 @@ export async function addCategory(
  * @access Public
  */
 export async function getCategory(req: Request, res: express.Response) {
-  CRUD.read<CategoryType>(req, res, "category", Category);
+  await CRUD.read<CategoryType>(req, res, "category", Category);
 }
 
 /**
@@ -97,7 +97,7 @@ export async function modifyCategory(
   req: RequestBody<CategoryType>,
   res: express.Response
 ) {
-  CRUD.update<CategoryType>(req, res, "category", Category);
+  await CRUD.update<CategoryType>(req, res, "category", Category);
 }
 
 /**
@@ -106,5 +106,5 @@ export async function modifyCategory(
  * @access Restricted
  */
 export async function deleteCategory(req: Request, res: express.Response) {
-  CRUD.del<CategoryType>(req, res, "category", Category);
+  await CRUD.del<CategoryType>(req, res, "category", Category);
 }

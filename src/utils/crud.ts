@@ -22,7 +22,9 @@ export async function create<T extends Base>(
   assumptions: {
     value: KeysOfMultiType<T, Types.ObjectId>;
     source: "user" | "provider";
-  }[] = []
+  }[] = [],
+  populate?: string[],
+  succResponse: boolean = true
 ) {
   try {
     if (!req.user.isAdmin)
@@ -34,11 +36,16 @@ export async function create<T extends Base>(
           assumption.source === "user" ? req.user._id : req.provider._id;
     }
 
-    const obj = await model.create(req.body);
-    res.status(201).json({
-      success: true,
-      data: { [modelName]: obj },
-    });
+    let obj = await model.create(req.body);
+
+    if (populate) for (const pop of populate) obj = await obj.populate(pop);
+
+    if (succResponse)
+      res.status(201).json({
+        success: true,
+        data: { [modelName]: obj },
+      });
+    else return obj;
   } catch (error) {
     postPatchErrorHandler(res, error);
   }
@@ -49,10 +56,13 @@ export async function read<T extends Base>(
   res: express.Response,
   modelName: string,
   model: Model<T>,
-  query: FilterQuery<T> = { _id: req.params.id }
+  query: FilterQuery<T> = { _id: req.params.id },
+  populate?: string[]
 ) {
   try {
-    const obj = await model.findOne(query);
+    let obj = await model.findOne(query);
+
+    if (populate) for (const pop of populate) obj = await obj.populate(pop);
 
     if (!obj)
       return res.status(404).json({
@@ -78,7 +88,8 @@ export async function readAll<T extends Base>(
   modelName: string,
   model: PaginateModel<T, {}, {}>,
   query: FilterQuery<T> = {},
-  plural?: string
+  plural?: string,
+  populate?: string[]
 ) {
   const pageLimit = 50;
   let page = 1;
@@ -96,6 +107,7 @@ export async function readAll<T extends Base>(
       page,
       limit: pageLimit,
       sort,
+      populate,
     });
 
     let resJSON: any = {
@@ -121,7 +133,9 @@ export async function update<T extends Base>(
   res: express.Response,
   modelName: string,
   model: Model<T>,
-  ignoreFields: (keyof T)[] = []
+  ignoreFields: (keyof T)[] = [],
+  populate?: string[],
+  succResponse: boolean = true
 ) {
   if (!req.user.isAdmin) {
     delete req.body._id;
@@ -132,7 +146,8 @@ export async function update<T extends Base>(
       runValidators: true,
     });
 
-    const obj = await model.findById(req.params.id);
+    let obj = await model.findById(req.params.id);
+    if (populate) for (const pop of populate) obj = await obj.populate(pop);
 
     if (!obj) {
       return res.status(404).json({
@@ -141,10 +156,12 @@ export async function update<T extends Base>(
       } as errorResponse);
     }
 
-    res.status(200).json({
-      success: true,
-      data: { [modelName]: obj },
-    });
+    if (succResponse)
+      res.status(200).json({
+        success: true,
+        data: { [modelName]: obj },
+      });
+    else return obj;
   } catch (error) {
     postPatchErrorHandler(res, error);
   }

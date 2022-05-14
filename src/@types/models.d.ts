@@ -29,7 +29,7 @@ export interface User extends Base {
 
 export interface Provider extends Base {
   user: User | Types.ObjectId;
-  address: Address;
+  address: Address | Types.ObjectId;
   isEnrolled: boolean;
   phone: string;
   bio?: string;
@@ -39,7 +39,8 @@ export interface Provider extends Base {
   getCourses: () => Promise<Course[]>;
 }
 
-export interface Address {
+export interface Address extends Base {
+  provider: Provider | Types.ObjectId;
   street1: string;
   street2?: string;
   city: string;
