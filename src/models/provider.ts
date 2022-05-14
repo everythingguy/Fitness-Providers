@@ -29,6 +29,7 @@ const ProviderSchema = new mongoose.Schema<Provider>(
     address: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Address",
+      default: null,
       validate: {
         validator: async (value: string): Promise<boolean> => {
           return await refValidator(Address, value);
@@ -45,16 +46,27 @@ const ProviderSchema = new mongoose.Schema<Provider>(
       type: String,
       trim: true,
       required: [true, "Missing phone"],
-      validate: [validator.isMobilePhone, "Invalid phone number"],
+      validate: [
+        (value: string | null) =>
+          value === null ? true : validator.isMobilePhone(value),
+        "Invalid phone number",
+      ],
+      default: null,
     },
     bio: {
       type: String,
       trim: true,
+      default: null,
     },
     website: {
       type: String,
       trim: true,
-      validate: [validator.isURL, "Invalid URL"],
+      validate: [
+        (value: string | null) =>
+          value === null ? true : validator.isURL(value),
+        "Invalid URL",
+      ],
+      default: null,
     },
     image: {
       type: String,

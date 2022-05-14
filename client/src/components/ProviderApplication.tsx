@@ -8,6 +8,8 @@ interface Props {
   buttonStyle?: string;
 }
 
+// TODO: break this up into a two part modal. The address needs to be sent after the provider is already created.
+
 export const ProviderApplication: React.FC<Props> = ({
   buttonStyle = "btn text-light btn-dark mb-2",
 }) => {
