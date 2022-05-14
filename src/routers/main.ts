@@ -1,6 +1,7 @@
 import express from "express";
 import userRouter from "./user";
 import providerRouter from "./provider";
+import addressRouter from "./address";
 import courseRouter from "./course";
 import sessionRouter from "./session";
 import liveSessionRouter from "./liveSession";
@@ -11,6 +12,7 @@ const router = express.Router();
 
 router.use("/users", userRouter);
 router.use("/providers", providerRouter);
+router.use("/addresses", addressRouter);
 router.use("/courses", courseRouter);
 router.use("/sessions", sessionRouter);
 router.use("/live-sessions", liveSessionRouter);

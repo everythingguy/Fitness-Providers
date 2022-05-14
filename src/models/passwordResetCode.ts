@@ -1,8 +1,7 @@
-import mongoose, { PaginateModel } from "mongoose";
+import mongoose from "mongoose";
 import { PasswordResetCode } from "../@types/models";
 import { UniqueErrorRaiser } from "../utils/errors";
 import User from "./user";
-import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -48,8 +47,6 @@ const PasswordResetCodeSchema = new mongoose.Schema<PasswordResetCode>(
   }
 );
 
-PasswordResetCodeSchema.plugin(Pagination);
-
 PasswordResetCodeSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
@@ -59,9 +56,10 @@ PasswordResetCodeSchema.post("save", UniqueErrorRaiser);
 PasswordResetCodeSchema.post("updateOne", UniqueErrorRaiser);
 PasswordResetCodeSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-const model: mongoose.PaginateModel<PasswordResetCode, {}, {}> = mongoose.model<
-  PasswordResetCode,
-  PaginateModel<PasswordResetCode>
->("PasswordResetCode", PasswordResetCodeSchema);
+const model: mongoose.Model<PasswordResetCode> =
+  mongoose.model<PasswordResetCode>(
+    "PasswordResetCode",
+    PasswordResetCodeSchema
+  );
 
 export default model;

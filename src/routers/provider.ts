@@ -16,6 +16,12 @@ router
       "user",
       "You cannot create a provider account for another user"
     ),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfAddress,
+      true,
+      "address",
+      "You cannot use another provider's address"
+    ),
     Controller.addProvider
   );
 
@@ -30,6 +36,12 @@ router
       true,
       "user",
       "You cannot give your provider account to another user"
+    ),
+    Permission.isOwnerOrAdmin(
+      Permission.OwnerOfAddress,
+      true,
+      "address",
+      "You cannot use another provider's address"
     ),
     Controller.modifyProvider
   )

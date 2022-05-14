@@ -36,19 +36,23 @@ export async function create<T extends Base>(
           assumption.source === "user" ? req.user._id : req.provider._id;
     }
 
-    let obj = await model.create(req.body);
+    let obj = new model(req.body);
+    await obj.validate();
+    if (succResponse) {
+      obj = await obj.save();
 
-    if (populate) for (const pop of populate) obj = await obj.populate(pop);
+      if (populate) for (const pop of populate) obj = await obj.populate(pop);
 
-    if (succResponse)
       res.status(201).json({
         success: true,
         data: { [modelName]: obj },
       });
-    else return obj;
+    } else return obj;
   } catch (error) {
     postPatchErrorHandler(res, error);
   }
+
+  return false;
 }
 
 export async function read<T extends Base>(
@@ -150,10 +154,11 @@ export async function update<T extends Base>(
     if (populate) for (const pop of populate) obj = await obj.populate(pop);
 
     if (!obj) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: `${modelName} not found`,
       } as errorResponse);
+      return false;
     }
 
     if (succResponse)
@@ -165,6 +170,8 @@ export async function update<T extends Base>(
   } catch (error) {
     postPatchErrorHandler(res, error);
   }
+
+  return false;
 }
 
 export async function del<T extends Base>(

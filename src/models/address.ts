@@ -1,7 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { PaginateModel } from "mongoose";
 import { Address } from "../@types/models";
 import Provider from "./provider";
 import { refValidator } from "../utils/validators";
+import Pagination from "mongoose-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -69,9 +70,11 @@ const AddressSchema = new mongoose.Schema<Address>(
   }
 );
 
-const model: mongoose.Model<Address> = mongoose.model<Address>(
-  "Address",
-  AddressSchema
-);
+AddressSchema.plugin(Pagination);
+
+const model: PaginateModel<Address, {}, {}> = mongoose.model<
+  Address,
+  PaginateModel<Address>
+>("Address", AddressSchema);
 
 export default model;

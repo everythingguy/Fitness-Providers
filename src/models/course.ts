@@ -78,7 +78,7 @@ CourseSchema.virtual("getSessions", async function (this: Course) {
   return await Session.find({ course: this._id });
 });
 
-const model: mongoose.PaginateModel<Course, {}, {}> = mongoose.model<
+const model: PaginateModel<Course, {}, {}> = mongoose.model<
   Course,
   PaginateModel<Course>
 >("Course", CourseSchema);

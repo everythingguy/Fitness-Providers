@@ -1,6 +1,7 @@
 import express from "express";
 import { errorResponse } from "../@types/response";
 import { Request } from "../@types/request";
+import Address from "../models/address";
 import Course from "../models/course";
 import Session from "../models/session";
 import LiveSession from "../models/liveSession";
@@ -156,6 +157,19 @@ export async function OwnerOfProvider(
   id = req.params.id
 ): Promise<boolean> {
   if (req.provider && req.provider._id.toString() === id) return true;
+
+  return false;
+}
+
+export async function OwnerOfAddress(
+  req: Request,
+  id = req.params.id
+): Promise<boolean> {
+  const address = await Address.findById(id);
+
+  if (!address) throw new NotFoundError("Address not found");
+
+  if (req.provider._id.toString() === address.provider.toString()) return true;
 
   return false;
 }

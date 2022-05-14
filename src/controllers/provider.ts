@@ -1,17 +1,11 @@
 import express from "express";
 
 import Provider from "../models/provider";
-import Address from "../models/address";
 import { Request, RequestBody } from "../@types/request";
-import {
-  Address as AddressType,
-  Provider as ProviderType,
-} from "../@types/models";
+import { Provider as ProviderType } from "../@types/models";
 import * as CRUD from "../utils/crud";
 import { FilterQuery, Types } from "mongoose";
 import { filterTags } from "../utils/filter";
-import { postPatchErrorHandler } from "../utils/errors";
-import { errorResponse } from "./../@types/response.d";
 
 // middleware
 // attach provider to req
@@ -41,73 +35,19 @@ export async function addProvider(
   req: RequestBody<ProviderType>,
   res: express.Response
 ) {
-  if (req.body.address) {
-    const address = req.body.address as AddressType;
-
-    let provider = await CRUD.create<ProviderType>(
-      req,
-      res,
-      "provider",
-      Provider,
-      ["isEnrolled", "image", "address"],
-      [
-        {
-          source: "user",
-          value: "user",
-        },
-      ],
-      undefined,
-      false
-    );
-
-    req.provider = provider;
-    req.body = address as any;
-
-    const addr = await CRUD.create<AddressType>(
-      req,
-      res,
-      "address",
-      Address,
-      ["provider"],
-      [
-        {
-          source: "provider",
-          value: "provider",
-        },
-      ],
-      undefined,
-      false
-    );
-
-    try {
-      provider.address = addr._id;
-      await provider.validate();
-      provider = await provider.save();
-
-      provider = await provider.populate("address");
-
-      res.status(201).json({
-        success: true,
-        data: { provider },
-      });
-    } catch (error) {
-      postPatchErrorHandler(res, error);
-    }
-  } else {
-    await CRUD.create<ProviderType>(
-      req,
-      res,
-      "provider",
-      Provider,
-      ["isEnrolled", "image", "address"],
-      [
-        {
-          source: "user",
-          value: "user",
-        },
-      ]
-    );
-  }
+  await CRUD.create<ProviderType>(
+    req,
+    res,
+    "provider",
+    Provider,
+    ["isEnrolled", "image", "address"],
+    [
+      {
+        source: "user",
+        value: "user",
+      },
+    ]
+  );
 }
 
 /**
@@ -184,51 +124,5 @@ export async function modifyProvider(
   req: RequestBody<ProviderType>,
   res: express.Response
 ) {
-  if (req.body.address) {
-    const address = req.body.address;
-
-    let provider: any = await CRUD.update(
-      req,
-      res,
-      "provider",
-      Provider,
-      ["isEnrolled", "image", "address"],
-      undefined,
-      false
-    );
-
-    req.body = address as any;
-
-    await CRUD.update(
-      req as unknown as RequestBody<AddressType>,
-      res,
-      "address",
-      Address,
-      ["provider"],
-      undefined,
-      false
-    );
-
-    try {
-      provider = await (
-        await Provider.findById(provider._id)
-      ).populate("address");
-
-      res.status(201).json({
-        success: true,
-        data: { provider },
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: "Server Error",
-      } as errorResponse);
-    }
-  } else {
-    await CRUD.update(req, res, "provider", Provider, [
-      "isEnrolled",
-      "image",
-      "address",
-    ]);
-  }
+  await CRUD.update(req, res, "provider", Provider, ["isEnrolled", "image"]);
 }

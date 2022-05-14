@@ -10,7 +10,7 @@ interface Props {
   showModal: boolean;
 }
 
-// TODO: handle submit form and move location to live session
+// TODO: handle submit form, move location to live session and handle image upload
 
 export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
   // field state

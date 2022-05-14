@@ -69,7 +69,7 @@ SessionSchema.pre("remove", function (next) {
   next();
 });
 
-const model: mongoose.PaginateModel<Session, {}, {}> = mongoose.model<
+const model: PaginateModel<Session, {}, {}> = mongoose.model<
   Session,
   PaginateModel<Session>
 >("Session", SessionSchema);

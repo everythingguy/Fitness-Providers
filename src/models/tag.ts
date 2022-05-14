@@ -57,7 +57,7 @@ TagSchema.post("save", UniqueErrorRaiser);
 TagSchema.post("updateOne", UniqueErrorRaiser);
 TagSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-const model: mongoose.PaginateModel<Tag, {}, {}> = mongoose.model<
+const model: PaginateModel<Tag, {}, {}> = mongoose.model<
   Tag,
   PaginateModel<Tag>
 >("Tag", TagSchema);

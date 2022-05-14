@@ -108,7 +108,7 @@ UserSchema.methods.isValidPassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-const model: mongoose.PaginateModel<User, {}, {}> = mongoose.model<
+const model: PaginateModel<User, {}, {}> = mongoose.model<
   User,
   PaginateModel<User>
 >("User", UserSchema);

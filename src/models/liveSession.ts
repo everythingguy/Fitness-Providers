@@ -77,7 +77,7 @@ LiveSessionSchema.post("validate", function (this: LiveSession, next) {
   else next();
 });
 
-const model: mongoose.PaginateModel<LiveSession, {}, {}> = mongoose.model<
+const model: PaginateModel<LiveSession, {}, {}> = mongoose.model<
   LiveSession,
   PaginateModel<LiveSession>
 >("LiveSession", LiveSessionSchema);

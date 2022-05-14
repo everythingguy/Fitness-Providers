@@ -94,6 +94,7 @@ const ProviderSchema = new mongoose.Schema<Provider>(
 ProviderSchema.plugin(Pagination);
 
 ProviderSchema.pre("remove", function (next) {
+  // TODO: remove addresses
   Course.remove({ provider: this._id }).exec();
   next();
 });
@@ -106,7 +107,7 @@ ProviderSchema.method("getCourses", async function (this: Provider) {
   return await Course.find({ provider: this._id });
 });
 
-const model: mongoose.PaginateModel<Provider, {}, {}> = mongoose.model<
+const model: PaginateModel<Provider, {}, {}> = mongoose.model<
   Provider,
   PaginateModel<Provider>
 >("Provider", ProviderSchema);
