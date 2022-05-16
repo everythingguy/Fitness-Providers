@@ -1,4 +1,4 @@
-import User, { Provider, Category } from "./Models";
+import User, { Provider, Address, Category } from "./Models";
 
 export interface BaseResponse {
   success: boolean;
@@ -22,6 +22,12 @@ export interface UserResponse extends SuccessfulResponse {
 export interface ProviderResponse extends SuccessfulResponse {
   data: {
     provider: Provider;
+  };
+}
+
+export interface AddressResponse extends SuccessfulResponse {
+  data: {
+    address: Address;
   };
 }
 

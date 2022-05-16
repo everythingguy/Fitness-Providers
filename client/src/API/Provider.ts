@@ -5,54 +5,38 @@ export default class API {
   static async createProvider(
     bio: string,
     website: string,
-    phone: string,
-    street1: string,
-    street2: string,
-    city: string,
-    state: string,
-    zip: string,
-    country: string
+    phone: string
   ): Promise<ProviderResponse | ErrorResponse> {
     const request = new DataRequest("POST", "providers");
 
-    const body: {
-      bio?: string;
-      website?: string;
-      phone: string;
-      address?: {
-        street1: string;
-        street2: string;
-        city: string;
-        state: string;
-        zip: string;
-        country: string;
-      };
-    } = {
-      bio: bio.length === 0 ? undefined : bio,
-      website: website.length === 0 ? undefined : website,
+    request.setBody({
+      bio: bio && bio.length > 0 ? bio : undefined,
+      website: website && website.length > 0 ? website : undefined,
       phone,
-    };
+    });
 
-    if (
-      !(
-        street1.length === 0 &&
-        street2.length === 0 &&
-        city.length === 0 &&
-        state.length === 0 &&
-        zip.length === 0 &&
-        country.length === 0
-      )
-    )
-      body.address = {
-        street1,
-        street2,
-        city,
-        state,
-        zip,
-        country,
-      };
+    return new Promise((res) => {
+      APIManager.sendRequest<ProviderResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as ProviderResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
 
-    request.setBody(body);
+  static async setAddress(
+    providerID: string,
+    addressID: string
+  ): Promise<ProviderResponse | ErrorResponse> {
+    const request = new DataRequest("PATCH", `providers/${providerID}`);
+
+    request.setBody({
+      address: addressID,
+    });
 
     return new Promise((res) => {
       APIManager.sendRequest<ProviderResponse>(

@@ -4,7 +4,7 @@ interface Base {
   updatedAt: Date;
 }
 
-interface Address {
+export interface Address extends Base {
   street1: string;
   street2?: string;
   city: string;
@@ -15,7 +15,7 @@ interface Address {
 
 export interface Provider extends Base {
   user: Types.ObjectId;
-  address: Address;
+  address: Types.ObjectId | Address;
   isEnrolled: boolean;
   phone: string;
   bio?: string;
