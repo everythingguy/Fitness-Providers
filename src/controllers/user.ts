@@ -325,27 +325,18 @@ export async function resendConfirmation(
  * @access Restricted
  */
 export async function getUser(req: Request, res: express.Response) {
-  try {
-    let user: UserType;
-    if (req.user) user = await User.findById(req.user._id);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: "No user found",
-      } as errorResponse);
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: { user: userResponse(req, user) },
-    } as userResponseType);
-  } catch (err) {
-    return res.status(500).json({
+  if (!req.user)
+    return res.status(404).json({
       success: false,
-      error: "Server Error",
+      error: "No user found",
     } as errorResponse);
-  }
+
+  return res.status(200).json({
+    success: true,
+    data: {
+      user: { ...req.user, provider: req.provider ? req.provider : null },
+    },
+  } as userResponseType);
 }
 
 /**

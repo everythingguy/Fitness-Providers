@@ -70,7 +70,8 @@ export async function getAddresses(req: Request, res: express.Response) {
   // unless logged in user is admin or the provider that owns the address
   let query: FilterQuery<AddressType>;
 
-  if (req.user && req.user.isAdmin) query = {};
+  if (req.user && req.user.isAdmin)
+    query = { provider: req.query.provider ? req.query.provider : undefined };
   else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
     if (req.provider) providerFilter.push({ _id: req.provider._id });
@@ -79,7 +80,14 @@ export async function getAddresses(req: Request, res: express.Response) {
       $or: providerFilter,
     }).select("_id");
 
-    query = { provider: approvedProviders };
+    if (req.query.provider)
+      query = {
+        $and: [
+          { provider: approvedProviders },
+          { provider: req.query.provider },
+        ],
+      };
+    else query = { provider: approvedProviders };
   }
 
   await CRUD.readAll<AddressType>(

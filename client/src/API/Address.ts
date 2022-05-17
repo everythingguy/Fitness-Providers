@@ -1,7 +1,11 @@
-import { AddressResponse, ErrorResponse } from "../@types/Response";
+import {
+  AddressesResponse,
+  AddressResponse,
+  ErrorResponse,
+} from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
-export default class API {
+export class Address {
   static async createAddress(
     street1: string,
     street2: string,
@@ -33,4 +37,28 @@ export default class API {
       );
     });
   }
+
+  static async getProvidersAddresses(
+    providerID: string
+  ): Promise<AddressesResponse | ErrorResponse> {
+    const request = new DataRequest("GET", "addresses");
+
+    request.setParams({
+      provider: providerID,
+    });
+
+    return new Promise((res) => {
+      APIManager.sendRequest<AddressesResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as AddressesResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
 }
+
+export default Address;

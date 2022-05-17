@@ -1,7 +1,7 @@
 import { TagResponse, ErrorResponse } from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
-export default class API {
+export class Tag {
   static async getProviderTags(): Promise<TagResponse | ErrorResponse> {
     const request = new DataRequest("GET", "tags");
 
@@ -42,3 +42,5 @@ export default class API {
     });
   }
 }
+
+export default Tag;

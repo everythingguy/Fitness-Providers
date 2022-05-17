@@ -23,6 +23,15 @@ export interface Provider extends Base {
   tags: Types.ObjectId[];
 }
 
+export interface Course extends Base {
+  name: string;
+  location: Address | Types.ObjectId | "online";
+  description: string;
+  provider: Provider | Types.ObjectId;
+  tags: Tag[] | Types.ObjectId[];
+  image?: string;
+}
+
 export interface Tag extends Base {
   category: Types.ObjectId;
   value: string;

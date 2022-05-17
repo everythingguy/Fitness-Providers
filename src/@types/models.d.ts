@@ -63,6 +63,7 @@ export interface Tag extends Base {
 
 export interface Course extends Base {
   name: string;
+  location: Address | Types.ObjectId | "online";
   description: string;
   provider: Provider | Types.ObjectId;
   tags: Tag[] | Types.ObjectId[];

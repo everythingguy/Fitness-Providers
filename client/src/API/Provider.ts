@@ -1,7 +1,7 @@
 import { ProviderResponse, ErrorResponse } from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
-export default class API {
+export class Provider {
   static async createProvider(
     bio: string,
     website: string,
@@ -51,3 +51,5 @@ export default class API {
     });
   }
 }
+
+export default Provider;

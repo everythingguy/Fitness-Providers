@@ -1,7 +1,7 @@
 import { UserResponse, ErrorResponse } from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
-export default class API {
+export class User {
   static async createUser(
     firstName: string,
     lastName: string,
@@ -130,3 +130,5 @@ export default class API {
     return (await this.getUserData()).success;
   }
 }
+
+export default User;

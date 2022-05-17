@@ -68,7 +68,7 @@ export async function getCourse(req: Request, res: express.Response) {
   };
   if (req.user && req.user.isAdmin) query = { _id: req.params.id };
 
-  await CRUD.read<CourseType>(req, res, "course", Course, query);
+  await CRUD.read<CourseType>(req, res, "course", Course, query, ["location"]);
 }
 
 /**
@@ -96,7 +96,9 @@ export async function getCourses(req: Request, res: express.Response) {
     query = { provider: approvedProviders, tags: tagFilter };
   }
 
-  await CRUD.readAll(req, res, "course", Course, query);
+  await CRUD.readAll(req, res, "course", Course, query, undefined, [
+    "location",
+  ]);
 }
 
 /**

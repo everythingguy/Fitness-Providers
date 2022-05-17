@@ -16,7 +16,9 @@ export async function ReqProvider(
 ) {
   if (req.user) {
     try {
-      const provider = await Provider.findOne({ user: req.user._id });
+      const provider = await Provider.findOne({ user: req.user._id }).populate(
+        "address"
+      );
       if (provider) req.provider = provider;
     } catch (e) {
       req.provider = undefined;

@@ -1,7 +1,7 @@
 import { CategoryResponse, ErrorResponse } from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
-export default class API {
+export class Category {
   static async getProviderCategories(): Promise<
     CategoryResponse | ErrorResponse
   > {
@@ -46,3 +46,5 @@ export default class API {
     });
   }
 }
+
+export default Category;

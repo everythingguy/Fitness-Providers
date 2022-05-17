@@ -4,6 +4,7 @@ import Tag from "./tag";
 import Session from "./session";
 import { refValidator } from "../utils/validators";
 import Provider from "./provider";
+import Address from "./address";
 import Pagination from "mongoose-paginate-v2";
 
 // debug
@@ -16,6 +17,15 @@ const CourseSchema = new mongoose.Schema<Course>(
       trim: true,
       maxLength: [50, "Name has max length of 50"],
       required: [true, "Missing name"],
+    },
+    location: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
+      validate: {
+        validator: async (value: string) => await refValidator(Address, value),
+        message: ({ value }: { value: string }) =>
+          `Address (${value}) not found`,
+      },
     },
     description: {
       type: String,
