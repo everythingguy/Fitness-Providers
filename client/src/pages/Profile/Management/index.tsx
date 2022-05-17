@@ -2,11 +2,20 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, Navigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Searchbar from "../../../components/Searchbar";
-import { Category as CategoryType } from "../../../@types/Models";
+import {
+  Category as CategoryType,
+  Course as CourseType,
+  Session as SessionType,
+} from "../../../@types/Models";
 import Category from "../../../components/Category";
-import CategoryAPI from "../../../API/Category";
+import {
+  Category as CategoryAPI,
+  Course as CourseAPI,
+  Session as SessionAPI,
+} from "../../../API";
 import { CourseModal, SessionModal } from "./Modals";
 import { UserContext } from "../../../context/UserState";
+import { ResultList } from "../../../components/ResultList";
 
 interface Props {}
 
@@ -16,6 +25,8 @@ export const Management: React.FC<Props> = () => {
 
   const [showCourseModal, setCourseModal] = useState(false);
   const [showSessionModal, setSessionModal] = useState(false);
+  const [showDeleteModal, setDeleteModal] = useState(false);
+
   const [searchParams, setSearchParams] = useState<{
     keywords: string;
     selectedCourseTags: string[];
@@ -25,12 +36,20 @@ export const Management: React.FC<Props> = () => {
   });
 
   const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [courses, setCourses] = useState<CourseType[]>([]);
+  const [sessions, setSessions] = useState<SessionType[]>([]);
+  const [editDeleteID, setEditDeleteID] = useState<string>();
 
   useEffect(() => {
     CategoryAPI.getCourseCategories().then((resp) => {
       if (resp.success) setCategories(resp.data.categories);
     });
-  }, []);
+
+    if (user && user.provider)
+      CourseAPI.getProvidersCourses(user.provider._id).then((resp) => {
+        if (resp.success) setCourses(resp.data.courses);
+      });
+  }, [user]);
 
   /*
   if (!(loggedIn && user && user.provider))
@@ -103,28 +122,51 @@ export const Management: React.FC<Props> = () => {
           </div>
           <div className="col-xs-6 col-sm-8 col-md-7 col-lg-9 col-xl-9 col-xxl-9 card mb-2">
             <div>
-              {/* <ResultList
+              <ResultList
                 title="Classes"
-                component={ClassResult}
-                items={courseResults}
-                onEditOptional={(id) => openCourseModal(id)}
-                onDeleteOptional={(id) => openDeleteCourseModal(id)}
-                onScrollBottom={(e) => {
-                  if (hasNextCoursePage) setCoursePage(coursePage + 1);
+                items={courses.map((course) => {
+                  return {
+                    _id: course._id,
+                    title: course.name,
+                    subtitle: course.description,
+                    href: "",
+                    image:
+                      course.image || "https://via.placeholder.com/500x500",
+                  };
+                })}
+                onEdit={(id) => console.log(id)} // TODO: edit course modal
+                onDelete={(id) => {
+                  setEditDeleteID(id);
+                  setDeleteModal(true);
                 }}
-              /> */}
+                onScrollBottom={(e) => {
+                  // TODO: add pagination
+                  console.log("Next Page Please");
+                }}
+              />
             </div>
             <div>
-              {/* <ResultList
-                title="Videos"
-                component={VideoResult}
-                items={sessionResults}
-                onEditOptional={(id) => openSessionModal(id)}
-                onDeleteOptional={(id) => openDeleteSessionModal(id)}
-                onScrollBottom={(e) => {
-                  if (hasNextSessionPage) setSessionPage(sessionPage + 1);
+              <ResultList
+                title="Sessions"
+                items={sessions.map((session) => {
+                  return {
+                    _id: session._id,
+                    title: session.name,
+                    href: "",
+                    image:
+                      session.image || "https://via.placeholder.com/500x500",
+                  };
+                })}
+                onEdit={(id) => console.log(id)}
+                onDelete={(id) => {
+                  setEditDeleteID(id);
+                  setDeleteModal(true);
                 }}
-              /> */}
+                onScrollBottom={(e) => {
+                  // TODO: add pagination
+                  console.log("Next Page Please");
+                }}
+              />
             </div>
           </div>
         </div>

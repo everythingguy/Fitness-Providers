@@ -1,20 +1,45 @@
 import React from "react";
+import Result from "./Result";
 
-export function ResultList({
-  title,
-  items,
-  component,
-  onEdit,
-  onDelete,
-  onScrollBottom,
-}: {
+interface ComponentProps {
+  _id: string;
+  href: string;
+  image: string;
   title: string;
-  items: any; // TODO: type this
-  component: any; // TODO: type this
+  subtitle?: string;
+  date?: Date;
+  newTab?: boolean;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+}
+
+interface Item {
+  _id: string;
+  href: string;
+  image: string;
+  title: string;
+  subtitle?: string;
+  date?: Date;
+  newTab?: boolean;
+}
+
+interface Props {
+  title: string;
+  items: Item[];
+  component?: React.FC<ComponentProps>;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   onScrollBottom?: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
-}) {
+}
+
+export const ResultList: React.FC<Props> = ({
+  title,
+  items,
+  component = Result,
+  onEdit,
+  onDelete,
+  onScrollBottom,
+}) => {
   const onScroll = (e) => {
     const ele = e.target;
     if (ele.scrollHeight - ele.scrollTop === ele.clientHeight) {
@@ -36,11 +61,13 @@ export function ResultList({
               ...item,
               onEdit,
               onDelete,
-              key: item.id,
+              key: item._id,
             })
           )}
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default ResultList;

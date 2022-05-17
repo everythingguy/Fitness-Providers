@@ -1,3 +1,5 @@
+import { WeekDays } from "./enums";
+
 interface Base {
   _id: Types.ObjectId;
   createdAt: Date;
@@ -30,6 +32,26 @@ export interface Course extends Base {
   provider: Provider | Types.ObjectId;
   tags: Tag[] | Types.ObjectId[];
   image?: string;
+}
+
+export interface Session extends Base {
+  course: Course | Types.ObjectId;
+  URL: string;
+  name: string;
+  image?: string;
+  liveSession: LiveSession | Types.ObjectId;
+}
+
+export interface Recurring {
+  weekDays: WeekDays[];
+  frequency: Number;
+}
+
+export interface LiveSession extends Base {
+  session: Session | Types.ObjectId;
+  beginDateTime: Date;
+  endDateTime: Date;
+  recurring: Recurring;
 }
 
 export interface Tag extends Base {

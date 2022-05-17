@@ -5,18 +5,20 @@ interface Item {
   value?: string;
 }
 
-export const Checklist = ({
-  items,
-  onChange,
-  onScrollBottom,
-  textProperty = "value",
-  id = "",
-}: {
+interface Props {
   items: Item[];
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onScrollBottom?: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   textProperty?: KeysOfMultiType<Item, string>;
   id?: string;
+}
+
+export const Checklist: React.FC<Props> = ({
+  items,
+  onChange,
+  onScrollBottom,
+  textProperty = "value",
+  id = "",
 }) => {
   const onScroll = (e) => {
     const ele = e.target;

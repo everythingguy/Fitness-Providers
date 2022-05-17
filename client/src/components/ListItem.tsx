@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const ListItem = ({
-  title,
-  items,
-}: {
+interface Props {
   title: string;
   items: [
     {
@@ -15,7 +12,9 @@ export const ListItem = ({
       date: Date;
     }
   ];
-}) => {
+}
+
+export const ListItem: React.FC<Props> = ({ title, items }) => {
   return (
     <div className="ListItem">
       <div className="d-grid gap-1 p-2">

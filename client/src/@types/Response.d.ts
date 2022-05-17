@@ -1,4 +1,12 @@
-import User, { Provider, Address, Course, Category, Tag } from "./Models";
+import User, {
+  Provider,
+  Address,
+  Course,
+  Session,
+  LiveSession,
+  Category,
+  Tag,
+} from "./Models";
 
 export interface BaseResponse {
   success: boolean;
@@ -46,6 +54,30 @@ export interface CourseResponse extends SuccessfulResponse {
 export interface CoursesResponse extends SuccessfulResponse {
   data: {
     courses: Course[];
+  };
+}
+
+export interface SessionResponse extends SuccessfulResponse {
+  data: {
+    session: Session;
+  };
+}
+
+export interface SessionsResponse extends SuccessfulResponse {
+  data: {
+    sessions: Session[];
+  };
+}
+
+export interface LiveSessionResponse extends SuccessfulResponse {
+  data: {
+    liveSession: LiveSession;
+  };
+}
+
+export interface LiveSessionsResponse extends SuccessfulResponse {
+  data: {
+    liveSessions: LiveSession[];
   };
 }
 

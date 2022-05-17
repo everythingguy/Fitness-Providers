@@ -93,7 +93,9 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
     if (providerAddresses.length > 0 && first.current) {
       setSelectedAddress(
         providerAddresses.filter((val) => {
-          return val._id === user!.provider!.address._id;
+          if (user && user.provider && user.provider.address)
+            return val._id === user!.provider!.address._id;
+          return val._id === "online";
         })[0]
       );
 
@@ -151,10 +153,16 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
 
         setModal(false);
         setSelectedTags([]);
-        setSelectedAddress({
-          _id: user!.provider!.address._id,
-          street1: user!.provider!.address.street1,
-        });
+        if (user && user.provider && user.provider.address)
+          setSelectedAddress({
+            _id: user!.provider!.address._id,
+            street1: user!.provider!.address.street1,
+          });
+        else
+          setSelectedAddress({
+            _id: "online",
+            street1: "Online",
+          });
         setFormData({ ...formData, name: "", description: "" });
       } else {
         setError(auth.error as any);
@@ -262,10 +270,16 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
             onClick={() => {
               setModal(false);
               setSelectedTags([]);
-              setSelectedAddress({
-                _id: user!.provider!.address._id,
-                street1: user!.provider!.address.street1,
-              });
+              if (user && user.provider && user.provider.address)
+                setSelectedAddress({
+                  _id: user!.provider!.address._id,
+                  street1: user!.provider!.address.street1,
+                });
+              else
+                setSelectedAddress({
+                  _id: "online",
+                  street1: "Online",
+                });
               setFormData({ ...formData, name: "", description: "" });
             }}
           >

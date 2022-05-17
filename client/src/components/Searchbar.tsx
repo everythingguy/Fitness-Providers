@@ -1,12 +1,12 @@
-export const Searchbar = ({
-  placeholder,
-  onChange,
-  id,
-}: {
+import React from "react";
+
+interface Props {
   placeholder: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   id?: string;
-}) => {
+}
+
+export const Searchbar: React.FC<Props> = ({ placeholder, onChange, id }) => {
   return (
     <div className="SearchbarLarge">
       <div className="input-group input-group-lg">
@@ -33,14 +33,10 @@ export const Searchbar = ({
   );
 };
 
-export const SearchbarSmall = ({
+export const SearchbarSmall: React.FC<Props> = ({
   placeholder,
   onChange,
   id,
-}: {
-  placeholder: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  id?: string;
 }) => {
   return (
     <div className="SearchbarSmall">

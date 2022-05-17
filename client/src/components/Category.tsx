@@ -1,16 +1,18 @@
 import { Tag } from "../@types/Models";
 import SearchableCheckList from "./SearchableCheckList";
 
-const Category = ({
-  category,
-  items,
-  onChange,
-  id,
-}: {
+interface Props {
   category: string;
   items: Tag[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   id: string;
+}
+
+export const Category: React.FC<Props> = ({
+  category,
+  items,
+  onChange,
+  id,
 }) => {
   if (items && items.length > 0)
     return (

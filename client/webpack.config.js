@@ -18,6 +18,10 @@ module.exports = () => {
     entry: "./src/index.tsx",
     devtool: "source-map",
     target: "node",
+    watchOptions: {
+      aggregateTimeout: 200,
+      poll: 1000,
+    },
     output: {
       path: path.resolve("../public/dist"),
       filename: "bundle.js"

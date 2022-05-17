@@ -8,18 +8,20 @@ interface Item {
   value?: string;
 }
 
-export const SearchableChecklist = ({
-  placeholder,
-  items,
-  onChange,
-  textProperty = "value",
-  id = "",
-}: {
+interface Props {
   placeholder: string;
   items: Item[];
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   textProperty?: KeysOfMultiType<Item, string>;
   id?: string;
+}
+
+export const SearchableChecklist: React.FC<Props> = ({
+  placeholder,
+  items,
+  onChange,
+  textProperty = "value",
+  id = "",
 }) => {
   const [visibleItems, setVisibleItems] = useState(items);
 
