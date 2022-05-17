@@ -106,7 +106,7 @@ const ProviderSchema = new mongoose.Schema<Provider>(
 ProviderSchema.plugin(Pagination);
 
 ProviderSchema.pre("remove", function (next) {
-  // TODO: remove addresses
+  Address.remove({ provider: this._id }).exec();
   Course.remove({ provider: this._id }).exec();
   next();
 });

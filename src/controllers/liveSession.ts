@@ -76,7 +76,6 @@ export async function getLiveSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getLiveSessions(req: Request, res: express.Response) {
-  // TODO: search by provider id or course id
   const { provider, course, session } = req.query;
 
   // hide sessions that belong to unenrolled providers
