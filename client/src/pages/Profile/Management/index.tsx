@@ -13,7 +13,7 @@ import {
   Course as CourseAPI,
   Session as SessionAPI,
 } from "../../../API";
-import { CourseModal, SessionModal } from "./Modals";
+import { CourseModal, SessionModal, DeleteModal } from "./Modals";
 import { UserContext } from "../../../context/UserState";
 import { ResultList } from "../../../components/ResultList";
 
@@ -38,14 +38,19 @@ export const Management: React.FC<Props> = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [courses, setCourses] = useState<CourseType[]>([]);
   const [sessions, setSessions] = useState<SessionType[]>([]);
-  const [editDeleteID, setEditDeleteID] = useState<string>();
+  const [editDeleteInfo, setEditDeleteInfo] = useState<{
+    type: "course" | "session" | "liveSession";
+    id: string;
+  }>({ type: "course", id: "" });
 
   useEffect(() => {
     CategoryAPI.getCourseCategories().then((resp) => {
       if (resp.success) setCategories(resp.data.categories);
     });
+  }, []);
 
-    if (user && user.provider) {
+  useEffect(() => {
+    if (user && user.provider && !showDeleteModal) {
       CourseAPI.getProvidersCourses(user.provider._id).then((resp) => {
         if (resp.success) setCourses(resp.data.courses);
       });
@@ -54,7 +59,7 @@ export const Management: React.FC<Props> = () => {
         if (resp.success) setSessions(resp.data.sessions);
       });
     }
-  }, [user]);
+  }, [user, showDeleteModal]);
 
   /*
   if (!(loggedIn && user && user.provider))
@@ -141,7 +146,7 @@ export const Management: React.FC<Props> = () => {
                 })}
                 onEdit={(id) => console.log(id)} // TODO: edit course modal
                 onDelete={(id) => {
-                  setEditDeleteID(id);
+                  setEditDeleteInfo({ id, type: "course" });
                   setDeleteModal(true);
                 }}
                 onScrollBottom={(e) => {
@@ -164,7 +169,7 @@ export const Management: React.FC<Props> = () => {
                 })}
                 onEdit={(id) => console.log(id)}
                 onDelete={(id) => {
-                  setEditDeleteID(id);
+                  setEditDeleteInfo({ id, type: "session" });
                   setDeleteModal(true);
                 }}
                 onScrollBottom={(e) => {
@@ -179,6 +184,11 @@ export const Management: React.FC<Props> = () => {
 
       <CourseModal setModal={setCourseModal} showModal={showCourseModal} />
       <SessionModal setModal={setSessionModal} showModal={showSessionModal} />
+      <DeleteModal
+        setModal={setDeleteModal}
+        showModal={showDeleteModal}
+        info={editDeleteInfo}
+      />
     </div>
   );
 };

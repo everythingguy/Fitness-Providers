@@ -65,6 +65,24 @@ export class Session {
       );
     });
   }
+
+  static async deleteSession(
+    id: string
+  ): Promise<SessionResponse | ErrorResponse> {
+    const request = new DataRequest("DELETE", `sessions/${id}`);
+
+    return new Promise((res) => {
+      APIManager.sendRequest<SessionResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as SessionResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
 }
 
 export default Session;

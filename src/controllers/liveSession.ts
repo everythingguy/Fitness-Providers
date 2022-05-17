@@ -7,6 +7,7 @@ import LiveSession from "../models/liveSession";
 import { Request, RequestBody } from "../@types/request";
 import {
   Provider as ProviderType,
+  Session as SessionType,
   LiveSession as LiveSessionType,
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
@@ -84,22 +85,47 @@ export async function getLiveSessions(req: Request, res: express.Response) {
 
   if (req.user && req.user.isAdmin) {
     query = {};
-    if (session) query.session = session;
+    if (session || course || provider) {
+      query = { $and: [] };
+      if (session) query.$and.push({ session });
+      if (course) {
+        const courseSessions = await Session.find({ course });
+        query.$and.push({ session: courseSessions });
+      }
+      if (provider) {
+        const providerCourses = await Course.find({ provider });
+        const courseSessions = await Session.find({ course: providerCourses });
+
+        query.$and.push({ session: courseSessions });
+      }
+    }
   } else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
     if (req.provider) providerFilter.push({ _id: req.provider._id });
 
-    const approvedProviders = await Provider.find({
+    let provFilter: FilterQuery<ProviderType> = {
       $or: providerFilter,
-    }).select("_id");
+    };
+
+    if (provider)
+      provFilter = {
+        $and: [{ $or: providerFilter }, { provider }],
+      };
+
+    const approvedProviders = await Provider.find(provFilter).select("_id");
 
     const approvedCourses = await Course.find({
       provider: approvedProviders,
     }).select("_id");
 
-    const approvedSessions = await Session.find({
+    let sessionFilter: FilterQuery<SessionType> = {
       course: approvedCourses,
-    }).select("_id");
+    };
+
+    if (course)
+      sessionFilter = { $and: [{ course: approvedCourses }, { course }] };
+
+    const approvedSessions = await Session.find(sessionFilter).select("_id");
 
     if (session)
       query = {
@@ -107,9 +133,6 @@ export async function getLiveSessions(req: Request, res: express.Response) {
       };
     else query = { session: approvedSessions };
   }
-
-  if (provider) query.provider = provider;
-  if (course) query.course = course;
 
   await CRUD.readAll<LiveSessionType>(
     req,

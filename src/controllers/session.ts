@@ -6,6 +6,7 @@ import Session from "../models/session";
 import { Request, RequestBody } from "../@types/request";
 import {
   Provider as ProviderType,
+  Course as CourseType,
   Session as SessionType,
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
@@ -79,6 +80,12 @@ export async function getSessions(req: Request, res: express.Response) {
   if (req.user && req.user.isAdmin) {
     query = {};
     if (course) query.course = course;
+    if (provider) {
+      const providerCourses = await Course.find({ provider });
+      if (course)
+        query.course = { $and: [{ course: providerCourses }, { course }] };
+      else query.course = providerCourses;
+    }
   } else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
     if (req.provider) providerFilter.push({ _id: req.provider._id });
@@ -87,9 +94,16 @@ export async function getSessions(req: Request, res: express.Response) {
       $or: providerFilter,
     }).select("_id");
 
-    const approvedCourses = await Course.find({
+    let courseFilter: FilterQuery<CourseType> = {
       provider: approvedProviders,
-    }).select("_id");
+    };
+
+    if (provider)
+      courseFilter = {
+        $and: [{ provider: approvedProviders }, { provider }],
+      };
+
+    const approvedCourses = await Course.find(courseFilter).select("_id");
 
     if (course)
       query = {
@@ -97,8 +111,6 @@ export async function getSessions(req: Request, res: express.Response) {
       };
     else query = { course: approvedCourses };
   }
-
-  if (provider) query.provider = provider;
 
   await CRUD.readAll<SessionType>(req, res, "session", Session, query);
 }

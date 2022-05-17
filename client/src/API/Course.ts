@@ -59,6 +59,24 @@ export class Course {
       );
     });
   }
+
+  static async deleteCourse(
+    id: string
+  ): Promise<CourseResponse | ErrorResponse> {
+    const request = new DataRequest("DELETE", `courses/${id}`);
+
+    return new Promise((res) => {
+      APIManager.sendRequest<CourseResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as CourseResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
 }
 
 export default Course;
