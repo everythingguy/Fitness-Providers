@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Select from "react-select";
@@ -19,7 +20,7 @@ interface Props {
 // TODO: handle image upload
 
 export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
-  let first = useRef(true);
+  const first = useRef(true);
   const { user } = useContext(UserContext);
 
   const [showAddressModal, setShowAddressModal] = useState(false);
