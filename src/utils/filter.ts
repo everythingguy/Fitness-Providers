@@ -9,7 +9,7 @@ export function filterTags(req: Request) {
   const tagFilter: Types.ObjectId[] = [];
 
   try {
-    const tagSplit: string[] | Types.ObjectId[] = req.query.tags
+    const tagSplit: string[] = req.query.tags
       ? (req.query.tags as string).split(",")
       : [];
 

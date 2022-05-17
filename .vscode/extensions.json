@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "Gruntfuggly.todo-tree",
     "mongodb.mongodb-vscode",
     "dbaeumer.vscode-eslint",
     "coenraads.bracket-pair-colorizer-2",

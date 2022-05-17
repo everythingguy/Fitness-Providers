@@ -70,12 +70,16 @@ export async function getSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getSessions(req: Request, res: express.Response) {
+  const { provider, course } = req.query;
+
   // hide sessions that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the session
   let query: FilterQuery<SessionType>;
 
-  if (req.user && req.user.isAdmin) query = {};
-  else {
+  if (req.user && req.user.isAdmin) {
+    query = {};
+    if (course) query.course = course;
+  } else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
     if (req.provider) providerFilter.push({ _id: req.provider._id });
 
@@ -87,8 +91,14 @@ export async function getSessions(req: Request, res: express.Response) {
       provider: approvedProviders,
     }).select("_id");
 
-    query = { course: approvedCourses };
+    if (course)
+      query = {
+        $and: [{ course: approvedCourses }, { course }],
+      };
+    else query = { course: approvedCourses };
   }
+
+  if (provider) query.provider = provider;
 
   await CRUD.readAll<SessionType>(req, res, "session", Session, query);
 }

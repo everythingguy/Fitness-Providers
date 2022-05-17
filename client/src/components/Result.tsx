@@ -44,7 +44,7 @@ export const Result: React.FC<Props> = ({
           <div className="d-flex w-100 ms-3 py-1 flex-column justify-content-between">
             <h6 className="fw-bold w-100 m-0">{title}</h6>
             <div className="d-flex w-100">
-              {date && <p className="m-0">{subtitle}</p>}
+              {subtitle && <p className="m-0">{subtitle}</p>}
 
               {date && <p className="m-0 ms-auto">{date}</p>}
             </div>

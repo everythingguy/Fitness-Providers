@@ -77,6 +77,8 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
+  const { provider } = req.query;
+
   // filter based on tags
   const tagFilter: Types.ObjectId[] = filterTags(req);
 
@@ -84,8 +86,10 @@ export async function getCourses(req: Request, res: express.Response) {
   // unless the logged in user is admin or the owner of the course
   let query: FilterQuery<CourseType>;
 
-  if (req.user && req.user.isAdmin) query = {};
-  else {
+  if (req.user && req.user.isAdmin) {
+    query = {};
+    if (provider) query.provider = provider;
+  } else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
     if (req.provider) providerFilter.push({ _id: req.provider._id });
 
@@ -93,7 +97,11 @@ export async function getCourses(req: Request, res: express.Response) {
       $or: providerFilter,
     }).select("_id");
 
-    query = { provider: approvedProviders, tags: tagFilter };
+    if (provider)
+      query = {
+        $and: [{ provider: approvedProviders, tags: tagFilter }, { provider }],
+      };
+    else query = { provider: approvedProviders, tags: tagFilter };
   }
 
   await CRUD.readAll(req, res, "course", Course, query, undefined, [

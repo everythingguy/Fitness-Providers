@@ -76,13 +76,16 @@ export async function getLiveSession(req: Request, res: express.Response) {
  */
 export async function getLiveSessions(req: Request, res: express.Response) {
   // TODO: search by provider id or course id
+  const { provider, course, session } = req.query;
 
   // hide sessions that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the session
   let query: FilterQuery<LiveSessionType>;
 
-  if (req.user && req.user.isAdmin) query = {};
-  else {
+  if (req.user && req.user.isAdmin) {
+    query = {};
+    if (session) query.session = session;
+  } else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
     if (req.provider) providerFilter.push({ _id: req.provider._id });
 
@@ -98,8 +101,15 @@ export async function getLiveSessions(req: Request, res: express.Response) {
       course: approvedCourses,
     }).select("_id");
 
-    query = { session: approvedSessions };
+    if (session)
+      query = {
+        $and: [{ session: approvedSessions }, { session }],
+      };
+    else query = { session: approvedSessions };
   }
+
+  if (provider) query.provider = provider;
+  if (course) query.course = course;
 
   await CRUD.readAll<LiveSessionType>(
     req,
