@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import mongoSanitize from "express-mongo-sanitize";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import path from "path";
 import flash from "connect-flash";
 import cors from "cors";
@@ -19,8 +20,6 @@ import { Request } from "./@types/request";
 import { capitalize } from "./utils/string";
 
 // global variables
-// tslint:disable-next-line: no-var-requires
-const MongoStore = require("connect-mongo")(session);
 const app = express();
 
 // middleware
@@ -49,7 +48,10 @@ app.use(
     cookie: {
       maxAge: 15 * 24 * 60 * 60 * 1000,
     },
-    store: new MongoStore({ url: getMongoURI() }),
+    store: MongoStore.create({
+      mongoUrl: getMongoURI(),
+      collectionName: "cookie-sessions",
+    }),
   })
 );
 

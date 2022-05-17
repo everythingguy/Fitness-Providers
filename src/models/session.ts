@@ -29,6 +29,7 @@ const SessionSchema = new mongoose.Schema<Session>(
     name: {
       type: String,
       trim: true,
+      required: [true, "Missing name"],
       maxLength: [50, "name has max length of 50"],
     },
     image: {

@@ -45,10 +45,15 @@ export const Management: React.FC<Props> = () => {
       if (resp.success) setCategories(resp.data.categories);
     });
 
-    if (user && user.provider)
+    if (user && user.provider) {
       CourseAPI.getProvidersCourses(user.provider._id).then((resp) => {
         if (resp.success) setCourses(resp.data.courses);
       });
+
+      SessionAPI.getProviderSessions(user.provider._id).then((resp) => {
+        if (resp.success) setSessions(resp.data.sessions);
+      });
+    }
   }, [user]);
 
   /*
