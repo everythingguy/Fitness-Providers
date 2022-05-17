@@ -18,12 +18,12 @@
     "shan.code-settings-sync",
     "thezhir.vscode-snippets",
     "redhat.vscode-yaml",
-    "mongodb.mongodb-vscode",
     "ritwickdey.live-sass",
     "stevencl.adddoccomments",
     "auchenberg.vscode-browser-preview",
     "hashicorp.terraform",
     "markis.code-coverage",
-    "ms-vscode.vscode-typescript-tslint-plugin"
+    "ms-vscode.vscode-typescript-tslint-plugin",
+    "PKief.material-icon-theme"
   ]
 }

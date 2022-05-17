@@ -23,5 +23,6 @@
   "browser-preview.startUrl": "http://localhost",
   "files.associations": {
     "*.tfvars": "terraform"
-  }
+  },
+  "workbench.iconTheme": "material-icon-theme"
 }
