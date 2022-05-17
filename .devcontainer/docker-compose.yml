@@ -10,6 +10,13 @@ services:
         # Append -bullseye or -buster to pin to an OS version.
         # Use -bullseye variants on local arm64/Apple Silicon.
         VARIANT: "16-buster"
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: rootpassword
+      DB_AUTHSOURCE: admin
+      DB_IP: db
+      DB_PORT: 27017
+      DB_NAME: fitness-providers
     volumes:
       - ..:/workspace:cached
 

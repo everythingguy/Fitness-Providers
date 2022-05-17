@@ -75,7 +75,14 @@
   "remoteUser": "node",
   "features": {
     "kubectl-helm-minikube": "latest",
-    "terraform": "latest",
-    "git": "latest"
-  }
+    "terraform": "latest"
+},
+"portsAttributes": {
+	"80": {
+		"label": "Express Server"
+	},
+	"27017": {
+		"label": "MongoDB"
+	}
+}
 }
