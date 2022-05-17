@@ -24,6 +24,7 @@
     "hashicorp.terraform",
     "markis.code-coverage",
     "ms-vscode.vscode-typescript-tslint-plugin",
-    "PKief.material-icon-theme"
+    "PKief.material-icon-theme",
+    "esbenp.prettier-vscode"
   ]
 }
