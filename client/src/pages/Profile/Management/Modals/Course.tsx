@@ -12,14 +12,23 @@ import { UserContext } from "../../../../context/UserState";
 import AddressModal from "./Address";
 import { Types } from "mongoose";
 
+type Info = { type: "course" | "session" | "liveSession"; id: string } | false;
+
 interface Props {
+  info: Info;
+  setInfo: React.Dispatch<React.SetStateAction<Info>>;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   showModal: boolean;
 }
 
 // TODO: handle image upload
 
-export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
+export const CourseModal: React.FC<Props> = ({
+  setModal,
+  showModal,
+  info,
+  setInfo,
+}) => {
   const first = useRef(true);
   const { user } = useContext(UserContext);
 
@@ -66,6 +75,39 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
       | { _id: "new"; street1: "Add new address" }
     )[]
   >([]);
+
+  useEffect(() => {
+    if (showModal && info) {
+      Course.getCourse(info.id).then((resp) => {
+        if (resp.success) {
+          const course = resp.data.course;
+
+          setFormData({
+            ...formData,
+            name: course.name,
+            description: course.description,
+          });
+
+          setSelectedTags(
+            course.tags.map((tag) => {
+              return { value: tag._id, label: tag.name };
+            })
+          );
+
+          if (course.location)
+            setSelectedAddress({
+              _id: course.location._id,
+              street1: course.location.street1,
+            });
+          else
+            setSelectedAddress({
+              _id: "online",
+              street1: "Online",
+            });
+        }
+      });
+    }
+  }, [info, showModal]);
 
   useEffect(() => {
     if (user && user.provider)
@@ -135,12 +177,22 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
 
   const onSubmit = async () => {
     if (formData.location !== "new") {
-      const auth = await Course.createCourse(
-        formData.name,
-        formData.description,
-        formData.tags,
-        formData.location
-      );
+      let auth;
+      if (!info)
+        auth = await Course.createCourse(
+          formData.name,
+          formData.description,
+          formData.tags,
+          formData.location
+        );
+      else
+        auth = await Course.updateCourse(
+          info.id,
+          formData.name,
+          formData.description,
+          formData.tags,
+          formData.location
+        );
 
       if (auth.success) {
         setError({
@@ -164,6 +216,7 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
             street1: "Online",
           });
         setFormData({ ...formData, name: "", description: "" });
+        if (info) setInfo(false);
       } else {
         setError(auth.error as any);
       }
@@ -189,7 +242,7 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
       />
       <Modal size="lg" show={showModal} onHide={() => setModal(!showModal)}>
         <Modal.Header>
-          <h5>Create a Course</h5>
+          <h5>{info ? "Edit Course" : "Create a Course"}</h5>
         </Modal.Header>
         <Modal.Body>
           <div className="form-group mb-4">
@@ -269,6 +322,7 @@ export const CourseModal: React.FC<Props> = ({ setModal, showModal }) => {
             type="button"
             onClick={() => {
               setModal(false);
+              setInfo(false);
               setSelectedTags([]);
               if (user && user.provider && user.provider.address)
                 setSelectedAddress({

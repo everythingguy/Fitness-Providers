@@ -38,10 +38,13 @@ export const Management: React.FC<Props> = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [courses, setCourses] = useState<CourseType[]>([]);
   const [sessions, setSessions] = useState<SessionType[]>([]);
-  const [editDeleteInfo, setEditDeleteInfo] = useState<{
-    type: "course" | "session" | "liveSession";
-    id: string;
-  }>({ type: "course", id: "" });
+  const [editDeleteInfo, setEditDeleteInfo] = useState<
+    | {
+        type: "course" | "session" | "liveSession";
+        id: string;
+      }
+    | false
+  >(false);
 
   useEffect(() => {
     CategoryAPI.getCourseCategories().then((resp) => {
@@ -50,7 +53,13 @@ export const Management: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
-    if (user && user.provider && !showDeleteModal) {
+    if (
+      user &&
+      user.provider &&
+      !showDeleteModal &&
+      !showCourseModal &&
+      !showSessionModal
+    ) {
       CourseAPI.getProvidersCourses(user.provider._id).then((resp) => {
         if (resp.success) setCourses(resp.data.courses);
       });
@@ -59,7 +68,7 @@ export const Management: React.FC<Props> = () => {
         if (resp.success) setSessions(resp.data.sessions);
       });
     }
-  }, [user, showDeleteModal]);
+  }, [user, showDeleteModal, showCourseModal, showSessionModal]);
 
   /*
   if (!(loggedIn && user && user.provider))
@@ -144,7 +153,10 @@ export const Management: React.FC<Props> = () => {
                       course.image || "https://via.placeholder.com/500x500",
                   };
                 })}
-                onEdit={(id) => console.log(id)} // TODO: edit course modal
+                onEdit={(id) => {
+                  setEditDeleteInfo({ id, type: "course" });
+                  setCourseModal(true);
+                }}
                 onDelete={(id) => {
                   setEditDeleteInfo({ id, type: "course" });
                   setDeleteModal(true);
@@ -182,12 +194,23 @@ export const Management: React.FC<Props> = () => {
         </div>
       </div>
 
-      <CourseModal setModal={setCourseModal} showModal={showCourseModal} />
-      <SessionModal setModal={setSessionModal} showModal={showSessionModal} />
+      <CourseModal
+        setModal={setCourseModal}
+        showModal={showCourseModal}
+        info={editDeleteInfo}
+        setInfo={setEditDeleteInfo}
+      />
+      <SessionModal
+        setModal={setSessionModal}
+        showModal={showSessionModal}
+        info={editDeleteInfo}
+        setInfo={setEditDeleteInfo}
+      />
       <DeleteModal
         setModal={setDeleteModal}
         showModal={showDeleteModal}
         info={editDeleteInfo}
+        setInfo={setEditDeleteInfo}
       />
     </div>
   );

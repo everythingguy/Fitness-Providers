@@ -1,14 +1,23 @@
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 
+type Info = { type: "course" | "session" | "liveSession"; id: string } | false;
+
 interface Props {
+  info: Info;
+  setInfo: React.Dispatch<React.SetStateAction<Info>>;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   showModal: boolean;
 }
 
 // TODO: change this to the session modal
 
-export const SessionModal: React.FC<Props> = ({ setModal, showModal }) => {
+export const SessionModal: React.FC<Props> = ({
+  setModal,
+  showModal,
+  info,
+  setInfo,
+}) => {
   // field state
   const [errors, setError] = useState({
     bio: null,
