@@ -18,7 +18,7 @@
       "name": "Launch Client",
       "type": "pwa-chrome",
       "request": "launch",
-      "url": "http://localhost:3000/",
+      "url": "http://localhost/",
       "webRoot": "${workspaceFolder}/client",
       "preLaunchTask": "npm: silent-client",
       "postDebugTask": "Terminate All Tasks",

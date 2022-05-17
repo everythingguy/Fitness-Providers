@@ -6,7 +6,7 @@ import connectDB, { getMongoURI } from "./utils/db";
 const conn = connectDB(getMongoURI());
 
 // express server
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 80;
 app.set("port", port);
 
 const server = app.listen(port, () => {
