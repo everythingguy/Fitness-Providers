@@ -1,14 +1,40 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.191.0/containers/javascript-node-mongo
-// Update the VARIANT arg in docker-compose.yml to pick a Node.js version: 10, 12, 14
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.234.0/containers/javascript-node-mongo
+// Update the VARIANT arg in docker-compose.yml to pick a Node.js version
 {
-  "name": "Node.js, Typescript, & Mongo DB",
+  "name": "Node.js & Mongo DB",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
 
   // Set *default* container specific settings.json values on container create.
-  "settings": {},
+  "settings": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.useTabStops": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "emmet.includeLanguages": {
+      "javascript": "javascriptreact"
+    },
+    "liveSassCompile.settings.formats": [
+      {
+        "format": "expanded",
+        "extensionName": ".css",
+        "savePath": "/client/src/assets"
+      },
+      {
+        "format": "compressed",
+        "extensionName": ".min.css",
+        "savePath": "/client/src/assets"
+      }
+    ],
+    "liveSassCompile.settings.showOutputWindow": false,
+    "browser-preview.startUrl": "http://localhost",
+    "files.associations": {
+      "*.tfvars": "terraform"
+    }
+  },
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
@@ -44,6 +70,11 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "yarn install",
 
-  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  "remoteUser": "node"
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "node",
+  "features": {
+    "kubectl-helm-minikube": "latest",
+    "terraform": "latest",
+    "git": "latest"
+  }
 }
