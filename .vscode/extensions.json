@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "mongodb.mongodb-vscode",
     "dbaeumer.vscode-eslint",
     "coenraads.bracket-pair-colorizer-2",
     "hookyqr.beautify",
