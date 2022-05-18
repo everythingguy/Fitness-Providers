@@ -38,7 +38,7 @@
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
-    "vscjava.vscode-java-test",
+    "Orta.vscode-jest",
     "Gruntfuggly.todo-tree",
     "mongodb.mongodb-vscode",
     "coenraads.bracket-pair-colorizer-2",

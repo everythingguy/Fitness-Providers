@@ -1,6 +1,6 @@
 {
   "recommendations": [
-    "vscjava.vscode-java-test",
+    "Orta.vscode-jest",
     "Gruntfuggly.todo-tree",
     "mongodb.mongodb-vscode",
     "dbaeumer.vscode-eslint",
