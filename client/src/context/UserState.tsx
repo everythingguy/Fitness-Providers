@@ -48,7 +48,7 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
     });
   }
 
-  setLogin();
+  if (state.loading) setLogin();
 
   return (
     <UserContext.Provider

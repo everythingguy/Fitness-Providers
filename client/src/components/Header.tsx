@@ -8,7 +8,7 @@ export const Header: React.FC = () => {
   const { loggedIn, user, logout } = useContext(UserContext);
 
   return (
-    <Navbar collapseOnSelect expand="lg" fixed="top" bg="white">
+    <Navbar collapseOnSelect expand="lg" fixed="top" bg="dark">
       <Container className="">
         <Navbar.Brand className="w-10 mx-auto mx-0 mx-lg-0 text-center">
           <Nav.Link as={Link} to="/" className="px-0 mx-0" eventKey="link-1">
@@ -23,13 +23,18 @@ export const Header: React.FC = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto mx-lg-4 fw-bold ">
-            <Nav.Link as={Link} to="/" className="mx-2 my-1" eventKey="link-2">
+            <Nav.Link
+              as={Link}
+              to="/"
+              className="mx-2 my-1 text-light"
+              eventKey="link-2"
+            >
               Home
             </Nav.Link>
             <Nav.Link
               as={Link}
               to="/calendar"
-              className="mx-1 my-1"
+              className="mx-1 my-1 text-light"
               eventKey="link-3"
             >
               Calendar
@@ -37,7 +42,7 @@ export const Header: React.FC = () => {
             <Nav.Link
               as={Link}
               to="/directory"
-              className="mx-1 my-1"
+              className="mx-1 my-1 text-light"
               eventKey="link-4"
             >
               Directory
@@ -48,7 +53,10 @@ export const Header: React.FC = () => {
           {loggedIn && (
             <Fragment>
               <Nav className="text-center">
-                <NavDropdown title="My Account" id="collasible-nav-dropdown">
+                <NavDropdown
+                  title={<span className="text-light">My Account</span>}
+                  id="collasible-nav-dropdown"
+                >
                   <NavDropdown.Header className="text-primary fw-bold">
                     {user?.username}
                   </NavDropdown.Header>
