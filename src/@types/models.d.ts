@@ -73,7 +73,7 @@ export interface Course extends Base {
 
 export interface Session extends Base {
   course: Course | Types.ObjectId;
-  URL: string;
+  URL?: string;
   name: string;
   image?: string;
   liveSession: LiveSession | Types.ObjectId;

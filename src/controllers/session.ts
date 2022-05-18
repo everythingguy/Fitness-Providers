@@ -72,7 +72,7 @@ export async function getSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getSessions(req: Request, res: express.Response) {
-  const { provider, course } = req.query;
+  const { provider, course, search } = req.query;
 
   const tagFilter: Types.ObjectId[] = filterTags(req);
 
@@ -83,7 +83,7 @@ export async function getSessions(req: Request, res: express.Response) {
   if (req.user && req.user.isAdmin) {
     query = {};
     if (provider) {
-      let courseQuery: FilterQuery<CourseType> = { provider };
+      const courseQuery: FilterQuery<CourseType> = { provider };
       if (tagFilter.length > 0) courseQuery.tags = tagFilter;
       const providerCourses = await Course.find(courseQuery);
       if (course)
@@ -126,7 +126,41 @@ export async function getSessions(req: Request, res: express.Response) {
     else query = { course: approvedCourses };
   }
 
-  await CRUD.readAll<SessionType>(req, res, "session", Session, query);
+  if (search) {
+    const searchCourses = await Course.find({
+      name: { $regex: search, $options: "i" },
+    });
+    if ("$and" in query)
+      query.$and.push({
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { course: searchCourses },
+        ],
+      });
+    else {
+      query = {
+        $and: [
+          query,
+          {
+            $or: [
+              { name: { $regex: search, $options: "i" } },
+              { course: searchCourses },
+            ],
+          },
+        ],
+      };
+    }
+  }
+
+  await CRUD.readAll<SessionType>(
+    req,
+    res,
+    "session",
+    Session,
+    query,
+    undefined,
+    ["course"]
+  );
 }
 
 /**

@@ -41,7 +41,7 @@ export const Management: React.FC<Props> = () => {
   const [page, setPage] = useState<{
     course: number | null;
     session: number | null;
-  }>({ course: 1, session: 1 });
+  }>({ course: null, session: null });
 
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [courses, setCourses] = useState<CourseType[]>([]);
@@ -61,48 +61,41 @@ export const Management: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      user &&
-      user.provider &&
-      !showDeleteModal &&
-      !showCourseModal &&
-      !showSessionModal
-    ) {
-      first.current = false;
+    if (!showDeleteModal && !showCourseModal && !showSessionModal) {
+      if (first.current) first.current = false;
 
-      CourseAPI.getProvidersCourses(user.provider._id).then((resp) => {
-        if (resp.success) setCourses(resp.data.courses);
-      });
-
-      SessionAPI.getProviderSessions(user.provider._id).then((resp) => {
-        if (resp.success) setSessions(resp.data.sessions);
-      });
+      setCourses([]);
+      setSessions([]);
+      setPage({ course: 1, session: 1 });
     }
-  }, [user, showDeleteModal, showCourseModal, showSessionModal]);
+  }, [showDeleteModal, showCourseModal, showSessionModal]);
 
   useEffect(() => {
-    if (user && user.provider && !first.current && page.course)
+    if (user && user.provider && page.course)
       CourseAPI.getProvidersCourses(user.provider._id, {
         page: page.course,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
       }).then((resp) => {
         if (resp.success) {
-          setCourses(resp.data.courses);
+          if (page.course !== 1) setCourses([...courses, ...resp.data.courses]);
+          else setCourses(resp.data.courses);
           if (!resp.hasNextPage) setPage({ ...page, course: null });
         }
       });
   }, [page.course]);
 
   useEffect(() => {
-    if (user && user.provider && !first.current && page.session)
+    if (user && user.provider && page.session)
       SessionAPI.getProviderSessions(user.provider._id, {
         page: page.session,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
       }).then((resp) => {
         if (resp.success) {
-          setSessions(resp.data.sessions);
+          if (page.session !== 1)
+            setSessions([...sessions, ...resp.data.sessions]);
+          else setSessions(resp.data.sessions);
           if (!resp.hasNextPage) setPage({ ...page, session: null });
         }
       });
@@ -114,30 +107,19 @@ export const Management: React.FC<Props> = () => {
 
       timeout.current = window.setTimeout(() => {
         if (user && user.provider) {
-          CourseAPI.getProvidersCourses(user.provider._id, {
-            page: 1,
-            search: searchParams.keywords,
-            tags: searchParams.selectedCourseTags,
-          }).then((resp) => {
-            if (resp.success) setCourses(resp.data.courses);
-          });
-
-          SessionAPI.getProviderSessions(user.provider._id, {
-            page: 1,
-            search: searchParams.keywords,
-            tags: searchParams.selectedCourseTags,
-          }).then((resp) => {
-            if (resp.success) setSessions(resp.data.sessions);
+          setCourses([]);
+          setSessions([]);
+          setPage({
+            course: 1,
+            session: 1,
           });
         }
       }, 250);
     }
   }, [searchParams]);
 
-  /*
   if (!(loggedIn && user && user.provider))
     return <Navigate to="/user/login" />;
-    */
 
   return (
     <div className="ContentManagement">
@@ -204,64 +186,68 @@ export const Management: React.FC<Props> = () => {
             </div>
           </div>
           <div className="col-xs-6 col-sm-8 col-md-7 col-lg-9 col-xl-9 col-xxl-9 card mb-2">
-            <div>
-              <ResultList
-                title="Classes"
-                items={courses.map((course) => {
-                  return {
-                    _id: course._id,
-                    title: course.name,
-                    subtitle: course.description,
-                    href: "",
-                    image:
-                      course.image || "https://via.placeholder.com/500x500",
-                  };
-                })}
-                onEdit={(id) => {
-                  setEditDeleteInfo({ id, type: "course" });
-                  setCourseModal(true);
-                }}
-                onDelete={(id) => {
-                  setEditDeleteInfo({ id, type: "course" });
-                  setDeleteModal(true);
-                }}
-                onScrollBottom={(e) => {
-                  if (page.course)
-                    setPage({
-                      ...page,
-                      course: page.course + 1,
-                    });
-                }}
-              />
-            </div>
-            <div>
-              <ResultList
-                title="Sessions"
-                items={sessions.map((s) => {
+            <ResultList
+              title="Classes"
+              items={courses.map((course) => {
+                return {
+                  _id: course._id,
+                  title: course.name,
+                  subtitle: course.description,
+                  href: `/course/${course._id}`,
+                  image: course.image || "https://via.placeholder.com/500x500",
+                };
+              })}
+              onEdit={(id) => {
+                setEditDeleteInfo({ id, type: "course" });
+                setCourseModal(true);
+              }}
+              onDelete={(id) => {
+                setEditDeleteInfo({ id, type: "course" });
+                setDeleteModal(true);
+              }}
+              onScrollBottom={(e) => {
+                if (page.course)
+                  setPage({
+                    ...page,
+                    course: page.course + 1,
+                  });
+              }}
+            />
+            <ResultList
+              title="Sessions"
+              items={sessions.map((s) => {
+                if (typeof s.course === "object")
                   return {
                     _id: s._id,
                     title: s.name,
-                    href: "",
+                    subtitle: s.course.name,
+                    href: s.URL || `/course/${s.course._id}`,
                     image: s.image || "https://via.placeholder.com/500x500",
                   };
-                })}
-                onEdit={(id) => {
-                  setEditDeleteInfo({ id, type: "session" });
-                  setSessionModal(true);
-                }}
-                onDelete={(id) => {
-                  setEditDeleteInfo({ id, type: "session" });
-                  setDeleteModal(true);
-                }}
-                onScrollBottom={(e) => {
-                  if (page.session)
-                    setPage({
-                      ...page,
-                      session: page.session + 1,
-                    });
-                }}
-              />
-            </div>
+                else
+                  return {
+                    _id: s._id,
+                    title: s.name,
+                    href: s.URL || "",
+                    image: s.image || "https://via.placeholder.com/500x500",
+                  };
+              })}
+              onEdit={(id) => {
+                setEditDeleteInfo({ id, type: "session" });
+                setSessionModal(true);
+              }}
+              onDelete={(id) => {
+                setEditDeleteInfo({ id, type: "session" });
+                setDeleteModal(true);
+              }}
+              onScrollBottom={(e) => {
+                if (page.session)
+                  setPage({
+                    ...page,
+                    session: page.session + 1,
+                  });
+              }}
+            />
           </div>
         </div>
       </div>

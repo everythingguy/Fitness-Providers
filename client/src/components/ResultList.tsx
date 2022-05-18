@@ -42,6 +42,7 @@ export const ResultList: React.FC<Props> = ({
 }) => {
   const onScroll = (e) => {
     const ele = e.target;
+
     if (ele.scrollHeight - ele.scrollTop === ele.clientHeight) {
       if (onScrollBottom) onScrollBottom(e);
     }
@@ -55,6 +56,7 @@ export const ResultList: React.FC<Props> = ({
         <div
           onScroll={onScroll}
           className="list-group rounded-2 import w-100 overflow-auto"
+          style={{ maxHeight: "30vh" }}
         >
           {items.map((item) =>
             React.createElement(component, {

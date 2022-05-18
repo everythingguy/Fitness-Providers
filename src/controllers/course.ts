@@ -80,7 +80,7 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
-  const { provider } = req.query;
+  const { provider, search } = req.query;
 
   // filter based on tags
   const tagFilter: Types.ObjectId[] = filterTags(req);
@@ -122,6 +122,19 @@ export async function getCourses(req: Request, res: express.Response) {
             }
           : { provider: approvedProviders };
   }
+
+  if (search)
+    query = {
+      $and: [
+        query,
+        {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { description: { $regex: search, $options: "i" } },
+          ],
+        },
+      ],
+    };
 
   await CRUD.readAll(req, res, "course", Course, query, undefined, [
     "location",
