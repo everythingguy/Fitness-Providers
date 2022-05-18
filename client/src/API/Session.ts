@@ -21,10 +21,10 @@ export class Session {
       APIManager.sendRequest<SessionsResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as SessionsResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -45,10 +45,10 @@ export class Session {
       APIManager.sendRequest<SessionsResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as SessionsResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -65,10 +65,10 @@ export class Session {
       APIManager.sendRequest<SessionsResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as SessionsResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -91,10 +91,10 @@ export class Session {
       APIManager.sendRequest<SessionResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as SessionResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -109,10 +109,10 @@ export class Session {
       APIManager.sendRequest<SessionResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as SessionResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -132,10 +132,10 @@ export class Session {
       APIManager.sendRequest<SessionResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as SessionResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -150,10 +150,10 @@ export class Session {
       APIManager.sendRequest<SessionResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as SessionResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });

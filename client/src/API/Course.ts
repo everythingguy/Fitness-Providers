@@ -52,10 +52,10 @@ export class Course {
       APIManager.sendRequest<CoursesResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as CoursesResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -72,10 +72,10 @@ export class Course {
       APIManager.sendRequest<CoursesResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as CoursesResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -88,10 +88,10 @@ export class Course {
       APIManager.sendRequest<CourseResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as CourseResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -121,10 +121,10 @@ export class Course {
       APIManager.sendRequest<CourseResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as CourseResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -139,10 +139,10 @@ export class Course {
       APIManager.sendRequest<CourseResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as CourseResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });

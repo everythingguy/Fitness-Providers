@@ -24,8 +24,8 @@ export const Management: React.FC<Props> = () => {
   // logged in context
   const { loggedIn, user } = useContext(UserContext);
 
-  const first = useRef(true);
   const timeout = useRef<number | null>(null);
+  const first = useRef(true);
 
   const [showCourseModal, setCourseModal] = useState(false);
   const [showSessionModal, setSessionModal] = useState(false);
@@ -42,7 +42,7 @@ export const Management: React.FC<Props> = () => {
   const [page, setPage] = useState<{
     course: number | null;
     session: number | null;
-  }>({ course: null, session: null });
+  }>({ course: 1, session: 1 });
 
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [courses, setCourses] = useState<CourseType[]>([]);
@@ -55,6 +55,34 @@ export const Management: React.FC<Props> = () => {
     | false
   >(false);
 
+  const initialQuery = () => {
+    if (user && user.provider) {
+      CourseAPI.getProvidersCourses(user.provider._id, {
+        page: 1,
+        search: searchParams.keywords,
+        tags: searchParams.selectedCourseTags,
+      }).then((resp) => {
+        if (resp.success) {
+          setCourses(resp.data.courses);
+          if (!resp.hasNextPage) setPage({ ...page, course: null });
+          else setPage({ ...page, course: 1 });
+        }
+      });
+
+      SessionAPI.getProviderSessions(user.provider._id, {
+        page: 1,
+        search: searchParams.keywords,
+        tags: searchParams.selectedCourseTags,
+      }).then((resp) => {
+        if (resp.success) {
+          setSessions(resp.data.sessions);
+          if (!resp.hasNextPage) setPage({ ...page, session: null });
+          else setPage({ ...page, session: 1 });
+        }
+      });
+    }
+  };
+
   useEffect(() => {
     CategoryAPI.getCourseCategories().then((resp) => {
       if (resp.success) setCategories(resp.data.categories);
@@ -63,40 +91,33 @@ export const Management: React.FC<Props> = () => {
 
   useEffect(() => {
     if (!showDeleteModal && !showCourseModal && !showSessionModal) {
-      if (first.current) first.current = false;
-
-      setCourses([]);
-      setSessions([]);
-      setPage({ course: 1, session: 1 });
+      initialQuery();
     }
   }, [showDeleteModal, showCourseModal, showSessionModal]);
 
   useEffect(() => {
-    if (user && user.provider && page.course)
+    if (user && user.provider && page.course && page.course > 1)
       CourseAPI.getProvidersCourses(user.provider._id, {
         page: page.course,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
       }).then((resp) => {
         if (resp.success) {
-          if (page.course !== 1) setCourses([...courses, ...resp.data.courses]);
-          else setCourses(resp.data.courses);
+          setCourses([...courses, ...resp.data.courses]);
           if (!resp.hasNextPage) setPage({ ...page, course: null });
         }
       });
   }, [page.course]);
 
   useEffect(() => {
-    if (user && user.provider && page.session)
+    if (user && user.provider && page.session && page.session > 1)
       SessionAPI.getProviderSessions(user.provider._id, {
         page: page.session,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
       }).then((resp) => {
         if (resp.success) {
-          if (page.session !== 1)
-            setSessions([...sessions, ...resp.data.sessions]);
-          else setSessions(resp.data.sessions);
+          setSessions([...sessions, ...resp.data.sessions]);
           if (!resp.hasNextPage) setPage({ ...page, session: null });
         }
       });
@@ -107,16 +128,9 @@ export const Management: React.FC<Props> = () => {
       if (timeout.current) window.clearTimeout(timeout.current);
 
       timeout.current = window.setTimeout(() => {
-        if (user && user.provider) {
-          setCourses([]);
-          setSessions([]);
-          setPage({
-            course: 1,
-            session: 1,
-          });
-        }
+        initialQuery();
       }, 250);
-    }
+    } else first.current = false;
   }, [searchParams]);
 
   if (!loggedIn) return <Navigate to="/user/login" />;
