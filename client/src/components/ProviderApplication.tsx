@@ -240,7 +240,7 @@ export const ProviderApplication: React.FC<Props> = ({
   const [showAddressModal, setAddressModal] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
 
-  const [providerID, setProviderID] = useState(null);
+  const [providerID, setProviderID] = useState<string | null>(null);
 
   // field state
   const [errors, setError] = useState({

@@ -19,6 +19,8 @@ import { ResultList } from "../../../components/ResultList";
 
 interface Props {}
 
+// TODO: filtering and pagination
+
 export const Management: React.FC<Props> = () => {
   // logged in context
   const { loggedIn, user } = useContext(UserContext);

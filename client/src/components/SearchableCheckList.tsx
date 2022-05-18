@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { KeysOfMultiType } from "../@types/misc";
 
 interface Item {
-  _id: number;
+  _id: string;
   value?: string;
 }
 
