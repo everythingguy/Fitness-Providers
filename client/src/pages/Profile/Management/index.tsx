@@ -154,8 +154,8 @@ export const Management: React.FC<Props> = () => {
             >
               Add Session
             </Button>
-            <Link className="btn btn-dark m-2" to="/provider/management/events">
-              Schedule Events
+            <Link className="btn btn-dark m-2" to="/provider/management/live">
+              Schedule Live Sessions
             </Link>
           </div>
         </div>
@@ -284,5 +284,5 @@ export const Management: React.FC<Props> = () => {
 };
 
 export default Management;
-export * from "./EventManagement";
+export * from "./LiveSessionManagement";
 export * from "./Modals";
