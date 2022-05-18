@@ -63,7 +63,7 @@ export async function getSession(req: Request, res: express.Response) {
     query = { course: approvedCourses, _id: req.params.id };
   }
 
-  await CRUD.read<SessionType>(req, res, "session", Session, query);
+  await CRUD.read<SessionType>(req, res, "session", Session, query, ["course"]);
 }
 
 /**
