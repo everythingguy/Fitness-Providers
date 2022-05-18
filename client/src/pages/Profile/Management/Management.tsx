@@ -16,6 +16,7 @@ import {
 import { CourseModal, SessionModal, DeleteModal } from "./Modals";
 import { UserContext } from "../../../context/UserState";
 import { ResultList } from "../../../components/ResultList";
+import Error403 from "../../ErrorPages/403";
 
 interface Props {}
 
@@ -118,8 +119,9 @@ export const Management: React.FC<Props> = () => {
     }
   }, [searchParams]);
 
-  if (!(loggedIn && user && user.provider))
-    return <Navigate to="/user/login" />;
+  if (!loggedIn) return <Navigate to="/user/login" />;
+
+  if (!(user && user.provider)) return <Error403 />;
 
   return (
     <div className="ContentManagement">
