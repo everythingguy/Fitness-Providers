@@ -10,6 +10,7 @@ type Actions = {
 
 interface State {
   loggedIn: boolean;
+  loading: boolean;
   user?: User;
 }
 
@@ -18,6 +19,7 @@ const UserReducer = (state: State, { action, payload }: Actions) => {
     case "SET_LOGIN":
       return {
         ...state,
+        loading: false,
         loggedIn: payload.loggedIn,
         user: payload.user,
       };

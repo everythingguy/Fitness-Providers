@@ -19,15 +19,22 @@ import Footer from "./components/Footer";
 
 import * as ErrorPages from "./pages/ErrorPages";
 
-import { UserProvider } from "./context/UserState";
+import { UserContext } from "./context/UserState";
+import { useContext } from "react";
 
 function App() {
+  const { loading } = useContext(UserContext);
+
   return (
     <>
-      <UserProvider>
-        <Header />
-        <div id="main" className="bg-light">
-          <div className="container">
+      <Header />
+      <div id="main" className="bg-light">
+        <div className="container">
+          {loading ? (
+            <div className="row text-center">
+              <h1>Loading...</h1>
+            </div>
+          ) : (
             <Routes>
               <Route path="/" element={<Home />} />
 
@@ -61,10 +68,10 @@ function App() {
               <Route path="/error/500" element={<ErrorPages.Error500 />} />
               <Route path="*" element={<ErrorPages.Error404 />} />
             </Routes>
-          </div>
+          )}
         </div>
-        <Footer />
-      </UserProvider>
+      </div>
+      <Footer />
     </>
   );
 }

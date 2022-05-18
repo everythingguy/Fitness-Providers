@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
+import { UserProvider } from "./context/UserState";
 
 import App from "./App";
 
@@ -11,7 +12,9 @@ import "./assets/bootstrap.css";
 ReactDOM.render(
   <Router>
     <React.StrictMode>
-      <App />
+      <UserProvider>
+        <App />
+      </UserProvider>
     </React.StrictMode>
   </Router>,
   document.getElementById("app")

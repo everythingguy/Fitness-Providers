@@ -6,6 +6,7 @@ import User from "../@types/Models";
 
 interface State {
   loggedIn: boolean;
+  loading: boolean;
   user?: User;
   setLogin?: (relogin?: boolean) => void;
   logout?: () => void;
@@ -17,6 +18,7 @@ interface Props {
 
 const initialState: State = {
   loggedIn: false,
+  loading: true,
 };
 
 export const UserContext = createContext(initialState);
@@ -30,8 +32,12 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
       if (body.success && body.data.user)
         dispatch({
           action: "SET_LOGIN",
-          payload: { loggedIn: body.success, user: body.data.user },
+          payload: {
+            loggedIn: body.success,
+            user: body.data.user,
+          },
         });
+      else logout();
     }
   }
 
@@ -47,6 +53,7 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
+        loading: state.loading,
         user: state.user,
         loggedIn: state.loggedIn,
         setLogin,
