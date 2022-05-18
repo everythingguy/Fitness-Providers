@@ -8,7 +8,7 @@ export default {
   testEnvironment: "node",
   collectCoverage: true,
   verbose: true,
-  modulePathIgnorePatterns: ["client", "dist"],
+  modulePathIgnorePatterns: ["client", "dist", "node_modules", "mongodb_data"],
   setupFiles: ["dotenv/config"],
   testTimeout: 10000,
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!**/node_modules/**"],
