@@ -9,6 +9,7 @@ interface ComponentProps {
   subtitle?: string;
   date?: Date;
   newTab?: boolean;
+  external?: boolean;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }
@@ -21,6 +22,7 @@ interface Item {
   subtitle?: string;
   date?: Date;
   newTab?: boolean;
+  external?: boolean;
 }
 
 interface Props {
@@ -47,7 +49,6 @@ export const ResultList: React.FC<Props> = ({
       if (onScrollBottom) onScrollBottom(e);
     }
   };
-
   return (
     <div className="ResultList">
       <div className="d-grid gap-1 p-2">

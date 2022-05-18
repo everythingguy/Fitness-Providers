@@ -239,6 +239,7 @@ export const Management: React.FC<Props> = () => {
                     subtitle: s.course.name,
                     href: s.URL || `/course/${s.course._id}`,
                     image: s.image || "https://via.placeholder.com/500x500",
+                    external: s.URL ? true : false,
                   };
                 else
                   return {
@@ -246,6 +247,7 @@ export const Management: React.FC<Props> = () => {
                     title: s.name,
                     href: s.URL || "",
                     image: s.image || "https://via.placeholder.com/500x500",
+                    external: s.URL ? true : false,
                   };
               })}
               onEdit={(id) => {
