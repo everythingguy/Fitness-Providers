@@ -92,10 +92,11 @@ export const SessionModal: React.FC<Props> = ({
       Session.getSession(info.id).then((resp) => {
         if (resp.success) {
           const session = resp.data.session;
+          const { course } = session;
 
-          if (typeof session.course !== "string")
+          if (typeof course === "object")
             setSelectedCourse(
-              providerCourses.filter((c) => c._id === session.course._id)[0]
+              providerCourses.filter((c) => c._id === course._id)[0]
             );
 
           setFormData({

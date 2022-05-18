@@ -179,7 +179,7 @@ export const Management: React.FC<Props> = () => {
               {categories.map((category) => (
                 <Category
                   category={category.name}
-                  items={category.tags}
+                  items={typeof category.tags === "object" ? category.tags : []}
                   onChange={(e) =>
                     setSearchParams({
                       ...searchParams,

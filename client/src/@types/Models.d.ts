@@ -17,7 +17,7 @@ export interface Address extends Base {
 
 export interface Provider extends Base {
   user: string;
-  address: Address;
+  address: Address | string;
   isEnrolled: boolean;
   phone: string;
   bio?: string;
@@ -27,19 +27,19 @@ export interface Provider extends Base {
 
 export interface Course extends Base {
   name: string;
-  location?: Address;
+  location?: Address | string;
   description: string;
-  provider: Provider;
-  tags: Tag[];
+  provider: Provider | string;
+  tags: Tag[] | string[];
   image?: string;
 }
 
 export interface Session extends Base {
-  course: Course;
+  course: Course | string;
   URL: string;
   name: string;
   image?: string;
-  liveSession: LiveSession;
+  liveSession: LiveSession | string;
 }
 
 export interface Recurring {
@@ -48,14 +48,14 @@ export interface Recurring {
 }
 
 export interface LiveSession extends Base {
-  session: Session;
+  session: Session | string;
   beginDateTime: Date;
   endDateTime: Date;
   recurring: Recurring;
 }
 
 export interface Tag extends Base {
-  category: string;
+  category: Category | string;
   value: string;
   appliesToProvider: boolean;
   appliesToCourse: boolean;
@@ -63,7 +63,7 @@ export interface Tag extends Base {
 
 export interface Category extends Base {
   name: string;
-  tags: Tag[];
+  tags: Tag[] | string;
 }
 
 export default interface User extends Base {
