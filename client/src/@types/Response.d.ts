@@ -20,6 +20,18 @@ export interface SuccessfulResponse extends BaseResponse {
   error?: undefined;
 }
 
+export interface SuccessfulPaginationResponse extends SuccessfulResponse {
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: string | null;
+  nextPage: string | null;
+}
+
 export interface UserResponse extends SuccessfulResponse {
   data: {
     user?: User;
@@ -39,7 +51,7 @@ export interface AddressResponse extends SuccessfulResponse {
   };
 }
 
-export interface AddressesResponse extends SuccessfulResponse {
+export interface AddressesResponse extends SuccessfulPaginationResponse {
   data: {
     addresses: Address[];
   };
@@ -51,7 +63,7 @@ export interface CourseResponse extends SuccessfulResponse {
   };
 }
 
-export interface CoursesResponse extends SuccessfulResponse {
+export interface CoursesResponse extends SuccessfulPaginationResponse {
   data: {
     courses: Course[];
   };
@@ -63,7 +75,7 @@ export interface SessionResponse extends SuccessfulResponse {
   };
 }
 
-export interface SessionsResponse extends SuccessfulResponse {
+export interface SessionsResponse extends SuccessfulPaginationResponse {
   data: {
     sessions: Session[];
   };
@@ -75,19 +87,19 @@ export interface LiveSessionResponse extends SuccessfulResponse {
   };
 }
 
-export interface LiveSessionsResponse extends SuccessfulResponse {
+export interface LiveSessionsResponse extends SuccessfulPaginationResponse {
   data: {
     liveSessions: LiveSession[];
   };
 }
 
-export interface CategoryResponse extends SuccessfulResponse {
+export interface CategoryResponse extends SuccessfulPaginationResponse {
   data: {
     categories: Category[];
   };
 }
 
-export interface TagResponse extends SuccessfulResponse {
+export interface TagResponse extends SuccessfulPaginationResponse {
   data: {
     tags: Tag[];
   };

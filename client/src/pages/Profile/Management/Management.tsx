@@ -19,8 +19,6 @@ import { ResultList } from "../../../components/ResultList";
 
 interface Props {}
 
-// TODO: filtering and pagination
-
 export const Management: React.FC<Props> = () => {
   // logged in context
   const { loggedIn, user } = useContext(UserContext);
@@ -40,7 +38,10 @@ export const Management: React.FC<Props> = () => {
     selectedCourseTags: [],
   });
 
-  const [page, setPage] = useState({ course: 1, session: 1 });
+  const [page, setPage] = useState<{
+    course: number | null;
+    session: number | null;
+  }>({ course: 1, session: 1 });
 
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [courses, setCourses] = useState<CourseType[]>([]);
@@ -79,27 +80,31 @@ export const Management: React.FC<Props> = () => {
     }
   }, [user, showDeleteModal, showCourseModal, showSessionModal]);
 
-  // TODO: implement search filtering on backend
   useEffect(() => {
-    if (user && user.provider && !first.current)
+    if (user && user.provider && !first.current && page.course)
       CourseAPI.getProvidersCourses(user.provider._id, {
         page: page.course,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
       }).then((resp) => {
-        if (resp.success) setCourses(resp.data.courses);
+        if (resp.success) {
+          setCourses(resp.data.courses);
+          if (!resp.hasNextPage) setPage({ ...page, course: null });
+        }
       });
   }, [page.course]);
 
-  // TODO: implement search and tag filtering on backend
   useEffect(() => {
-    if (user && user.provider && !first.current)
+    if (user && user.provider && !first.current && page.session)
       SessionAPI.getProviderSessions(user.provider._id, {
-        page: page.course,
+        page: page.session,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
       }).then((resp) => {
-        if (resp.success) setSessions(resp.data.sessions);
+        if (resp.success) {
+          setSessions(resp.data.sessions);
+          if (!resp.hasNextPage) setPage({ ...page, session: null });
+        }
       });
   }, [page.session]);
 
@@ -110,7 +115,7 @@ export const Management: React.FC<Props> = () => {
       timeout.current = window.setTimeout(() => {
         if (user && user.provider) {
           CourseAPI.getProvidersCourses(user.provider._id, {
-            page: page.course,
+            page: 1,
             search: searchParams.keywords,
             tags: searchParams.selectedCourseTags,
           }).then((resp) => {
@@ -118,7 +123,7 @@ export const Management: React.FC<Props> = () => {
           });
 
           SessionAPI.getProviderSessions(user.provider._id, {
-            page: page.course,
+            page: 1,
             search: searchParams.keywords,
             tags: searchParams.selectedCourseTags,
           }).then((resp) => {
@@ -221,10 +226,11 @@ export const Management: React.FC<Props> = () => {
                   setDeleteModal(true);
                 }}
                 onScrollBottom={(e) => {
-                  setPage({
-                    ...page,
-                    course: page.course + 1,
-                  });
+                  if (page.course)
+                    setPage({
+                      ...page,
+                      course: page.course + 1,
+                    });
                 }}
               />
             </div>
@@ -248,10 +254,11 @@ export const Management: React.FC<Props> = () => {
                   setDeleteModal(true);
                 }}
                 onScrollBottom={(e) => {
-                  setPage({
-                    ...page,
-                    session: page.session + 1,
-                  });
+                  if (page.session)
+                    setPage({
+                      ...page,
+                      session: page.session + 1,
+                    });
                 }}
               />
             </div>
