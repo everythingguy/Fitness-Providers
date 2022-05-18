@@ -66,6 +66,73 @@ export class Session {
     });
   }
 
+  static async createSession(
+    URL: string,
+    name: string,
+    course?: string
+  ): Promise<SessionResponse | ErrorResponse> {
+    const request = new DataRequest("POST", "sessions");
+
+    request.setBody({
+      course,
+      URL: URL && URL.length > 0 ? URL : undefined,
+      name,
+    });
+
+    return new Promise((res) => {
+      APIManager.sendRequest<SessionResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as SessionResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
+
+  static async getSession(
+    id: string
+  ): Promise<SessionResponse | ErrorResponse> {
+    const request = new DataRequest("GET", `sessions/${id}`);
+
+    return new Promise((res) => {
+      APIManager.sendRequest<SessionResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as SessionResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
+
+  static async updateSession(
+    id: string,
+    URL: string,
+    name: string,
+    course?: string
+  ): Promise<SessionResponse | ErrorResponse> {
+    const request = new DataRequest("PATCH", `sessions/${id}`);
+
+    request.setBody({ course, URL, name });
+
+    return new Promise((res) => {
+      APIManager.sendRequest<SessionResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as SessionResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
+
   static async deleteSession(
     id: string
   ): Promise<SessionResponse | ErrorResponse> {

@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import {
   CoursesResponse,
   CourseResponse,
@@ -10,8 +9,8 @@ export class Course {
   static async createCourse(
     name: string,
     description: string,
-    tags: Types.ObjectId[],
-    location?: Types.ObjectId | "online"
+    tags: string[],
+    location?: string | "online"
   ): Promise<CourseResponse | ErrorResponse> {
     const request = new DataRequest("POST", "courses");
     const body = {
@@ -80,8 +79,8 @@ export class Course {
     id: string,
     name: string,
     description: string,
-    tags: Types.ObjectId[],
-    location: Types.ObjectId | "online" | null
+    tags: string[],
+    location: string | "online" | null
   ): Promise<CourseResponse | ErrorResponse> {
     const request = new DataRequest("PATCH", `courses/${id}`);
 

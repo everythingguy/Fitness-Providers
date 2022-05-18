@@ -1,7 +1,7 @@
 import { WeekDays } from "./enums";
 
 interface Base {
-  _id: Types.ObjectId;
+  _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,30 +16,30 @@ export interface Address extends Base {
 }
 
 export interface Provider extends Base {
-  user: Types.ObjectId;
-  address: Types.ObjectId | Address;
+  user: string;
+  address: Address;
   isEnrolled: boolean;
   phone: string;
   bio?: string;
   website?: string;
-  tags: Types.ObjectId[];
+  tags: string[];
 }
 
 export interface Course extends Base {
   name: string;
-  location: Address | Types.ObjectId | "online";
+  location?: Address;
   description: string;
-  provider: Provider | Types.ObjectId;
-  tags: Tag[] | Types.ObjectId[];
+  provider: Provider;
+  tags: Tag[];
   image?: string;
 }
 
 export interface Session extends Base {
-  course: Course | Types.ObjectId;
+  course: Course;
   URL: string;
   name: string;
   image?: string;
-  liveSession: LiveSession | Types.ObjectId;
+  liveSession: LiveSession;
 }
 
 export interface Recurring {
@@ -48,14 +48,14 @@ export interface Recurring {
 }
 
 export interface LiveSession extends Base {
-  session: Session | Types.ObjectId;
+  session: Session;
   beginDateTime: Date;
   endDateTime: Date;
   recurring: Recurring;
 }
 
 export interface Tag extends Base {
-  category: Types.ObjectId;
+  category: string;
   value: string;
   appliesToProvider: boolean;
   appliesToCourse: boolean;

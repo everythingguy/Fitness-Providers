@@ -92,7 +92,7 @@ export const Management: React.FC<Props> = () => {
               variant="dark"
               onClick={() => setSessionModal(true)}
             >
-              Add Video
+              Add Session
             </Button>
             <Link className="btn btn-dark m-2" to="/provider/management/events">
               Schedule Events
@@ -179,7 +179,10 @@ export const Management: React.FC<Props> = () => {
                       session.image || "https://via.placeholder.com/500x500",
                   };
                 })}
-                onEdit={(id) => console.log(id)}
+                onEdit={(id) => {
+                  setEditDeleteInfo({ id, type: "session" });
+                  setSessionModal(true);
+                }}
                 onDelete={(id) => {
                   setEditDeleteInfo({ id, type: "session" });
                   setDeleteModal(true);
@@ -203,6 +206,7 @@ export const Management: React.FC<Props> = () => {
       <SessionModal
         setModal={setSessionModal}
         showModal={showSessionModal}
+        providerCourses={courses}
         info={editDeleteInfo}
         setInfo={setEditDeleteInfo}
       />

@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "vscjava.vscode-java-test",
     "Gruntfuggly.todo-tree",
     "mongodb.mongodb-vscode",
     "dbaeumer.vscode-eslint",

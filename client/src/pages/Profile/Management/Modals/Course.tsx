@@ -10,7 +10,6 @@ import {
 } from "../../../../@types/Models";
 import { UserContext } from "../../../../context/UserState";
 import AddressModal from "./Address";
-import { Types } from "mongoose";
 
 type Info = { type: "course" | "session" | "liveSession"; id: string } | false;
 
@@ -42,7 +41,7 @@ export const CourseModal: React.FC<Props> = ({
     street1: "Online",
   });
   const [selectedTags, setSelectedTags] = useState<
-    { value: Types.ObjectId; label: string }[]
+    { value: string; label: string }[]
   >([]);
 
   // field state
@@ -57,14 +56,10 @@ export const CourseModal: React.FC<Props> = ({
   const [formData, setFormData] = useState<{
     name: string;
     description: string;
-    location: Types.ObjectId | "online" | "new";
     image?: string;
-    tags: Types.ObjectId[];
   }>({
     name: "",
     description: "",
-    location: "online",
-    tags: [],
   });
 
   const [courseTags, setCourseTags] = useState<TagType[]>([]);
@@ -90,16 +85,16 @@ export const CourseModal: React.FC<Props> = ({
 
           setSelectedTags(
             course.tags.map((tag) => {
-              return { value: tag._id, label: tag.name };
+              return { value: tag._id, label: tag.value };
             })
           );
 
-          if (course.location)
-            setSelectedAddress({
-              _id: course.location._id,
-              street1: course.location.street1,
-            });
-          else
+          if (course.location) {
+            const location = course.location;
+            setSelectedAddress(
+              providerAddresses.filter((addr) => addr._id === location._id)[0]
+            );
+          } else
             setSelectedAddress({
               _id: "online",
               street1: "Online",
@@ -145,19 +140,6 @@ export const CourseModal: React.FC<Props> = ({
     }
   }, [providerAddresses]);
 
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      location: selectedAddress._id,
-    });
-  }, [selectedAddress]);
-
-  useEffect(() => {
-    const tags: Types.ObjectId[] = [];
-    for (const value of selectedTags) tags.push(value.value);
-    setFormData({ ...formData, tags });
-  }, [selectedTags]);
-
   const onChange = (e) => {
     if (e.target.type === "checkbox")
       setFormData({ ...formData, [e.target.name]: e.target.checked });
@@ -176,22 +158,22 @@ export const CourseModal: React.FC<Props> = ({
   };
 
   const onSubmit = async () => {
-    if (formData.location !== "new") {
+    if (selectedAddress._id !== "new") {
       let auth;
       if (!info)
         auth = await Course.createCourse(
           formData.name,
           formData.description,
-          formData.tags,
-          formData.location
+          selectedTags.map((tag) => tag.value),
+          selectedAddress._id
         );
       else
         auth = await Course.updateCourse(
           info.id,
           formData.name,
           formData.description,
-          formData.tags,
-          formData.location
+          selectedTags.map((tag) => tag.value),
+          selectedAddress._id
         );
 
       if (auth.success) {
@@ -206,10 +188,7 @@ export const CourseModal: React.FC<Props> = ({
         setModal(false);
         setSelectedTags([]);
         if (user && user.provider && user.provider.address)
-          setSelectedAddress({
-            _id: user!.provider!.address._id,
-            street1: user!.provider!.address.street1,
-          });
+          setSelectedAddress(user.provider.address);
         else
           setSelectedAddress({
             _id: "online",
@@ -240,7 +219,23 @@ export const CourseModal: React.FC<Props> = ({
           setModal(true);
         }}
       />
-      <Modal size="lg" show={showModal} onHide={() => setModal(!showModal)}>
+      <Modal
+        size="lg"
+        show={showModal}
+        onHide={() => {
+          setModal(!showModal);
+          setInfo(false);
+          setSelectedTags([]);
+          if (user && user.provider && user.provider.address)
+            setSelectedAddress(user.provider.address);
+          else
+            setSelectedAddress({
+              _id: "online",
+              street1: "Online",
+            });
+          setFormData({ ...formData, name: "", description: "" });
+        }}
+      >
         <Modal.Header>
           <h5>{info ? "Edit Course" : "Create a Course"}</h5>
         </Modal.Header>
@@ -283,10 +278,14 @@ export const CourseModal: React.FC<Props> = ({
               options={providerAddresses.map((val) => {
                 return { value: val._id, label: val.street1 };
               })}
-              value={{
-                value: selectedAddress._id,
-                label: selectedAddress.street1,
-              }}
+              value={
+                selectedAddress
+                  ? {
+                      value: selectedAddress._id,
+                      label: selectedAddress.street1,
+                    }
+                  : undefined
+              }
               onChange={({ value }: any) => {
                 const address = providerAddresses.filter(
                   (addr) => addr._id === value
@@ -325,10 +324,7 @@ export const CourseModal: React.FC<Props> = ({
               setInfo(false);
               setSelectedTags([]);
               if (user && user.provider && user.provider.address)
-                setSelectedAddress({
-                  _id: user!.provider!.address._id,
-                  street1: user!.provider!.address.street1,
-                });
+                setSelectedAddress(user.provider.address);
               else
                 setSelectedAddress({
                   _id: "online",

@@ -105,7 +105,7 @@ export function isOwnerOrAdmin(
         else if (id && !req.body[id] && !allowMissing)
           res.status(400).json({
             success: false,
-            error: `Missing ${id}`,
+            error: { [id]: `Missing ${id}` },
           } as errorResponse);
         else if (id && req.body[id])
           res.status(401).json({
