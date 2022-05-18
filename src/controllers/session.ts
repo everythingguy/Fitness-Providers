@@ -10,7 +10,8 @@ import {
   Session as SessionType,
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
-import { FilterQuery } from "mongoose";
+import { filterTags } from "../utils/filter";
+import { FilterQuery, Types } from "mongoose";
 
 /**
  * @desc Add a session to a course
@@ -73,18 +74,28 @@ export async function getSession(req: Request, res: express.Response) {
 export async function getSessions(req: Request, res: express.Response) {
   const { provider, course } = req.query;
 
+  const tagFilter: Types.ObjectId[] = filterTags(req);
+
   // hide sessions that belong to unenrolled providers
   // unless the logged in user is admin or the owner of the session
   let query: FilterQuery<SessionType>;
 
   if (req.user && req.user.isAdmin) {
     query = {};
-    if (course) query.course = course;
     if (provider) {
-      const providerCourses = await Course.find({ provider });
+      let courseQuery: FilterQuery<CourseType> = { provider };
+      if (tagFilter.length > 0) courseQuery.tags = tagFilter;
+      const providerCourses = await Course.find(courseQuery);
       if (course)
         query.course = { $and: [{ course: providerCourses }, { course }] };
       else query.course = providerCourses;
+    }
+    if (course && !provider) {
+      query.course = course;
+      if (tagFilter.length > 0) {
+        const tagCourses = await Course.find({ _id: course, tags: tagFilter });
+        query = { course: tagCourses };
+      }
     }
   } else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
@@ -102,6 +113,9 @@ export async function getSessions(req: Request, res: express.Response) {
       courseFilter = {
         $and: [{ provider: approvedProviders }, { provider }],
       };
+
+    if (tagFilter.length > 0 && provider) courseFilter.$and[0].tags = tagFilter;
+    else if (tagFilter.length > 0) courseFilter.tags = tagFilter;
 
     const approvedCourses = await Course.find(courseFilter).select("_id");
 

@@ -6,8 +6,8 @@ const API_URL = process.env.API_URL;
 export class DataRequest {
   requestType: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   endpoint: string;
-  params: { [key: string]: string | number };
-  body: { [key: string]: string | number };
+  params: { [key: string]: string[] | string | number[] | number | boolean };
+  body: { [key: string]: string[] | string | number | null | undefined };
 
   /**
    * @desc DataRequest is a class used to define the parameters of an API request.
@@ -28,21 +28,25 @@ export class DataRequest {
   /**
    * @desc Set the body to be used in post, put, patch, delete requests. Ex: {username: 'myUsername', password: 'myPassword'}.
    */
-  setBody(body) {
+  setBody(body: {
+    [key: string]: string[] | string | number | null | undefined;
+  }) {
     this.body = body;
   }
 
   /**
    * Set the parameters to be used in a get request. Ex: {search: 'mySearchTerm', page: 2}.
    */
-  setParams(params) {
+  setParams(params: {
+    [key: string]: string[] | string | number[] | number | boolean;
+  }) {
     this.params = params;
   }
 
   /**
    * Set more parameters without removing existing parameters. Can be used with: setSeachTerm, setOrdering, setPage.
    */
-  addParams(params) {
+  addParams(params: { [key: string]: string | number }) {
     this.params = {
       ...this.params,
       ...params,
@@ -73,10 +77,13 @@ export class APIManager {
 
       for (const param in dataRequest.params) {
         if (dataRequest.params[param]) {
+          let data = dataRequest.params[param];
+          if (Array.isArray(data)) data = data.join();
+
           if (firstParam) {
-            paramString += `?${param}=${dataRequest.params[param]}`;
+            paramString += `?${param}=${data}`;
             firstParam = false;
-          } else paramString += `&${param}=${dataRequest.params[param]}`;
+          } else paramString += `&${param}=${data}`;
         }
       }
 

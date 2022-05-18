@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, Navigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Searchbar from "../../../components/Searchbar";
@@ -16,6 +16,7 @@ import {
 import { CourseModal, SessionModal, DeleteModal } from "./Modals";
 import { UserContext } from "../../../context/UserState";
 import { ResultList } from "../../../components/ResultList";
+import session from "express-session";
 
 interface Props {}
 
@@ -24,6 +25,9 @@ interface Props {}
 export const Management: React.FC<Props> = () => {
   // logged in context
   const { loggedIn, user } = useContext(UserContext);
+
+  const first = useRef(true);
+  const timeout = useRef<number | null>(null);
 
   const [showCourseModal, setCourseModal] = useState(false);
   const [showSessionModal, setSessionModal] = useState(false);
@@ -36,6 +40,8 @@ export const Management: React.FC<Props> = () => {
     keywords: "",
     selectedCourseTags: [],
   });
+
+  const [page, setPage] = useState({ course: 1, session: 1 });
 
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [courses, setCourses] = useState<CourseType[]>([]);
@@ -62,6 +68,8 @@ export const Management: React.FC<Props> = () => {
       !showCourseModal &&
       !showSessionModal
     ) {
+      first.current = false;
+
       CourseAPI.getProvidersCourses(user.provider._id).then((resp) => {
         if (resp.success) setCourses(resp.data.courses);
       });
@@ -71,6 +79,56 @@ export const Management: React.FC<Props> = () => {
       });
     }
   }, [user, showDeleteModal, showCourseModal, showSessionModal]);
+
+  // TODO: implement search filtering on backend
+  useEffect(() => {
+    if (user && user.provider && !first.current)
+      CourseAPI.getProvidersCourses(user.provider._id, {
+        page: page.course,
+        search: searchParams.keywords,
+        tags: searchParams.selectedCourseTags,
+      }).then((resp) => {
+        if (resp.success) setCourses(resp.data.courses);
+      });
+  }, [page.course]);
+
+  // TODO: implement search and tag filtering on backend
+  useEffect(() => {
+    if (user && user.provider && !first.current)
+      SessionAPI.getProviderSessions(user.provider._id, {
+        page: page.course,
+        search: searchParams.keywords,
+        tags: searchParams.selectedCourseTags,
+      }).then((resp) => {
+        if (resp.success) setSessions(resp.data.sessions);
+      });
+  }, [page.session]);
+
+  useEffect(() => {
+    if (!first.current) {
+      if (timeout.current) window.clearTimeout(timeout.current);
+
+      timeout.current = window.setTimeout(() => {
+        if (user && user.provider) {
+          CourseAPI.getProvidersCourses(user.provider._id, {
+            page: page.course,
+            search: searchParams.keywords,
+            tags: searchParams.selectedCourseTags,
+          }).then((resp) => {
+            if (resp.success) setCourses(resp.data.courses);
+          });
+
+          SessionAPI.getProviderSessions(user.provider._id, {
+            page: page.course,
+            search: searchParams.keywords,
+            tags: searchParams.selectedCourseTags,
+          }).then((resp) => {
+            if (resp.success) setSessions(resp.data.sessions);
+          });
+        }
+      }, 250);
+    }
+  }, [searchParams]);
 
   /*
   if (!(loggedIn && user && user.provider))
@@ -164,21 +222,22 @@ export const Management: React.FC<Props> = () => {
                   setDeleteModal(true);
                 }}
                 onScrollBottom={(e) => {
-                  // TODO: add pagination
-                  console.log("Next Page Please");
+                  setPage({
+                    ...page,
+                    course: page.course + 1,
+                  });
                 }}
               />
             </div>
             <div>
               <ResultList
                 title="Sessions"
-                items={sessions.map((session) => {
+                items={sessions.map((s) => {
                   return {
-                    _id: session._id,
-                    title: session.name,
+                    _id: s._id,
+                    title: s.name,
                     href: "",
-                    image:
-                      session.image || "https://via.placeholder.com/500x500",
+                    image: s.image || "https://via.placeholder.com/500x500",
                   };
                 })}
                 onEdit={(id) => {
@@ -190,8 +249,10 @@ export const Management: React.FC<Props> = () => {
                   setDeleteModal(true);
                 }}
                 onScrollBottom={(e) => {
-                  // TODO: add pagination
-                  console.log("Next Page Please");
+                  setPage({
+                    ...page,
+                    session: page.session + 1,
+                  });
                 }}
               />
             </div>

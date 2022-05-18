@@ -7,11 +7,13 @@ import { APIManager, DataRequest } from "./APIManager";
 
 export class Session {
   static async getProviderSessions(
-    providerID: string
+    providerID: string,
+    params: { [key: string]: string[] | string | number[] | number } = {}
   ): Promise<SessionsResponse | ErrorResponse> {
     const request = new DataRequest("GET", "sessions");
 
     request.setParams({
+      ...params,
       provider: providerID,
     });
 
@@ -29,11 +31,13 @@ export class Session {
   }
 
   static async getCourseSessions(
-    courseID: string
+    courseID: string,
+    params: { [key: string]: string[] | string | number[] | number } = {}
   ): Promise<SessionsResponse | ErrorResponse> {
     const request = new DataRequest("GET", "sessions");
 
     request.setParams({
+      ...params,
       course: courseID,
     });
 
@@ -50,8 +54,12 @@ export class Session {
     });
   }
 
-  static async getSessions(): Promise<SessionsResponse | ErrorResponse> {
+  static async getSessions(params?: {
+    [key: string]: string[] | string | number[] | number;
+  }): Promise<SessionsResponse | ErrorResponse> {
     const request = new DataRequest("GET", "sessions");
+
+    if (params) request.setParams(params);
 
     return new Promise((res) => {
       APIManager.sendRequest<SessionsResponse>(

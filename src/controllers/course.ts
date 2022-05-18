@@ -88,6 +88,7 @@ export async function getCourses(req: Request, res: express.Response) {
 
   if (req.user && req.user.isAdmin) {
     query = {};
+    if (tagFilter.length > 0) query.tags = tagFilter;
     if (provider) query.provider = provider;
   } else {
     const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
@@ -99,9 +100,24 @@ export async function getCourses(req: Request, res: express.Response) {
 
     if (provider)
       query = {
-        $and: [{ provider: approvedProviders, tags: tagFilter }, { provider }],
+        $and: [
+          tagFilter.length > 0
+            ? {
+                provider: approvedProviders,
+                tags: tagFilter,
+              }
+            : { provider: approvedProviders },
+          { provider },
+        ],
       };
-    else query = { provider: approvedProviders, tags: tagFilter };
+    else
+      query =
+        tagFilter.length > 0
+          ? {
+              provider: approvedProviders,
+              tags: tagFilter.length > 0 ? tagFilter : undefined,
+            }
+          : { provider: approvedProviders };
   }
 
   await CRUD.readAll(req, res, "course", Course, query, undefined, [

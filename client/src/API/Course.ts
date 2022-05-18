@@ -38,13 +38,35 @@ export class Course {
   }
 
   static async getProvidersCourses(
-    providerID: string
+    providerID: string,
+    params: { [key: string]: string[] | string | number[] | number } = {}
   ): Promise<CoursesResponse | ErrorResponse> {
     const request = new DataRequest("GET", "courses");
 
     request.setParams({
+      ...params,
       provider: providerID,
     });
+
+    return new Promise((res) => {
+      APIManager.sendRequest<CoursesResponse>(
+        request,
+        (resp) => {
+          res({ success: true, data: resp.data } as CoursesResponse);
+        },
+        (resp) => {
+          res({ success: false, error: resp.error } as ErrorResponse);
+        }
+      );
+    });
+  }
+
+  static async getCourses(params?: {
+    [key: string]: string[] | string | number[] | number;
+  }): Promise<CoursesResponse | ErrorResponse> {
+    const request = new DataRequest("GET", "courses");
+
+    if (params) request.setParams(params);
 
     return new Promise((res) => {
       APIManager.sendRequest<CoursesResponse>(
