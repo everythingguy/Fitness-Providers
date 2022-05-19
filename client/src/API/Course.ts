@@ -3,6 +3,7 @@ import {
   CourseResponse,
   ErrorResponse,
 } from "../@types/Response";
+import { Course as CourseType } from "../@types/Models";
 import { APIManager, DataRequest } from "./APIManager";
 
 export class Course {
@@ -57,6 +58,32 @@ export class Course {
         (resp) => {
           res(resp);
         }
+      );
+    });
+  }
+
+  static async getAllProvidersCourses(
+    providerID: string,
+    params: { [key: string]: string[] | string | number[] | number } = {}
+  ): Promise<CourseType[]> {
+    let page = 1;
+    const courses: CourseType[] = [];
+
+    return new Promise((res) => {
+      const cb = (resp, first = true) => {
+        if (resp.success) {
+          for (const c of resp.data.courses) courses.push(c);
+          if (resp.hasNextPage) {
+            page++;
+            Course.getProvidersCourses(providerID, { ...params, page }).then(
+              (response) => cb(response, false)
+            );
+          } else res(courses);
+        } else res(courses);
+      };
+
+      Course.getProvidersCourses(providerID, { ...params, page }).then((resp) =>
+        cb(resp)
       );
     });
   }

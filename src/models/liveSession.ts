@@ -5,6 +5,7 @@ import { WeekDays } from "../@types/enums";
 import { refValidator } from "../utils/validators";
 import Session from "./session";
 import Pagination from "mongoose-paginate-v2";
+import { UniqueErrorRaiser, ValidationError } from "../utils/errors";
 
 // debug
 // mongoose.set('debug', true);
@@ -30,6 +31,7 @@ const LiveSessionSchema = new mongoose.Schema<LiveSession>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Session",
       required: [true, "Missing session"],
+      unique: true,
       validate: {
         validator: async (value: string) => await refValidator(Session, value),
         message: ({ value }: { value: string }) =>
@@ -71,10 +73,34 @@ const LiveSessionSchema = new mongoose.Schema<LiveSession>(
 
 LiveSessionSchema.plugin(Pagination);
 
-LiveSessionSchema.post("validate", function (this: LiveSession, next) {
-  if (this.beginDateTime > this.endDateTime)
-    next(new Error("The event must start before it ends"));
-  else next();
+LiveSessionSchema.post("validate", function (this: LiveSession, doc, next) {
+  if (this.beginDateTime > this.endDateTime) {
+    const errorMsg = "The event must start before it ends";
+    next(
+      new ValidationError(errorMsg, {
+        beginDateTime: new Error(errorMsg),
+        endDateTime: new Error(errorMsg),
+      })
+    );
+  } else next();
+});
+
+LiveSessionSchema.post("save", UniqueErrorRaiser);
+LiveSessionSchema.post("updateOne", UniqueErrorRaiser);
+LiveSessionSchema.post("findOneAndUpdate", UniqueErrorRaiser);
+
+LiveSessionSchema.post("save", async function (this: LiveSession, doc, next) {
+  await Session.findByIdAndUpdate(this.session, { liveSession: this._id });
+
+  next();
+});
+
+LiveSessionSchema.post("remove", async function (this: LiveSession, doc, next) {
+  try {
+    await Session.findByIdAndUpdate(this.session, { liveSession: null });
+  } catch (error) {}
+
+  next();
 });
 
 const model: PaginateModel<LiveSession, {}, {}> = mongoose.model<

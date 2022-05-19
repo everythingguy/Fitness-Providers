@@ -65,7 +65,7 @@ const SessionSchema = new mongoose.Schema<Session>(
 
 SessionSchema.plugin(Pagination);
 
-SessionSchema.pre("remove", function (next) {
+SessionSchema.post("remove", function (res, next) {
   LiveSession.findByIdAndRemove(this.liveSession).exec();
   next();
 });

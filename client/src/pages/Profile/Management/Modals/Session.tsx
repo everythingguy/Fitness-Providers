@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Session from "../../../../API/Session";
 import { Course as CourseType } from "../../../../@types/Models";
 
-type Info = { type: "course" | "session" | "liveSession"; id: string } | false;
+type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
 interface Props {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -120,7 +120,7 @@ export const SessionModal: React.FC<Props> = ({
       }}
     >
       <Modal.Header>
-        <h5>Create a Session</h5>
+        <h5>{info ? "Edit Session" : "Create a Session"}</h5>
       </Modal.Header>
       <Modal.Body>
         <div className="form-group mb-4">

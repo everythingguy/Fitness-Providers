@@ -79,7 +79,7 @@ const CourseSchema = new mongoose.Schema<Course>(
 
 CourseSchema.plugin(Pagination);
 
-CourseSchema.pre("remove", function (next) {
+CourseSchema.post("remove", function (res, next) {
   Session.remove({ course: this._id }).exec();
   next();
 });

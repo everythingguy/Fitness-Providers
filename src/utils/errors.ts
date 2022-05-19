@@ -15,12 +15,24 @@ export class NotFoundError extends Error {
   }
 }
 
+export class ValidationError extends Error {
+  errors: { [key: string]: Error };
+
+  constructor(message: string, errors: { [key: string]: Error }) {
+    super(message);
+    this.name = "ValidationError";
+    this.errors = errors;
+  }
+}
+
 export function parseValidationErrors(error: any) {
   const errors: any = {};
-  for (const err in error.errors) {
-    if (error.errors.hasOwnProperty(err))
-      errors[err] = error.errors[err].message;
-  }
+  if (error.errors)
+    for (const err in error.errors) {
+      if (error.errors.hasOwnProperty(err))
+        errors[err] = error.errors[err].message;
+    }
+  else return error.message;
   return errors;
 }
 

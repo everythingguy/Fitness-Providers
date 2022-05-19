@@ -10,7 +10,7 @@ import {
   Profile,
   Management,
   MyProfile,
-  LiveSessionManagement,
+  LiveManagement,
 } from "./pages/Profile";
 import * as UserPages from "./pages/User";
 import Terms from "./pages/Terms";
@@ -46,7 +46,7 @@ function App() {
               <Route path="/provider/management" element={<Management />} />
               <Route
                 path="/provider/management/live"
-                element={<LiveSessionManagement />}
+                element={<LiveManagement />}
               />
 
               <Route path="/user/register" element={<UserPages.Register />} />

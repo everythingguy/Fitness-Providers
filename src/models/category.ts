@@ -34,7 +34,7 @@ CategorySchema.method("getTags", async function (this: Category) {
   return await Tag.find({ category: this._id });
 });
 
-CategorySchema.pre("remove", async function (next) {
+CategorySchema.post("remove", async function (res, next) {
   const tags = await this.getTags();
 
   for (const tag of tags) {

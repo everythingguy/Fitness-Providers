@@ -95,7 +95,7 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.pre("remove", function (next) {
+UserSchema.post("remove", function (res, next) {
   Provider.remove({ user: this._id }).exec();
   next();
 });

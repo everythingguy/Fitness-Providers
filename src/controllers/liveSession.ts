@@ -138,7 +138,18 @@ export async function getLiveSessions(req: Request, res: express.Response) {
     res,
     "liveSession",
     LiveSession,
-    query
+    query,
+    undefined,
+    [
+      {
+        path: "session",
+        populate: {
+          path: "course",
+          model: "Course",
+          populate: { path: "provider", model: "Provider" },
+        },
+      },
+    ]
   );
 }
 

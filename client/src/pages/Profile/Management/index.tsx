@@ -2,5 +2,6 @@ import Management from "./Management";
 export default Management;
 
 export * from "./Management";
-export * from "./LiveSessionManagement";
+export * from "./LiveManagement";
+export * from "./LiveSchedule";
 export * from "./Modals";

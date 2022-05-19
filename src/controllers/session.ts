@@ -72,7 +72,9 @@ export async function getSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getSessions(req: Request, res: express.Response) {
-  const { provider, course, search } = req.query;
+  const { provider, course, search, live } = req.query;
+
+  const blnLive = live ? (live as string).toLowerCase() === "true" : undefined;
 
   const tagFilter: Types.ObjectId[] = filterTags(req);
 
@@ -152,6 +154,38 @@ export async function getSessions(req: Request, res: express.Response) {
     }
   }
 
+  if (blnLive) {
+    if ("$and" in query)
+      query.$and.push({
+        liveSession: { $ne: null },
+      });
+    else {
+      query = {
+        $and: [
+          query,
+          {
+            liveSession: { $ne: null },
+          },
+        ],
+      };
+    }
+  } else if (blnLive === false) {
+    if ("$and" in query)
+      query.$and.push({
+        liveSession: { $eq: null },
+      });
+    else {
+      query = {
+        $and: [
+          query,
+          {
+            liveSession: { $eq: null },
+          },
+        ],
+      };
+    }
+  }
+
   await CRUD.readAll<SessionType>(
     req,
     res,
@@ -159,7 +193,13 @@ export async function getSessions(req: Request, res: express.Response) {
     Session,
     query,
     undefined,
-    ["course"]
+    [
+      {
+        path: "course",
+        populate: { path: "provider", model: "Provider" },
+      },
+      { path: "liveSession" },
+    ]
   );
 }
 

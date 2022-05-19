@@ -86,6 +86,15 @@ export async function read<T extends Base>(
   }
 }
 
+type Populate = {
+  path: string;
+  populate?: {
+    path: string;
+    model: string;
+    populate?: Populate & { model: string };
+  };
+};
+
 export async function readAll<T extends Base>(
   req: Request,
   res: express.Response,
@@ -93,7 +102,7 @@ export async function readAll<T extends Base>(
   model: PaginateModel<T, {}, {}>,
   query: FilterQuery<T> = {},
   plural?: string,
-  populate?: string[]
+  populate?: string[] | Populate[]
 ) {
   const pageLimit = 50;
   let page = 1;

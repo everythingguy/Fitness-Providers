@@ -138,6 +138,7 @@ export async function getCourses(req: Request, res: express.Response) {
 
   await CRUD.readAll(req, res, "course", Course, query, undefined, [
     "location",
+    "provider",
   ]);
 }
 

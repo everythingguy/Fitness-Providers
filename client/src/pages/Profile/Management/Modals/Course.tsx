@@ -11,7 +11,7 @@ import {
 import { UserContext } from "../../../../context/UserState";
 import AddressModal from "./Address";
 
-type Info = { type: "course" | "session" | "liveSession"; id: string } | false;
+type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
 interface Props {
   info: Info;

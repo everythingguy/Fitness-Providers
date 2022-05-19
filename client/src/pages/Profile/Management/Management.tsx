@@ -40,16 +40,15 @@ export const Management: React.FC<Props> = () => {
   });
 
   const [page, setPage] = useState<{
-    course: number | null;
     session: number | null;
-  }>({ course: 1, session: 1 });
+  }>({ session: 1 });
 
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [courses, setCourses] = useState<CourseType[]>([]);
   const [sessions, setSessions] = useState<SessionType[]>([]);
   const [editDeleteInfo, setEditDeleteInfo] = useState<
     | {
-        type: "course" | "session" | "liveSession";
+        type: "course" | "session" | "live session";
         id: string;
       }
     | false
@@ -57,22 +56,18 @@ export const Management: React.FC<Props> = () => {
 
   const initialQuery = () => {
     if (user && user.provider) {
-      CourseAPI.getProvidersCourses(user.provider._id, {
-        page: 1,
+      CourseAPI.getAllProvidersCourses(user.provider._id, {
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
-      }).then((resp) => {
-        if (resp.success) {
-          setCourses(resp.data.courses);
-          if (!resp.hasNextPage) setPage({ ...page, course: null });
-          else setPage({ ...page, course: 1 });
-        }
+      }).then((respCourses) => {
+        setCourses(respCourses);
       });
 
       SessionAPI.getProviderSessions(user.provider._id, {
         page: 1,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
+        live: false,
       }).then((resp) => {
         if (resp.success) {
           setSessions(resp.data.sessions);
@@ -96,25 +91,12 @@ export const Management: React.FC<Props> = () => {
   }, [showDeleteModal, showCourseModal, showSessionModal]);
 
   useEffect(() => {
-    if (user && user.provider && page.course && page.course > 1)
-      CourseAPI.getProvidersCourses(user.provider._id, {
-        page: page.course,
-        search: searchParams.keywords,
-        tags: searchParams.selectedCourseTags,
-      }).then((resp) => {
-        if (resp.success) {
-          setCourses([...courses, ...resp.data.courses]);
-          if (!resp.hasNextPage) setPage({ ...page, course: null });
-        }
-      });
-  }, [page.course]);
-
-  useEffect(() => {
     if (user && user.provider && page.session && page.session > 1)
       SessionAPI.getProviderSessions(user.provider._id, {
         page: page.session,
         search: searchParams.keywords,
         tags: searchParams.selectedCourseTags,
+        live: false,
       }).then((resp) => {
         if (resp.success) {
           setSessions([...sessions, ...resp.data.sessions]);
@@ -221,13 +203,6 @@ export const Management: React.FC<Props> = () => {
                 setEditDeleteInfo({ id, type: "course" });
                 setDeleteModal(true);
               }}
-              onScrollBottom={(e) => {
-                if (page.course)
-                  setPage({
-                    ...page,
-                    course: page.course + 1,
-                  });
-              }}
             />
             <ResultList
               title="Sessions"
@@ -245,7 +220,7 @@ export const Management: React.FC<Props> = () => {
                   return {
                     _id: s._id,
                     title: s.name,
-                    href: s.URL || "",
+                    href: s.URL || `/course/${s.course}`,
                     image: s.image || "https://via.placeholder.com/500x500",
                     external: s.URL ? true : false,
                   };
