@@ -198,7 +198,7 @@ export async function del<T extends Base>(
         error: `No ${modelName} found by that id`,
       } as errorResponse);
 
-    await model.findByIdAndDelete(req.params.id);
+    await obj.remove();
 
     return res.status(200).json({
       success: true,

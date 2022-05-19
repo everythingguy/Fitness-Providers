@@ -202,7 +202,7 @@ export async function OwnerOfLiveSession(
   req: Request,
   id = req.params.id
 ): Promise<boolean> {
-  const liveSession = LiveSession.findById(id);
+  const liveSession = await LiveSession.findById(id);
 
   if (!liveSession) throw new NotFoundError("Live session not found");
 

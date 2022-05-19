@@ -89,13 +89,16 @@ LiveSessionSchema.post("save", UniqueErrorRaiser);
 LiveSessionSchema.post("updateOne", UniqueErrorRaiser);
 LiveSessionSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-LiveSessionSchema.post("save", async function (this: LiveSession, doc, next) {
-  await Session.findByIdAndUpdate(this.session, { liveSession: this._id });
+LiveSessionSchema.post(
+  "save",
+  async function (this: LiveSession, doc: LiveSession, next) {
+    await Session.findByIdAndUpdate(this.session, { liveSession: this._id });
 
-  next();
-});
+    next();
+  }
+);
 
-LiveSessionSchema.post("remove", async function (this: LiveSession, doc, next) {
+LiveSessionSchema.post("remove", async function (res, next) {
   try {
     await Session.findByIdAndUpdate(this.session, { liveSession: null });
   } catch (error) {}
