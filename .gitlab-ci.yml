@@ -62,6 +62,7 @@ tscompile:
   cache:
     - key:
         files:
+          - package.json
           - package-lock.json
       paths:
         - node_modules
@@ -69,6 +70,7 @@ tscompile:
       policy: pull-push
     - key:
         files:
+          - client/package.json
           - client/package-lock.json
       paths:
         - client/node_modules
