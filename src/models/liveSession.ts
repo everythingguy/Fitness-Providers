@@ -101,6 +101,7 @@ LiveSessionSchema.post(
 LiveSessionSchema.post("remove", async function (res, next) {
   try {
     await Session.findByIdAndUpdate(this.session, { liveSession: null });
+    // tslint:disable-next-line: no-empty
   } catch (error) {}
 
   next();
