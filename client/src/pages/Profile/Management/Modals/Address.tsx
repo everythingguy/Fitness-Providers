@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Modal from "react-bootstrap/esm/Modal";
+import Modal from "react-bootstrap/Modal";
 import Address from "../../../../API/Address";
 import { Address as AddressType } from "../../../../@types/Models";
 
