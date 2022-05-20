@@ -3,6 +3,11 @@ import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
 import Session from "../../../../API/Session";
 import { Course as CourseType } from "../../../../@types/Models";
+import { DatePicker, TimePicker, Space, InputNumber } from "antd";
+import CircleToggle from "./../../../../components/CircleToggle";
+
+import "antd/dist/antd.css";
+import { WeekDays } from "../../../../@types/enums";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -17,6 +22,7 @@ interface Props {
 // TODO: image upload
 
 // TODO: add additional live session inputs and API call
+// https://ant.design/components/date-picker/
 
 export const LiveSessionModal: React.FC<Props> = ({
   setModal,
@@ -33,11 +39,30 @@ export const LiveSessionModal: React.FC<Props> = ({
     URL: null,
     course: null,
     image: null,
+    session: null,
+    beginDateTime: null,
+    endDateTime: null,
+    "recurring.weekDays": null,
+    "recurring.frequency": null,
   });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    URL: string;
+    isRecurring: boolean;
+    beginDateTime: Date | null;
+    endDateTime: Date | null;
+    recurring: { weekDays: WeekDays[]; frequency: number };
+  }>({
     name: "",
     URL: "",
+    isRecurring: false,
+    beginDateTime: null,
+    endDateTime: null,
+    recurring: {
+      weekDays: [],
+      frequency: 1,
+    },
   });
 
   const onChange = (e) => {
@@ -79,11 +104,26 @@ export const LiveSessionModal: React.FC<Props> = ({
         URL: null,
         course: null,
         image: null,
+        session: null,
+        beginDateTime: null,
+        endDateTime: null,
+        "recurring.weekDays": null,
+        "recurring.frequency": null,
       });
 
       setModal(false);
       setInfo(false);
-      setFormData({ ...formData, name: "", URL: "" });
+      setFormData({
+        name: "",
+        URL: "",
+        isRecurring: false,
+        beginDateTime: null,
+        endDateTime: null,
+        recurring: {
+          weekDays: [],
+          frequency: 1,
+        },
+      });
     } else {
       setError(auth.error as any);
     }
@@ -111,6 +151,32 @@ export const LiveSessionModal: React.FC<Props> = ({
     }
   }, [info, showModal]);
 
+  useEffect(() => {
+    if (formData.recurring.weekDays.length === 0 && formData.isRecurring)
+      setFormData({ ...formData, isRecurring: false });
+    else if (formData.recurring.weekDays.length !== 0 && !formData.isRecurring)
+      setFormData({ ...formData, isRecurring: true });
+  }, [formData.recurring.weekDays]);
+
+  const toggleWeekDayButton = (id: WeekDays) => {
+    if (formData.recurring.weekDays.includes(id))
+      setFormData({
+        ...formData,
+        recurring: {
+          ...formData.recurring,
+          weekDays: formData.recurring.weekDays.filter((day) => day !== id),
+        },
+      });
+    else
+      setFormData({
+        ...formData,
+        recurring: {
+          ...formData.recurring,
+          weekDays: [...formData.recurring.weekDays, id],
+        },
+      });
+  };
+
   return (
     <Modal
       size="lg"
@@ -118,17 +184,32 @@ export const LiveSessionModal: React.FC<Props> = ({
       onHide={() => {
         setModal(!showModal);
         setInfo(false);
-        setFormData({ ...formData, name: "", URL: "" });
+        setFormData({
+          name: "",
+          URL: "",
+          isRecurring: false,
+          beginDateTime: null,
+          endDateTime: null,
+          recurring: {
+            weekDays: [],
+            frequency: 1,
+          },
+        });
         setError({
           name: null,
           URL: null,
           course: null,
           image: null,
+          session: null,
+          beginDateTime: null,
+          endDateTime: null,
+          "recurring.weekDays": null,
+          "recurring.frequency": null,
         });
       }}
     >
       <Modal.Header>
-        <h5>{info ? "Edit Session" : "Create a Session"}</h5>
+        <h5>{info ? "Edit Live Session" : "Create a Live Session"}</h5>
       </Modal.Header>
       <Modal.Body>
         <div className="form-group mb-4">
@@ -193,6 +274,118 @@ export const LiveSessionModal: React.FC<Props> = ({
           />
           {errors.course && <div className="text-danger">{errors.course}</div>}
         </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Session Date:</label>
+          <br />
+          <DatePicker popupStyle={{ zIndex: 1070 }} style={{ width: "100%" }} />
+          {errors.beginDateTime || errors.endDateTime ? (
+            <div className="text-danger">
+              <p>{errors.beginDateTime}</p>
+              <p>{errors.endDateTime}</p>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label">Session Time:</label>
+          <br />
+          <TimePicker popupStyle={{ zIndex: 1070 }} style={{ width: "100%" }} />
+          {errors.beginDateTime || errors.endDateTime ? (
+            <div className="text-danger">
+              <p>{errors.beginDateTime}</p>
+              <p>{errors.endDateTime}</p>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        <div className="form-group mb-4">
+          <label className="form-label me-3">Recurring:</label>
+          <CircleToggle
+            label="S"
+            id={WeekDays.Sunday}
+            enabled={formData.recurring.weekDays.includes(WeekDays.Sunday)}
+            onChange={(id) => toggleWeekDayButton(id)}
+          />
+          <CircleToggle
+            label="M"
+            id={WeekDays.Monday}
+            enabled={formData.recurring.weekDays.includes(WeekDays.Monday)}
+            onChange={(id) => toggleWeekDayButton(id)}
+          />
+          <CircleToggle
+            label="T"
+            id={WeekDays.Tuesday}
+            enabled={formData.recurring.weekDays.includes(WeekDays.Tuesday)}
+            onChange={(id) => toggleWeekDayButton(id)}
+          />
+          <CircleToggle
+            label="W"
+            id={WeekDays.Wednesday}
+            enabled={formData.recurring.weekDays.includes(WeekDays.Wednesday)}
+            onChange={(id) => toggleWeekDayButton(id)}
+          />
+          <CircleToggle
+            label="T"
+            id={WeekDays.Thursday}
+            enabled={formData.recurring.weekDays.includes(WeekDays.Thursday)}
+            onChange={(id) => toggleWeekDayButton(id)}
+          />
+          <CircleToggle
+            label="F"
+            id={WeekDays.Friday}
+            enabled={formData.recurring.weekDays.includes(WeekDays.Friday)}
+            onChange={(id) => toggleWeekDayButton(id)}
+          />
+          <CircleToggle
+            label="S"
+            id={WeekDays.Saturday}
+            enabled={formData.recurring.weekDays.includes(WeekDays.Saturday)}
+            onChange={(id) => toggleWeekDayButton(id)}
+          />
+          {formData.isRecurring && (
+            <span className="float-lg-end w-lg-25 d-lg-inline mt-lg-0 d-sm-block w-sm-100 mt-sm-3">
+              Every{" "}
+              <input
+                className="border text-center d-inline"
+                style={{ width: "25%" }}
+                type="number"
+                name="frequency"
+                value={formData.recurring.frequency}
+                onChange={(e) => {
+                  setFormData({
+                    ...formData,
+                    recurring: {
+                      ...formData.recurring,
+                      frequency: parseInt(e.target.value, 10),
+                    },
+                  });
+                }}
+                onKeyUp={enterSubmit}
+              />{" "}
+              Week(s)
+            </span>
+          )}
+        </div>
+        {formData.isRecurring && (
+          <div className="form-group mb-4">
+            <label className="form-label">Until:</label>
+            <br />
+            <DatePicker
+              popupStyle={{ zIndex: 1070 }}
+              style={{ width: "100%" }}
+            />
+            {errors.beginDateTime || errors.endDateTime ? (
+              <div className="text-danger">
+                <p>{errors.beginDateTime}</p>
+                <p>{errors.endDateTime}</p>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <button
@@ -201,12 +394,27 @@ export const LiveSessionModal: React.FC<Props> = ({
           onClick={() => {
             setModal(false);
             setInfo(false);
-            setFormData({ ...formData, name: "", URL: "" });
+            setFormData({
+              name: "",
+              URL: "",
+              isRecurring: false,
+              beginDateTime: null,
+              endDateTime: null,
+              recurring: {
+                weekDays: [],
+                frequency: 1,
+              },
+            });
             setError({
               name: null,
               URL: null,
               course: null,
               image: null,
+              session: null,
+              beginDateTime: null,
+              endDateTime: null,
+              "recurring.weekDays": null,
+              "recurring.frequency": null,
             });
           }}
         >
