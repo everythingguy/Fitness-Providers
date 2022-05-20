@@ -150,7 +150,7 @@ export const Management: React.FC<Props> = () => {
           <div className="mb-2">
             <Searchbar
               id="search"
-              placeholder="Search Key Words"
+              placeholder="Search"
               onChange={(e) =>
                 setSearchParams({
                   ...searchParams,
