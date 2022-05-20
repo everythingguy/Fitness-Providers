@@ -51,11 +51,14 @@ export const LiveManagement: React.FC<Props> = () => {
       <div className="container">
         <div className="row">
           <div className="col-md-12">
-            <Link className="btn btn-dark m-2" to="/provider/management">
+            <Link
+              className="btn btn-dark m-2 text-light fw-bold"
+              to="/provider/management"
+            >
               Return
             </Link>
             <Button
-              className="m-2"
+              className="m-2 text-light fw-bold"
               variant="dark"
               onClick={() => setLiveSessionModal(true)}
             >

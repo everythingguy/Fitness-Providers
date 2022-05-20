@@ -125,20 +125,23 @@ export const Management: React.FC<Props> = () => {
         <div className="row">
           <div className="col-md-12">
             <Button
-              className="m-2"
+              className="m-2 text-light fw-bold"
               variant="dark"
               onClick={() => setCourseModal(true)}
             >
               Add Class
             </Button>
             <Button
-              className="m-2"
+              className="m-2 text-light fw-bold"
               variant="dark"
               onClick={() => setSessionModal(true)}
             >
               Add Session
             </Button>
-            <Link className="btn btn-dark m-2" to="/provider/management/live">
+            <Link
+              className="btn btn-dark m-2 text-light fw-bold"
+              to="/provider/management/live"
+            >
               Schedule Live Sessions
             </Link>
           </div>
