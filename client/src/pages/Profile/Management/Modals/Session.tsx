@@ -170,6 +170,18 @@ export const SessionModal: React.FC<Props> = ({
               const course = providerCourses.filter((c) => c._id === value)[0];
               setSelectedCourse(course);
             }}
+            styles={{
+              control: (provided, state) =>
+                errors.course
+                  ? {
+                      ...provided,
+                      borderColor: "#dc3545",
+                      "&:hover": {
+                        borderColor: "#a21c29",
+                      },
+                    }
+                  : provided,
+            }}
           />
           {errors.course && <div className="text-danger">{errors.course}</div>}
         </div>

@@ -307,6 +307,18 @@ export const CourseModal: React.FC<Props> = ({
                 )[0];
                 setSelectedAddress(address);
               }}
+              styles={{
+                control: (provided, state) =>
+                  errors.location
+                    ? {
+                        ...provided,
+                        borderColor: "#dc3545",
+                        "&:hover": {
+                          borderColor: "#a21c29",
+                        },
+                      }
+                    : provided,
+              }}
             />
             {errors.location && (
               <div className="text-danger">{errors.location}</div>
@@ -324,10 +336,20 @@ export const CourseModal: React.FC<Props> = ({
               value={selectedTags}
               isMulti
               closeMenuOnSelect={false}
+              styles={{
+                control: (provided, state) =>
+                  errors.tags
+                    ? {
+                        ...provided,
+                        borderColor: "#dc3545",
+                        "&:hover": {
+                          borderColor: "#a21c29",
+                        },
+                      }
+                    : provided,
+              }}
             />
-            {errors.location && (
-              <div className="text-danger">{errors.tags}</div>
-            )}
+            {errors.tags && <div className="text-danger">{errors.tags}</div>}
           </div>
         </Modal.Body>
         <Modal.Footer>
