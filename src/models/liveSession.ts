@@ -20,7 +20,13 @@ const RecurringSchema = new mongoose.Schema<Recurring>({
     type: Number,
     min: [1, "Frequency cannot be less than one"],
     max: [20, "Frequency cannot be greater than twenty"],
-    validate: [validator.isInt, "Frequency must be an integer"],
+    validate: [
+      (value: any) => {
+        if (typeof value === "number") return validator.isInt(value.toString());
+        else return false;
+      },
+      "Frequency must be an integer",
+    ],
     default: 1,
   },
 });

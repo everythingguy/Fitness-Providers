@@ -46,7 +46,7 @@ export class LiveSession {
     session: string,
     beginDateTime: Date | null,
     endDateTime: Date | null,
-    recurring?: { weekDays: WeekDays[]; frequency: number }
+    recurring?: { weekDays: WeekDays[]; frequency: number } | null
   ): Promise<LiveSessionResponse | ErrorResponse> {
     const request = new DataRequest("PATCH", `live-sessions/${id}`);
 
@@ -57,7 +57,7 @@ export class LiveSession {
       recurring,
     };
 
-    if (!recurring) delete body.recurring;
+    if (recurring === undefined) delete body.recurring;
 
     request.setBody(body);
 

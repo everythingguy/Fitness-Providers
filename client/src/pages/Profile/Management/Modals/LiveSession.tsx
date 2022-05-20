@@ -202,7 +202,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                 )} ${formData.time[1].format("hh:mm:ss a")}`,
                 "YYYY-MM-DD hh:mm:ss a"
               ).toDate(),
-          formData.isRecurring ? formData.recurring : undefined
+          formData.isRecurring ? formData.recurring : null
         );
 
       if (liveResp.success) {
@@ -265,12 +265,22 @@ export const LiveSessionModal: React.FC<Props> = ({
                 ...formData,
                 name: session.name,
                 URL: session.URL || "",
+                date: moment(liveResp.data.liveSession.beginDateTime),
+                isRecurring: liveResp.data.liveSession.recurring ? true : false,
+                time: [
+                  moment(liveResp.data.liveSession.beginDateTime),
+                  moment(liveResp.data.liveSession.endDateTime),
+                ],
+                recurring: liveResp.data.liveSession.recurring
+                  ? {
+                      ...liveResp.data.liveSession.recurring,
+                      endDate: moment(liveResp.data.liveSession.endDateTime),
+                    }
+                  : { frequency: 1, weekDays: [], endDate: null },
               });
             }
           });
         }
-
-        // TODO: populate live session data
       });
     }
   }, [info, showModal]);
@@ -413,6 +423,7 @@ export const LiveSessionModal: React.FC<Props> = ({
             popupStyle={{ zIndex: 1070 }}
             style={{ width: "100%" }}
             onChange={(date) => setFormData({ ...formData, date })}
+            value={formData.date}
             status={
               errors.date || errors.beginDateTime || errors.endDateTime
                 ? "error"
@@ -442,6 +453,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                   time: [t[0] as moment.Moment, t[1] as moment.Moment],
                 });
             }}
+            value={formData.time as any}
             use12Hours
             format="h:mm a"
             status={
@@ -567,6 +579,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                     },
                   })
                 }
+                value={formData.recurring.endDate}
                 status={
                   errors.endDate || errors.beginDateTime || errors.endDateTime
                     ? "error"

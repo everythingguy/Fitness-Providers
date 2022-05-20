@@ -18,7 +18,7 @@ export const LiveSchedule: React.FC<Props> = ({ liveSessions }) => {
         plugins={[timeGridPlugin, rrulePlugin]}
         initialView="timeGridWeek"
         allDaySlot={false}
-        eventColor="#664479"
+        eventColor="#219ebc"
         events={
           liveSessions.map((session) => {
             if (
@@ -28,7 +28,7 @@ export const LiveSchedule: React.FC<Props> = ({ liveSessions }) => {
             )
               return {
                 id: session._id,
-                title: session.course.name,
+                title: session.name,
                 start: !session.liveSession.recurring
                   ? session.liveSession.beginDateTime
                   : undefined,

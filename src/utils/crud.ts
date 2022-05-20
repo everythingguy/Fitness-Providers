@@ -1,12 +1,5 @@
 import express from "express";
-import {
-  Types,
-  Model,
-  FilterQuery,
-  HydratedDocument,
-  PaginateModel,
-  PaginateResult,
-} from "mongoose";
+import { Types, Model, FilterQuery, PaginateModel } from "mongoose";
 import { postPatchErrorHandler } from "./errors";
 import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";

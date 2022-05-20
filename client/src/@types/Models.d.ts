@@ -44,7 +44,7 @@ export interface Session extends Base {
 
 export interface Recurring {
   weekDays: WeekDays[];
-  frequency: Number;
+  frequency: number;
 }
 
 export interface LiveSession extends Base {
