@@ -1,6 +1,7 @@
 import mongoose, { PaginateModel } from "mongoose";
 import { Address } from "../@types/models";
 import Provider from "./provider";
+import Course from "./course";
 import { refValidator } from "../utils/validators";
 import Pagination from "mongoose-paginate-v2";
 
@@ -76,5 +77,16 @@ const model: PaginateModel<Address, {}, {}> = mongoose.model<
   Address,
   PaginateModel<Address>
 >("Address", AddressSchema);
+
+// delete ref of address on provider and courses
+AddressSchema.post("remove", async function (res, next) {
+  try {
+    await Provider.findByIdAndUpdate(this.provider, { address: null });
+    await Course.updateMany({ location: this._id }, { location: null });
+    // tslint:disable-next-line: no-empty
+  } catch (error) {}
+
+  next();
+});
 
 export default model;

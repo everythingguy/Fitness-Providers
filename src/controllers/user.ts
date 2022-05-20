@@ -291,6 +291,7 @@ export async function resendConfirmation(
   res: express.Response
 ) {
   try {
+    // TODO: add timeout per user
     const user = await User.findOne({ username: req.body.username });
 
     if (user) {
@@ -325,6 +326,7 @@ export async function resendConfirmation(
  * @access Restricted
  */
 export async function getUser(req: Request, res: express.Response) {
+  // TODO: handle admin
   if (!req.user)
     return res.status(404).json({
       success: false,
@@ -345,6 +347,7 @@ export async function getUser(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteUser(req: Request, res: express.Response) {
+  // TODO: handle admin
   try {
     let user: UserType;
     if (req.user) user = await User.findById(req.user._id);
