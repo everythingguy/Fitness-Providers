@@ -13,6 +13,7 @@ import ResultList from "../../../components/ResultList";
 import LiveSessionModal from "./Modals/LiveSession";
 import DeleteModal from "./Modals/Delete";
 import { Course, LiveSession } from "../../../API";
+import { liveSessionDateToString } from "../../../utils/Date";
 
 interface Props {}
 
@@ -43,7 +44,7 @@ export const LiveManagement: React.FC<Props> = () => {
         setCourses(c)
       );
     }
-  }, [showLiveSessionModal]);
+  }, [showLiveSessionModal, showDeleteModal]);
 
   return (
     <div className="ContentManagement">
@@ -79,9 +80,7 @@ export const LiveManagement: React.FC<Props> = () => {
                         liveSession.image ||
                         "https://via.placeholder.com/500x500",
                       subtitle: liveSession.course.name,
-                      /*TODO: date: liveSession.liveSession.recurring
-                  ? recurringLiveSessionDateToString(liveSession)
-                  : liveSessionDateToString(liveSession),*/
+                      date: liveSessionDateToString(liveSession),
                     }
                   : { _id: "", title: "", href: "", image: "" }
               )}

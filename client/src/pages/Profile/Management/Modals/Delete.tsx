@@ -24,7 +24,16 @@ export const DeleteModal: React.FC<Props> = ({
 
       if (type === "course") await Course.deleteCourse(id);
       else if (type === "session") await Session.deleteSession(id);
-      else if (type === "live session") await LiveSession.deleteLiveSession(id);
+      else if (type === "live session") {
+        const resp = await LiveSession.deleteLiveSession(id);
+        if (resp.success && typeof resp.data.liveSession.session === "string")
+          await Session.deleteSession(resp.data.liveSession.session);
+        else if (
+          resp.success &&
+          typeof resp.data.liveSession.session === "object"
+        )
+          await Session.deleteSession(resp.data.liveSession.session._id);
+      }
 
       setModal(false);
       setInfo(false);

@@ -10,6 +10,7 @@ import {
 } from "../../../../@types/Models";
 import { UserContext } from "../../../../context/UserState";
 import AddressModal from "./Address";
+import { CourseResponse, ErrorResponse } from "../../../../@types/Response";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -164,16 +165,16 @@ export const CourseModal: React.FC<Props> = ({
 
   const onSubmit = async () => {
     if (selectedAddress._id !== "new") {
-      let auth;
+      let courseResp: CourseResponse | ErrorResponse;
       if (!info)
-        auth = await Course.createCourse(
+        courseResp = await Course.createCourse(
           formData.name,
           formData.description,
           selectedTags.map((tag) => tag.value),
           selectedAddress._id
         );
       else
-        auth = await Course.updateCourse(
+        courseResp = await Course.updateCourse(
           info.id,
           formData.name,
           formData.description,
@@ -181,7 +182,7 @@ export const CourseModal: React.FC<Props> = ({
           selectedAddress._id
         );
 
-      if (auth.success) {
+      if (courseResp.success) {
         setError({
           name: null,
           description: null,
@@ -207,7 +208,7 @@ export const CourseModal: React.FC<Props> = ({
         setFormData({ ...formData, name: "", description: "" });
         if (info) setInfo(false);
       } else {
-        setError(auth.error as any);
+        setError(courseResp.error as any);
       }
     } else {
       setShowAddressModal(true);

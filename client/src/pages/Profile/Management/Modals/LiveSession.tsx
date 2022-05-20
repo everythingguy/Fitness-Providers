@@ -3,11 +3,18 @@ import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
 import Session from "../../../../API/Session";
 import { Course as CourseType } from "../../../../@types/Models";
-import { DatePicker, TimePicker, Space, InputNumber } from "antd";
+import { DatePicker, TimePicker } from "antd";
 import CircleToggle from "./../../../../components/CircleToggle";
+import moment from "moment";
 
 import "antd/dist/antd.css";
 import { WeekDays } from "../../../../@types/enums";
+import {
+  ErrorResponse,
+  LiveSessionResponse,
+  SessionResponse,
+} from "../../../../@types/Response";
+import LiveSession from "../../../../API/LiveSession";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -21,8 +28,7 @@ interface Props {
 
 // TODO: image upload
 
-// TODO: add additional live session inputs and API call
-// https://ant.design/components/date-picker/
+// TODO: edit live session
 
 export const LiveSessionModal: React.FC<Props> = ({
   setModal,
@@ -34,14 +40,17 @@ export const LiveSessionModal: React.FC<Props> = ({
   const [selectedCourse, setSelectedCourse] = useState<CourseType | null>(null);
 
   // field state
-  const [errors, setError] = useState({
+  const [errors, setError] = useState<{ [key: string]: string | null }>({
     name: null,
     URL: null,
     course: null,
     image: null,
     session: null,
+    time: null,
     beginDateTime: null,
     endDateTime: null,
+    date: null,
+    endDate: null,
     "recurring.weekDays": null,
     "recurring.frequency": null,
   });
@@ -50,18 +59,23 @@ export const LiveSessionModal: React.FC<Props> = ({
     name: string;
     URL: string;
     isRecurring: boolean;
-    beginDateTime: Date | null;
-    endDateTime: Date | null;
-    recurring: { weekDays: WeekDays[]; frequency: number };
+    date: moment.Moment | null;
+    time: moment.Moment[];
+    recurring: {
+      weekDays: WeekDays[];
+      frequency: number;
+      endDate: moment.Moment | null;
+    };
   }>({
     name: "",
     URL: "",
     isRecurring: false,
-    beginDateTime: null,
-    endDateTime: null,
+    date: null,
+    time: [],
     recurring: {
       weekDays: [],
       frequency: 1,
+      endDate: null,
     },
   });
 
@@ -82,71 +96,181 @@ export const LiveSessionModal: React.FC<Props> = ({
     }
   };
 
+  const errorHandler = () => {
+    const e: any = {};
+    if (!formData.name) e.name = "Please enter a session name";
+    if (!selectedCourse) e.course = "Please select a course";
+    if (!formData.date) e.date = "Please select a session date";
+    if (!formData.time || (formData.time && formData.time.length !== 2))
+      e.time = "Please select a time";
+    if (formData.isRecurring) {
+      if (!formData.recurring.endDate) e.endDate = "Please select a end date";
+      else if (formData.date && formData.recurring.endDate < formData.date)
+        e.endDate = "Must be greater than session date";
+    }
+
+    if (Object.keys(e).length > 0) {
+      setError(e);
+      return true;
+    } else return false;
+  };
+
   const onSubmit = async () => {
-    let auth;
+    if (errorHandler()) return;
+
+    let sessionResp: SessionResponse | ErrorResponse;
     if (!info)
-      auth = await Session.createSession(
-        formData.URL,
+      sessionResp = await Session.createSession(
         formData.name,
+        formData.URL,
         selectedCourse ? selectedCourse._id : undefined
       );
-    else
-      auth = await Session.updateSession(
-        info.id,
-        formData.URL,
-        formData.name,
-        selectedCourse ? selectedCourse._id : undefined
-      );
+    else {
+      const resp = await LiveSession.getLiveSession(info.id);
+      if (resp.success && typeof resp.data.liveSession.session === "string") {
+        sessionResp = await Session.updateSession(
+          resp.data.liveSession.session,
+          formData.name,
+          formData.URL,
+          selectedCourse ? selectedCourse._id : undefined
+        );
+      } else if (
+        resp.success &&
+        typeof resp.data.liveSession.session === "object"
+      ) {
+        sessionResp = await Session.updateSession(
+          resp.data.liveSession.session._id,
+          formData.name,
+          formData.URL,
+          selectedCourse ? selectedCourse._id : undefined
+        );
+      } else {
+        setError({
+          ...errors,
+          name: "Unable to find the session that this live session belongs to",
+        });
+        return;
+      }
+    }
 
-    if (auth.success) {
-      setError({
-        name: null,
-        URL: null,
-        course: null,
-        image: null,
-        session: null,
-        beginDateTime: null,
-        endDateTime: null,
-        "recurring.weekDays": null,
-        "recurring.frequency": null,
-      });
+    if (sessionResp.success) {
+      let liveResp: LiveSessionResponse | ErrorResponse;
+      if (!info)
+        liveResp = await LiveSession.createLiveSession(
+          sessionResp.data.session._id,
+          moment(
+            `${formData.date!.format("YYYY-MM-DD")} ${formData.time[0].format(
+              "hh:mm:ss a"
+            )}`,
+            "YYYY-MM-DD hh:mm:ss a"
+          ).toDate(),
+          formData.isRecurring
+            ? moment(
+                `${formData.recurring.endDate!.format(
+                  "YYYY-MM-DD"
+                )} ${formData.time[1].format("hh:mm:ss a")}`,
+                "YYYY-MM-DD hh:mm:ss a"
+              ).toDate()
+            : moment(
+                `${formData.date!.format(
+                  "YYYY-MM-DD"
+                )} ${formData.time[1].format("hh:mm:ss a")}`,
+                "YYYY-MM-DD hh:mm:ss a"
+              ).toDate(),
+          formData.isRecurring ? formData.recurring : undefined
+        );
+      else
+        liveResp = await LiveSession.updateLiveSession(
+          info.id,
+          sessionResp.data.session._id,
+          moment(
+            `${formData.date!.format("YYYY-MM-DD")} ${formData.time[0].format(
+              "hh:mm:ss a"
+            )}`,
+            "YYYY-MM-DD hh:mm:ss a"
+          ).toDate(),
+          formData.isRecurring
+            ? moment(
+                `${formData.recurring.endDate!.format(
+                  "YYYY-MM-DD"
+                )} ${formData.time[1].format("hh:mm:ss a")}`,
+                "YYYY-MM-DD hh:mm:ss a"
+              ).toDate()
+            : moment(
+                `${formData.date!.format(
+                  "YYYY-MM-DD"
+                )} ${formData.time[1].format("hh:mm:ss a")}`,
+                "YYYY-MM-DD hh:mm:ss a"
+              ).toDate(),
+          formData.isRecurring ? formData.recurring : undefined
+        );
 
-      setModal(false);
-      setInfo(false);
-      setFormData({
-        name: "",
-        URL: "",
-        isRecurring: false,
-        beginDateTime: null,
-        endDateTime: null,
-        recurring: {
-          weekDays: [],
-          frequency: 1,
-        },
-      });
+      if (liveResp.success) {
+        setError({
+          name: null,
+          URL: null,
+          course: null,
+          image: null,
+          session: null,
+          time: null,
+          beginDateTime: null,
+          endDateTime: null,
+          date: null,
+          endDate: null,
+          "recurring.weekDays": null,
+          "recurring.frequency": null,
+        });
+
+        setModal(false);
+        setInfo(false);
+        setFormData({
+          name: "",
+          URL: "",
+          isRecurring: false,
+          date: null,
+          time: [],
+          recurring: {
+            weekDays: [],
+            frequency: 1,
+            endDate: null,
+          },
+        });
+      } else {
+        setError(liveResp.error as any);
+        if (!info) await Session.deleteSession(sessionResp.data.session._id);
+      }
     } else {
-      setError(auth.error as any);
+      setError(sessionResp.error as any);
     }
   };
 
   useEffect(() => {
     if (showModal && info) {
-      Session.getSession(info.id).then((resp) => {
-        if (resp.success) {
-          const session = resp.data.session;
-          const { course } = session;
+      LiveSession.getLiveSession(info.id).then((liveResp) => {
+        if (
+          liveResp.success &&
+          typeof liveResp.data.liveSession.session === "string"
+        ) {
+          Session.getSession(liveResp.data.liveSession.session).then((resp) => {
+            if (resp.success) {
+              const session = resp.data.session;
+              const { course } = session;
 
-          if (typeof course === "object")
-            setSelectedCourse(
-              providerCourses.filter((c) => c._id === course._id)[0]
-            );
+              if (typeof course === "object")
+                setSelectedCourse(
+                  providerCourses.filter((c) => c._id === course._id)[0]
+                );
 
-          setFormData({
-            ...formData,
-            name: session.name,
-            URL: session.URL || "",
+              setFormData({
+                ...formData,
+                name: session.name,
+                URL: session.URL || "",
+              });
+            }
           });
         }
+
+        // TODO: populate live session data
       });
     }
   }, [info, showModal]);
@@ -157,6 +281,10 @@ export const LiveSessionModal: React.FC<Props> = ({
     else if (formData.recurring.weekDays.length !== 0 && !formData.isRecurring)
       setFormData({ ...formData, isRecurring: true });
   }, [formData.recurring.weekDays]);
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   const toggleWeekDayButton = (id: WeekDays) => {
     if (formData.recurring.weekDays.includes(id))
@@ -188,11 +316,12 @@ export const LiveSessionModal: React.FC<Props> = ({
           name: "",
           URL: "",
           isRecurring: false,
-          beginDateTime: null,
-          endDateTime: null,
+          date: null,
+          time: [],
           recurring: {
             weekDays: [],
             frequency: 1,
+            endDate: null,
           },
         });
         setError({
@@ -201,8 +330,11 @@ export const LiveSessionModal: React.FC<Props> = ({
           course: null,
           image: null,
           session: null,
+          time: null,
           beginDateTime: null,
           endDateTime: null,
+          date: null,
+          endDate: null,
           "recurring.weekDays": null,
           "recurring.frequency": null,
         });
@@ -277,11 +409,21 @@ export const LiveSessionModal: React.FC<Props> = ({
         <div className="form-group mb-4">
           <label className="form-label">Session Date:</label>
           <br />
-          <DatePicker popupStyle={{ zIndex: 1070 }} style={{ width: "100%" }} />
-          {errors.beginDateTime || errors.endDateTime ? (
+          <DatePicker
+            popupStyle={{ zIndex: 1070 }}
+            style={{ width: "100%" }}
+            onChange={(date) => setFormData({ ...formData, date })}
+            status={
+              errors.date || errors.beginDateTime || errors.endDateTime
+                ? "error"
+                : undefined
+            }
+          />
+          {errors.date || errors.beginDateTime || errors.endDateTime ? (
             <div className="text-danger">
-              <p>{errors.beginDateTime}</p>
-              <p>{errors.endDateTime}</p>
+              {errors.date && <p>{errors.date}</p>}
+              {errors.beginDateTime && <p>{errors.beginDateTime}</p>}
+              {errors.endDateTime && <p>{errors.endDateTime}</p>}
             </div>
           ) : (
             <></>
@@ -290,11 +432,29 @@ export const LiveSessionModal: React.FC<Props> = ({
         <div className="form-group mb-4">
           <label className="form-label">Session Time:</label>
           <br />
-          <TimePicker popupStyle={{ zIndex: 1070 }} style={{ width: "100%" }} />
-          {errors.beginDateTime || errors.endDateTime ? (
+          <TimePicker.RangePicker
+            popupStyle={{ zIndex: 1070 }}
+            style={{ width: "100%" }}
+            onChange={(t) => {
+              if (t && t.length >= 2)
+                setFormData({
+                  ...formData,
+                  time: [t[0] as moment.Moment, t[1] as moment.Moment],
+                });
+            }}
+            use12Hours
+            format="h:mm a"
+            status={
+              errors.time || errors.beginDateTime || errors.endDateTime
+                ? "error"
+                : undefined
+            }
+          />
+          {errors.time || errors.beginDateTime || errors.endDateTime ? (
             <div className="text-danger">
-              <p>{errors.beginDateTime}</p>
-              <p>{errors.endDateTime}</p>
+              {errors.time && <p>{errors.time}</p>}
+              {errors.beginDateTime && <p>{errors.beginDateTime}</p>}
+              {errors.endDateTime && <p>{errors.endDateTime}</p>}
             </div>
           ) : (
             <></>
@@ -351,16 +511,33 @@ export const LiveSessionModal: React.FC<Props> = ({
                 className="border text-center d-inline"
                 style={{ width: "25%" }}
                 type="number"
+                min={1}
+                max={20}
                 name="frequency"
                 value={formData.recurring.frequency}
                 onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    recurring: {
-                      ...formData.recurring,
-                      frequency: parseInt(e.target.value, 10),
-                    },
-                  });
+                  if (
+                    Number.isInteger(e.target.value) &&
+                    parseInt(e.target.value, 10) > 0
+                  ) {
+                    setFormData({
+                      ...formData,
+                      recurring: {
+                        ...formData.recurring,
+                        frequency: parseInt(e.target.value, 10),
+                      },
+                    });
+
+                    setError({
+                      ...errors,
+                      "recurring.frequency": null,
+                    });
+                  } else {
+                    setError({
+                      ...errors,
+                      "recurring.frequency": "Please enter a postive integer",
+                    });
+                  }
                 }}
                 onKeyUp={enterSubmit}
               />{" "}
@@ -369,22 +546,44 @@ export const LiveSessionModal: React.FC<Props> = ({
           )}
         </div>
         {formData.isRecurring && (
-          <div className="form-group mb-4">
-            <label className="form-label">Until:</label>
-            <br />
-            <DatePicker
-              popupStyle={{ zIndex: 1070 }}
-              style={{ width: "100%" }}
-            />
-            {errors.beginDateTime || errors.endDateTime ? (
+          <>
+            {errors["recurring.frequency"] && (
               <div className="text-danger">
-                <p>{errors.beginDateTime}</p>
-                <p>{errors.endDateTime}</p>
+                <p>{errors["recurring.frequency"]}</p>
               </div>
-            ) : (
-              <></>
             )}
-          </div>
+            <div className="form-group mb-4">
+              <label className="form-label">Until:</label>
+              <br />
+              <DatePicker
+                popupStyle={{ zIndex: 1070 }}
+                style={{ width: "100%" }}
+                onChange={(date) =>
+                  setFormData({
+                    ...formData,
+                    recurring: {
+                      ...formData.recurring,
+                      endDate: date,
+                    },
+                  })
+                }
+                status={
+                  errors.endDate || errors.beginDateTime || errors.endDateTime
+                    ? "error"
+                    : undefined
+                }
+              />
+              {errors.beginDateTime || errors.endDateTime || errors.endDate ? (
+                <div className="text-danger">
+                  {errors.endDate && <p>{errors.endDate}</p>}
+                  {errors.beginDateTime && <p>{errors.beginDateTime}</p>}
+                  {errors.endDateTime && <p>{errors.endDateTime}</p>}
+                </div>
+              ) : (
+                <></>
+              )}
+            </div>
+          </>
         )}
       </Modal.Body>
       <Modal.Footer>
@@ -398,11 +597,12 @@ export const LiveSessionModal: React.FC<Props> = ({
               name: "",
               URL: "",
               isRecurring: false,
-              beginDateTime: null,
-              endDateTime: null,
+              date: null,
+              time: [],
               recurring: {
                 weekDays: [],
                 frequency: 1,
+                endDate: null,
               },
             });
             setError({
@@ -411,8 +611,11 @@ export const LiveSessionModal: React.FC<Props> = ({
               course: null,
               image: null,
               session: null,
+              time: null,
               beginDateTime: null,
               endDateTime: null,
+              date: null,
+              endDate: null,
               "recurring.weekDays": null,
               "recurring.frequency": null,
             });

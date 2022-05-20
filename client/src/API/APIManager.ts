@@ -6,8 +6,8 @@ const API_URL = process.env.API_URL;
 export class DataRequest {
   requestType: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   endpoint: string;
-  params: { [key: string]: string[] | string | number[] | number | boolean };
-  body: { [key: string]: string[] | string | number | null | undefined };
+  params: { [key: string]: any };
+  body: { [key: string]: any };
 
   /**
    * @desc DataRequest is a class used to define the parameters of an API request.
@@ -28,18 +28,14 @@ export class DataRequest {
   /**
    * @desc Set the body to be used in post, put, patch, delete requests. Ex: {username: 'myUsername', password: 'myPassword'}.
    */
-  setBody(body: {
-    [key: string]: string[] | string | number | null | undefined;
-  }) {
+  setBody(body: { [key: string]: any }) {
     this.body = body;
   }
 
   /**
    * Set the parameters to be used in a get request. Ex: {search: 'mySearchTerm', page: 2}.
    */
-  setParams(params: {
-    [key: string]: string[] | string | number[] | number | boolean;
-  }) {
+  setParams(params: { [key: string]: any }) {
     this.params = params;
   }
 

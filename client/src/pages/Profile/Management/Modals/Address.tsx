@@ -53,7 +53,7 @@ export const AddressModal: React.FC<Props> = ({
   };
 
   const onSubmit = async () => {
-    const auth = await Address.createAddress(
+    const addressResp = await Address.createAddress(
       formData.street1,
       formData.street2,
       formData.city,
@@ -62,7 +62,7 @@ export const AddressModal: React.FC<Props> = ({
       formData.country
     );
 
-    if (auth.success) {
+    if (addressResp.success) {
       setError({
         street1: null,
         street2: null,
@@ -73,9 +73,9 @@ export const AddressModal: React.FC<Props> = ({
       });
 
       setModal(false);
-      onSuccess(auth.data.address);
+      onSuccess(addressResp.data.address);
     } else {
-      setError(auth.error as any);
+      setError(addressResp.error as any);
     }
   };
 

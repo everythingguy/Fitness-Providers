@@ -6,19 +6,105 @@ import {
 import Session from "./Session";
 import { Session as SessionType } from "../@types/Models";
 import { APIManager, DataRequest } from "./APIManager";
+import { WeekDays } from "../@types/enums";
 
 export class LiveSession {
-  static async getLiveSessions(): Promise<LiveSessionResponse | ErrorResponse> {
-    const request = new DataRequest("GET", "live-sessions");
+  static async createLiveSession(
+    session: string,
+    beginDateTime: Date | null,
+    endDateTime: Date | null,
+    recurring?: { weekDays: WeekDays[]; frequency: number }
+  ): Promise<LiveSessionResponse | ErrorResponse> {
+    const request = new DataRequest("POST", "live-sessions");
+
+    const body = {
+      session,
+      beginDateTime,
+      endDateTime,
+      recurring,
+    };
+
+    if (!recurring) delete body.recurring;
+
+    request.setBody(body);
 
     return new Promise((res) => {
       APIManager.sendRequest<LiveSessionResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as LiveSessionResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
+        }
+      );
+    });
+  }
+
+  static async updateLiveSession(
+    id: string,
+    session: string,
+    beginDateTime: Date | null,
+    endDateTime: Date | null,
+    recurring?: { weekDays: WeekDays[]; frequency: number }
+  ): Promise<LiveSessionResponse | ErrorResponse> {
+    const request = new DataRequest("PATCH", `live-sessions/${id}`);
+
+    const body = {
+      session,
+      beginDateTime,
+      endDateTime,
+      recurring,
+    };
+
+    if (!recurring) delete body.recurring;
+
+    request.setBody(body);
+
+    return new Promise((res) => {
+      APIManager.sendRequest<LiveSessionResponse>(
+        request,
+        (resp) => {
+          res(resp);
+        },
+        (resp) => {
+          res(resp);
+        }
+      );
+    });
+  }
+
+  static async getLiveSession(
+    id: string
+  ): Promise<LiveSessionResponse | ErrorResponse> {
+    const request = new DataRequest("GET", `live-sessions/${id}`);
+
+    return new Promise((res) => {
+      APIManager.sendRequest<LiveSessionResponse>(
+        request,
+        (resp) => {
+          res(resp);
+        },
+        (resp) => {
+          res(resp);
+        }
+      );
+    });
+  }
+
+  static async getLiveSessions(): Promise<
+    LiveSessionsResponse | ErrorResponse
+  > {
+    const request = new DataRequest("GET", "live-sessions");
+
+    return new Promise((res) => {
+      APIManager.sendRequest<LiveSessionsResponse>(
+        request,
+        (resp) => {
+          res(resp);
+        },
+        (resp) => {
+          res(resp);
         }
       );
     });
@@ -63,10 +149,10 @@ export class LiveSession {
       APIManager.sendRequest<LiveSessionResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as LiveSessionResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });

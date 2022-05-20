@@ -7,7 +7,7 @@ interface Props {
   image: string;
   title: string;
   subtitle?: string;
-  date?: Date;
+  date?: string;
   external?: boolean;
   newTab?: boolean;
   onEdit?: (_id: string) => void;
@@ -44,7 +44,7 @@ export const Result: React.FC<Props> = ({
 
             <div className="d-flex w-100 ms-3 py-1 flex-column justify-content-between">
               <h6 className="fw-bold w-100 m-0">{title}</h6>
-              <div className="d-flex w-100">
+              <div className="d-lg-flex w-100">
                 {subtitle && <p className="m-0">{subtitle}</p>}
 
                 {date && <p className="m-0 ms-auto">{date}</p>}

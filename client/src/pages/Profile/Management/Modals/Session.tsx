@@ -3,6 +3,7 @@ import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
 import Session from "../../../../API/Session";
 import { Course as CourseType } from "../../../../@types/Models";
+import { ErrorResponse, SessionResponse } from "../../../../@types/Response";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -56,22 +57,22 @@ export const SessionModal: React.FC<Props> = ({
   };
 
   const onSubmit = async () => {
-    let auth;
+    let sessionResp: SessionResponse | ErrorResponse;
     if (!info)
-      auth = await Session.createSession(
-        formData.URL,
+      sessionResp = await Session.createSession(
         formData.name,
+        formData.URL,
         selectedCourse ? selectedCourse._id : undefined
       );
     else
-      auth = await Session.updateSession(
+      sessionResp = await Session.updateSession(
         info.id,
-        formData.URL,
         formData.name,
+        formData.URL,
         selectedCourse ? selectedCourse._id : undefined
       );
 
-    if (auth.success) {
+    if (sessionResp.success) {
       setError({
         name: null,
         URL: null,
@@ -83,7 +84,7 @@ export const SessionModal: React.FC<Props> = ({
       setInfo(false);
       setFormData({ ...formData, name: "", URL: "" });
     } else {
-      setError(auth.error as any);
+      setError(sessionResp.error as any);
     }
   };
 

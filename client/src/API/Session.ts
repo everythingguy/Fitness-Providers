@@ -79,17 +79,18 @@ export class Session {
   }
 
   static async createSession(
-    URL: string,
     name: string,
+    URL?: string,
     course?: string
   ): Promise<SessionResponse | ErrorResponse> {
     const request = new DataRequest("POST", "sessions");
 
-    request.setBody({
-      course,
-      URL: URL && URL.length > 0 ? URL : undefined,
-      name,
-    });
+    const body = { course, URL, name };
+
+    if (!course) delete body.course;
+    if (!(URL && URL.length > 0)) delete body.URL;
+
+    request.setBody(body);
 
     return new Promise((res) => {
       APIManager.sendRequest<SessionResponse>(
@@ -124,13 +125,18 @@ export class Session {
 
   static async updateSession(
     id: string,
-    URL: string,
     name: string,
+    URL?: string,
     course?: string
   ): Promise<SessionResponse | ErrorResponse> {
     const request = new DataRequest("PATCH", `sessions/${id}`);
 
-    request.setBody({ course, URL, name });
+    const body = { course, URL, name };
+
+    if (!course) delete body.course;
+    if (!(URL && URL.length > 0)) delete body.URL;
+
+    request.setBody(body);
 
     return new Promise((res) => {
       APIManager.sendRequest<SessionResponse>(

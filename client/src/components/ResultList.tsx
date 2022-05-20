@@ -7,7 +7,7 @@ interface ComponentProps {
   image: string;
   title: string;
   subtitle?: string;
-  date?: Date;
+  date?: string;
   newTab?: boolean;
   external?: boolean;
   onEdit?: (id: string) => void;
@@ -20,7 +20,7 @@ interface Item {
   image: string;
   title: string;
   subtitle?: string;
-  date?: Date;
+  date?: string;
   newTab?: boolean;
   external?: boolean;
 }
