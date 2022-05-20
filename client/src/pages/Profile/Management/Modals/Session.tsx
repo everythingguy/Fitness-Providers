@@ -117,6 +117,12 @@ export const SessionModal: React.FC<Props> = ({
         setModal(!showModal);
         setInfo(false);
         setFormData({ ...formData, name: "", URL: "" });
+        setError({
+          name: null,
+          URL: null,
+          course: null,
+          image: null,
+        });
       }}
     >
       <Modal.Header>
@@ -194,6 +200,12 @@ export const SessionModal: React.FC<Props> = ({
             setModal(false);
             setInfo(false);
             setFormData({ ...formData, name: "", URL: "" });
+            setError({
+              name: null,
+              URL: null,
+              course: null,
+              image: null,
+            });
           }}
         >
           Cancel

@@ -249,6 +249,13 @@ export const CourseModal: React.FC<Props> = ({
               street1: "Online",
             });
           setFormData({ ...formData, name: "", description: "" });
+          setError({
+            name: null,
+            description: null,
+            location: null,
+            image: null,
+            tags: null,
+          });
         }}
       >
         <Modal.Header>
@@ -373,6 +380,13 @@ export const CourseModal: React.FC<Props> = ({
                   street1: "Online",
                 });
               setFormData({ ...formData, name: "", description: "" });
+              setError({
+                name: null,
+                description: null,
+                location: null,
+                image: null,
+                tags: null,
+              });
             }}
           >
             Cancel

@@ -119,6 +119,12 @@ export const LiveSessionModal: React.FC<Props> = ({
         setModal(!showModal);
         setInfo(false);
         setFormData({ ...formData, name: "", URL: "" });
+        setError({
+          name: null,
+          URL: null,
+          course: null,
+          image: null,
+        });
       }}
     >
       <Modal.Header>
@@ -172,6 +178,18 @@ export const LiveSessionModal: React.FC<Props> = ({
               const course = providerCourses.filter((c) => c._id === value)[0];
               setSelectedCourse(course);
             }}
+            styles={{
+              control: (provided, state) =>
+                errors.course
+                  ? {
+                      ...provided,
+                      borderColor: "#dc3545",
+                      "&:hover": {
+                        borderColor: "#a21c29",
+                      },
+                    }
+                  : provided,
+            }}
           />
           {errors.course && <div className="text-danger">{errors.course}</div>}
         </div>
@@ -184,6 +202,12 @@ export const LiveSessionModal: React.FC<Props> = ({
             setModal(false);
             setInfo(false);
             setFormData({ ...formData, name: "", URL: "" });
+            setError({
+              name: null,
+              URL: null,
+              course: null,
+              image: null,
+            });
           }}
         >
           Cancel
