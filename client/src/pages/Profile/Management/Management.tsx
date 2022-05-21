@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Searchbar from "../../../components/Searchbar";
 import {
     Category as CategoryType,
+    Tag as TagType,
     Course as CourseType,
     Session as SessionType
 } from "../../../@types/Models";
@@ -166,11 +167,7 @@ export const Management: React.FC<Props> = () => {
                             {categories.map((category) => (
                                 <Category
                                     category={category.name}
-                                    items={
-                                        typeof category.tags === "object"
-                                            ? category.tags
-                                            : []
-                                    }
+                                    items={category.tags as TagType[]}
                                     onChange={(e) =>
                                         setSearchParams({
                                             ...searchParams,

@@ -4,8 +4,8 @@ import Course from "../models/course";
 import Provider from "../models/provider";
 import { Request, RequestBody } from "../@types/request";
 import {
-  Course as CourseType,
-  Provider as ProviderType,
+    Course as CourseType,
+    Provider as ProviderType
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
 import { FilterQuery, Types } from "mongoose";
@@ -17,22 +17,22 @@ import { filterTags } from "./../utils/filter";
  * @access Restricted
  */
 export async function addCourse(
-  req: RequestBody<CourseType>,
-  res: express.Response
+    req: RequestBody<CourseType>,
+    res: express.Response
 ) {
-  await CRUD.create<CourseType>(
-    req,
-    res,
-    "course",
-    Course,
-    ["image"],
-    [
-      {
-        source: "provider",
-        value: "provider",
-      },
-    ]
-  );
+    await CRUD.create<CourseType>(
+        req,
+        res,
+        "course",
+        Course,
+        ["image"],
+        [
+            {
+                source: "provider",
+                value: "provider"
+            }
+        ]
+    );
 }
 
 /**
@@ -41,10 +41,10 @@ export async function addCourse(
  * @access Restricted
  */
 export async function modifyCourse(
-  req: RequestBody<CourseType>,
-  res: express.Response
+    req: RequestBody<CourseType>,
+    res: express.Response
 ) {
-  await CRUD.update<CourseType>(req, res, "course", Course, ["image"]);
+    await CRUD.update<CourseType>(req, res, "course", Course, ["image"]);
 }
 
 /**
@@ -53,25 +53,25 @@ export async function modifyCourse(
  * @access Public
  */
 export async function getCourse(req: Request, res: express.Response) {
-  // hide courses that belong to unenrolled providers
-  // unless the logged in user is admin or the owner of the course
-  const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
-  if (req.provider) providerFilter.push({ _id: req.provider._id });
+    // hide courses that belong to unenrolled providers
+    // unless the logged in user is admin or the owner of the course
+    const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
+    if (req.provider) providerFilter.push({ _id: req.provider._id });
 
-  const approvedProviders = await Provider.find({ $or: providerFilter }).select(
-    "_id"
-  );
+    const approvedProviders = await Provider.find({
+        $or: providerFilter
+    }).select("_id");
 
-  let query: FilterQuery<CourseType> = {
-    provider: approvedProviders,
-    _id: req.params.id,
-  };
-  if (req.user && req.user.isAdmin) query = { _id: req.params.id };
+    let query: FilterQuery<CourseType> = {
+        provider: approvedProviders,
+        _id: req.params.id
+    };
+    if (req.user && req.user.isAdmin) query = { _id: req.params.id };
 
-  await CRUD.read<CourseType>(req, res, "course", Course, query, [
-    "location",
-    "tags",
-  ]);
+    await CRUD.read<CourseType>(req, res, "course", Course, query, [
+        "location",
+        "tags"
+    ]);
 }
 
 /**
@@ -80,66 +80,75 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
-  const { provider, search } = req.query;
+    const { provider, search } = req.query;
 
-  // filter based on tags
-  const tagFilter: Types.ObjectId[] = filterTags(req);
+    // filter based on tags
+    const tagFilter: Types.ObjectId[] = filterTags(req);
 
-  // hide courses that belong to unenrolled providers
-  // unless the logged in user is admin or the owner of the course
-  let query: FilterQuery<CourseType>;
+    // hide courses that belong to unenrolled providers
+    // unless the logged in user is admin or the owner of the course
+    let query: FilterQuery<CourseType>;
 
-  if (req.user && req.user.isAdmin) {
-    query = {};
-    if (tagFilter.length > 0) query.tags = tagFilter;
-    if (provider) query.provider = provider;
-  } else {
-    const providerFilter: FilterQuery<ProviderType>[] = [{ isEnrolled: true }];
-    if (req.provider) providerFilter.push({ _id: req.provider._id });
+    if (req.user && req.user.isAdmin) {
+        query = {};
+        if (tagFilter.length > 0) query.tags = tagFilter;
+        if (provider) query.provider = provider;
+    } else {
+        const providerFilter: FilterQuery<ProviderType>[] = [
+            { isEnrolled: true }
+        ];
+        if (req.provider) providerFilter.push({ _id: req.provider._id });
 
-    const approvedProviders = await Provider.find({
-      $or: providerFilter,
-    }).select("_id");
+        const approvedProviders = await Provider.find({
+            $or: providerFilter
+        }).select("_id");
 
-    if (provider)
-      query = {
-        $and: [
-          tagFilter.length > 0
-            ? {
-                provider: approvedProviders,
-                tags: tagFilter,
-              }
-            : { provider: approvedProviders },
-          { provider },
-        ],
-      };
-    else
-      query =
-        tagFilter.length > 0
-          ? {
-              provider: approvedProviders,
-              tags: tagFilter.length > 0 ? tagFilter : undefined,
-            }
-          : { provider: approvedProviders };
-  }
+        if (provider)
+            query = {
+                $and: [
+                    tagFilter.length > 0
+                        ? {
+                              provider: approvedProviders,
+                              tags: tagFilter
+                          }
+                        : { provider: approvedProviders },
+                    { provider }
+                ]
+            };
+        else
+            query =
+                tagFilter.length > 0
+                    ? {
+                          provider: approvedProviders,
+                          tags: tagFilter.length > 0 ? tagFilter : undefined
+                      }
+                    : { provider: approvedProviders };
+    }
 
-  if (search)
-    query = {
-      $and: [
-        query,
+    if (search)
+        query = {
+            $and: [
+                query,
+                {
+                    $or: [
+                        { name: { $regex: search, $options: "i" } },
+                        { description: { $regex: search, $options: "i" } }
+                    ]
+                }
+            ]
+        };
+
+    await CRUD.readAll(req, res, "course", Course, query, undefined, [
+        { path: "location" },
         {
-          $or: [
-            { name: { $regex: search, $options: "i" } },
-            { description: { $regex: search, $options: "i" } },
-          ],
-        },
-      ],
-    };
-
-  await CRUD.readAll(req, res, "course", Course, query, undefined, [
-    "location",
-    "provider",
-  ]);
+            path: "provider",
+            populate: {
+                path: "user",
+                model: "User",
+                select: "firstName lastName name email username"
+            }
+        }
+    ]);
 }
 
 /**
@@ -148,5 +157,5 @@ export async function getCourses(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteCourse(req: Request, res: express.Response) {
-  await CRUD.del(req, res, "course", Course);
+    await CRUD.del(req, res, "course", Course);
 }

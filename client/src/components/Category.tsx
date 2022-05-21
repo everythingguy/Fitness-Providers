@@ -4,20 +4,22 @@ import SearchableCheckList from "./SearchableCheckList";
 
 interface Props {
     category: string;
-    items: Tag[];
+    items: (Tag & { checked?: boolean })[];
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     id: string;
+    display?: boolean;
 }
 
 export const Category: React.FC<Props> = ({
     category,
     items,
     onChange,
-    id
+    id,
+    display = true
 }) => {
     if (items && items.length > 0)
         return (
-            <div className="col-12">
+            <div className={display ? "col-12" : "col-12 d-none"}>
                 <div className="card-body mb-md-4">
                     <h6 className="fw-bold">{category}</h6>
                     <SearchableCheckList

@@ -7,6 +7,7 @@ import { KeysOfMultiType } from "../@types/misc";
 interface Item {
     _id: string;
     value?: string;
+    checked?: boolean;
 }
 
 interface Props {

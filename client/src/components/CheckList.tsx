@@ -4,6 +4,7 @@ import { KeysOfMultiType } from "../@types/misc";
 interface Item {
     _id: string;
     value?: string;
+    checked?: boolean;
 }
 
 interface Props {
@@ -43,6 +44,7 @@ export const Checklist: React.FC<Props> = ({
                             id={item[textProperty] + id}
                             data-id={item._id}
                             onChange={onChange}
+                            checked={item.checked === true ? true : false}
                         />
                         <label
                             className="form-check-label"
