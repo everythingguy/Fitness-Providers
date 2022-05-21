@@ -130,7 +130,9 @@ jest_backend:
             - coverage
         reports:
             junit: junit.xml
-            cobertura: coverage/cobertura-coverage.xml
+            coverage_report:
+                coverage_format: cobertura
+                path: coverage/cobertura-coverage.xml
 
 jest_frontend:
     image: node:latest
@@ -151,7 +153,9 @@ jest_frontend:
             - client/coverage
         reports:
             junit: client/junit.xml
-            cobertura: client/coverage/cobertura-coverage.xml
+            coverage_report:
+                coverage_format: cobertura
+                path: client/coverage/cobertura-coverage.xml
 
 cypress_chrome:
     image: cypress/browsers:node16.13.2-chrome97-ff96
