@@ -4,7 +4,8 @@
         "mongodb_data",
         "**/dist",
         "**/build",
-        "**/coverage"
+        "**/coverage",
+        "**/*.ejs"
     ],
     "env": {
         "browser": true,
