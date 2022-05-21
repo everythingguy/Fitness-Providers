@@ -1,7 +1,7 @@
 import mongoose, { PaginateModel } from "mongoose";
 import validator from "validator";
 import { refValidator } from "../utils/validators";
-import { Provider } from "../@types/models";
+import { Provider as ProviderType } from "../@types/models";
 import Tag from "./tag";
 import Course from "./course";
 import { UniqueErrorRaiser } from "../utils/errors";
@@ -12,7 +12,7 @@ import Pagination from "mongoose-paginate-v2";
 // debug
 // mongoose.set('debug', true);
 
-const ProviderSchema = new mongoose.Schema<Provider>(
+const ProviderSchema = new mongoose.Schema<ProviderType>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -115,13 +115,13 @@ ProviderSchema.post("save", UniqueErrorRaiser);
 ProviderSchema.post("updateOne", UniqueErrorRaiser);
 ProviderSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-ProviderSchema.method("getCourses", async function (this: Provider) {
+ProviderSchema.method("getCourses", async function (this: ProviderType) {
   return await Course.find({ provider: this._id });
 });
 
-const model: PaginateModel<Provider, {}, {}> = mongoose.model<
-  Provider,
-  PaginateModel<Provider>
+export const Provider: PaginateModel<ProviderType, {}, {}> = mongoose.model<
+  ProviderType,
+  PaginateModel<ProviderType>
 >("Provider", ProviderSchema);
 
-export default model;
+export default Provider;

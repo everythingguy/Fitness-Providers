@@ -89,7 +89,7 @@ export class Course {
   }
 
   static async getCourses(params?: {
-    [key: string]: string[] | string | number[] | number;
+    [key: string]: any;
   }): Promise<CoursesResponse | ErrorResponse> {
     const request = new DataRequest("GET", "courses");
 

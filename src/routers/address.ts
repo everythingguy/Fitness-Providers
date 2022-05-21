@@ -3,9 +3,9 @@ import express from "express";
 import * as Permission from "../utils/permissions";
 import * as Controller from "../controllers/address";
 
-const router = express.Router();
+export const addressRouter = express.Router();
 
-router
+addressRouter
   .route("/")
   .get(Controller.getAddresses)
   .post(
@@ -19,7 +19,7 @@ router
     Controller.addAddress
   );
 
-router
+addressRouter
   .route("/:id")
   .get(Controller.getAddress)
   .patch(
@@ -39,4 +39,4 @@ router
     Controller.deleteAddress
   );
 
-export default router;
+export default addressRouter;

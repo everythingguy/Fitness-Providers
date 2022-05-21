@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { PasswordResetCode } from "../@types/models";
+import { PasswordResetCode as PasswordResetCodeType } from "../@types/models";
 import { UniqueErrorRaiser } from "../utils/errors";
 import User from "./user";
 
 // debug
 // mongoose.set('debug', true);
 
-const PasswordResetCodeSchema = new mongoose.Schema<PasswordResetCode>(
+const PasswordResetCodeSchema = new mongoose.Schema<PasswordResetCodeType>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -56,10 +56,10 @@ PasswordResetCodeSchema.post("save", UniqueErrorRaiser);
 PasswordResetCodeSchema.post("updateOne", UniqueErrorRaiser);
 PasswordResetCodeSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-const model: mongoose.Model<PasswordResetCode> =
-  mongoose.model<PasswordResetCode>(
+export const PasswordResetCode: mongoose.Model<PasswordResetCodeType> =
+  mongoose.model<PasswordResetCodeType>(
     "PasswordResetCode",
     PasswordResetCodeSchema
   );
 
-export default model;
+export default PasswordResetCode;

@@ -33,6 +33,7 @@ export const Result: React.FC<Props> = ({
           to={href}
           className="text-decoration-none text-reset d-inline-block"
           style={{ width: "90%" }}
+          data-id={_id}
         >
           <div className="d-flex w-100">
             <img

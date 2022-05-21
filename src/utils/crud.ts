@@ -81,9 +81,11 @@ export async function read<T extends Base>(
 
 type Populate = {
   path: string;
+  select?: string;
   populate?: {
     path: string;
     model: string;
+    select?: string;
     populate?: Populate & { model: string };
   };
 };

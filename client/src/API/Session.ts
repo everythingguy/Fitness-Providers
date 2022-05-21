@@ -59,7 +59,7 @@ export class Session {
   }
 
   static async getSessions(params?: {
-    [key: string]: string[] | string | number[] | number | boolean;
+    [key: string]: any;
   }): Promise<SessionsResponse | ErrorResponse> {
     const request = new DataRequest("GET", "sessions");
 

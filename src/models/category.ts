@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { Category } from "../@types/models";
+import { Category as CategoryType } from "../@types/models";
 import Tag from "./tag";
 import { UniqueErrorRaiser } from "../utils/errors";
 
 // debug
 // mongoose.set('debug', true);
 
-const CategorySchema = new mongoose.Schema<Category>(
+const CategorySchema = new mongoose.Schema<CategoryType>(
   {
     name: {
       type: String,
@@ -30,7 +30,7 @@ const CategorySchema = new mongoose.Schema<Category>(
   }
 );
 
-CategorySchema.method("getTags", async function (this: Category) {
+CategorySchema.method("getTags", async function (this: CategoryType) {
   return await Tag.find({ category: this._id });
 });
 
@@ -48,9 +48,7 @@ CategorySchema.post("save", UniqueErrorRaiser);
 CategorySchema.post("updateOne", UniqueErrorRaiser);
 CategorySchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-const model: mongoose.Model<Category> = mongoose.model<Category>(
-  "Category",
-  CategorySchema
-);
+export const Category: mongoose.Model<CategoryType> =
+  mongoose.model<CategoryType>("Category", CategorySchema);
 
-export default model;
+export default Category;

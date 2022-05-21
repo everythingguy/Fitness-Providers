@@ -74,7 +74,10 @@ export async function getSession(req: Request, res: express.Response) {
 export async function getSessions(req: Request, res: express.Response) {
   const { provider, course, search, live } = req.query;
 
-  const blnLive = live ? (live as string).toLowerCase() === "true" : undefined;
+  const blnLive =
+    live !== undefined && live !== null
+      ? (live as any) === true || (live as string).toLowerCase() === "true"
+      : undefined;
 
   const tagFilter: Types.ObjectId[] = filterTags(req);
 

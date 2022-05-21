@@ -11,7 +11,7 @@ import cors from "cors";
 import "colors";
 
 // local imports
-import mainRouter from "./routers/main";
+import mainRouter from "./routers";
 import { ReqUser } from "./controllers/user";
 import { ReqProvider } from "./controllers/provider";
 import { isLoggedIn } from "./utils/permissions";

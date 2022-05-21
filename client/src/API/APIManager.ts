@@ -72,7 +72,7 @@ export class APIManager {
       let firstParam = true;
 
       for (const param in dataRequest.params) {
-        if (dataRequest.params[param]) {
+        if (dataRequest.params[param] !== undefined) {
           let data = dataRequest.params[param];
           if (Array.isArray(data)) data = data.join();
 

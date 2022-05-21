@@ -1,5 +1,5 @@
 import mongoose, { PaginateModel } from "mongoose";
-import { Address } from "../@types/models";
+import { Address as AddressType } from "../@types/models";
 import Provider from "./provider";
 import Course from "./course";
 import { refValidator } from "../utils/validators";
@@ -8,7 +8,7 @@ import Pagination from "mongoose-paginate-v2";
 // debug
 // mongoose.set('debug', true);
 
-const AddressSchema = new mongoose.Schema<Address>(
+const AddressSchema = new mongoose.Schema<AddressType>(
   {
     provider: {
       type: mongoose.Schema.Types.ObjectId,
@@ -73,11 +73,6 @@ const AddressSchema = new mongoose.Schema<Address>(
 
 AddressSchema.plugin(Pagination);
 
-const model: PaginateModel<Address, {}, {}> = mongoose.model<
-  Address,
-  PaginateModel<Address>
->("Address", AddressSchema);
-
 // delete ref of address on provider and courses
 AddressSchema.post("remove", async function (res, next) {
   try {
@@ -89,4 +84,9 @@ AddressSchema.post("remove", async function (res, next) {
   next();
 });
 
-export default model;
+export const Address: PaginateModel<AddressType, {}, {}> = mongoose.model<
+  AddressType,
+  PaginateModel<AddressType>
+>("Address", AddressSchema);
+
+export default Address;

@@ -16,10 +16,11 @@ export interface Address extends Base {
 }
 
 export interface Provider extends Base {
-  user: string;
+  user: ProviderUser | string;
   address: Address | string;
   isEnrolled: boolean;
   phone: string;
+  image?: string;
   bio?: string;
   website?: string;
   tags: string[];
@@ -66,12 +67,15 @@ export interface Category extends Base {
   tags: Tag[] | string;
 }
 
-export default interface User extends Base {
+export default interface ProviderUser extends Base {
   firstName: string;
   lastName: string;
   name: string;
   email: string;
   username: string;
+}
+
+export default interface User extends ProviderUser {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   provider?: Provider;

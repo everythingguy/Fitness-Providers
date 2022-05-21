@@ -3,9 +3,9 @@ import express from "express";
 import * as Permission from "../utils/permissions";
 import * as Controller from "../controllers/course";
 
-const router = express.Router();
+export const courseRouter = express.Router();
 
-router
+courseRouter
   .route("/")
   .get(Controller.getCourses)
   .post(
@@ -19,7 +19,7 @@ router
     Controller.addCourse
   );
 
-router
+courseRouter
   .route("/:id")
   .get(Controller.getCourse)
   .patch(
@@ -39,4 +39,4 @@ router
     Controller.deleteCourse
   );
 
-export default router;
+export default courseRouter;

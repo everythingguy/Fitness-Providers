@@ -1,4 +1,8 @@
-import { ProviderResponse, ErrorResponse } from "../@types/Response";
+import {
+  ProviderResponse,
+  ProvidersResponse,
+  ErrorResponse,
+} from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
 export class Provider {
@@ -19,10 +23,10 @@ export class Provider {
       APIManager.sendRequest<ProviderResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as ProviderResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
         }
       );
     });
@@ -42,10 +46,48 @@ export class Provider {
       APIManager.sendRequest<ProviderResponse>(
         request,
         (resp) => {
-          res({ success: true, data: resp.data } as ProviderResponse);
+          res(resp);
         },
         (resp) => {
-          res({ success: false, error: resp.error } as ErrorResponse);
+          res(resp);
+        }
+      );
+    });
+  }
+
+  static async getProviders(params?: {
+    [key: string]: any;
+  }): Promise<ProvidersResponse | ErrorResponse> {
+    const request = new DataRequest("GET", `providers`);
+
+    if (params) request.setParams(params);
+
+    return new Promise((res) => {
+      APIManager.sendRequest<ProvidersResponse>(
+        request,
+        (resp) => {
+          res(resp);
+        },
+        (resp) => {
+          res(resp);
+        }
+      );
+    });
+  }
+
+  static async getProvider(
+    providerID: string
+  ): Promise<ProviderResponse | ErrorResponse> {
+    const request = new DataRequest("GET", `providers/${providerID}`);
+
+    return new Promise((res) => {
+      APIManager.sendRequest<ProviderResponse>(
+        request,
+        (resp) => {
+          res(resp);
+        },
+        (resp) => {
+          res(resp);
         }
       );
     });

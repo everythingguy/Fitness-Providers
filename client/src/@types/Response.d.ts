@@ -45,6 +45,12 @@ export interface ProviderResponse extends SuccessfulResponse {
   };
 }
 
+export interface ProvidersResponse extends SuccessfulPaginationResponse {
+  data: {
+    providers: Provider[];
+  };
+}
+
 export interface AddressResponse extends SuccessfulResponse {
   data: {
     address: Address;

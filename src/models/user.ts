@@ -1,7 +1,7 @@
 import mongoose, { PaginateModel } from "mongoose";
 import bcrypt from "bcryptjs";
 import validator from "validator";
-import { User } from "../@types/models";
+import { User as UserType } from "../@types/models";
 import Provider from "./provider";
 import { UniqueErrorRaiser } from "../utils/errors";
 import Pagination from "mongoose-paginate-v2";
@@ -9,7 +9,7 @@ import Pagination from "mongoose-paginate-v2";
 // debug
 // mongoose.set('debug', true);
 
-const UserSchema = new mongoose.Schema<User>(
+const UserSchema = new mongoose.Schema<UserType>(
   {
     firstName: {
       type: String,
@@ -78,11 +78,11 @@ const UserSchema = new mongoose.Schema<User>(
 
 UserSchema.plugin(Pagination);
 
-UserSchema.virtual("name").get(function (this: User) {
+UserSchema.virtual("name").get(function (this: UserType) {
   return `${this.firstName} ${this.lastName}`;
 });
 
-UserSchema.method("getProvider", async function (this: User) {
+UserSchema.method("getProvider", async function (this: UserType) {
   const provider = await Provider.findOne({ user: this._id });
   if (provider) return provider;
   else return null;
@@ -108,9 +108,9 @@ UserSchema.methods.isValidPassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-const model: PaginateModel<User, {}, {}> = mongoose.model<
-  User,
-  PaginateModel<User>
+export const User: PaginateModel<UserType, {}, {}> = mongoose.model<
+  UserType,
+  PaginateModel<UserType>
 >("User", UserSchema);
 
-export default model;
+export default User;

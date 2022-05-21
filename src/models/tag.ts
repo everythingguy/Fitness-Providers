@@ -1,6 +1,6 @@
 import { refValidator } from "../utils/validators";
 import mongoose, { PaginateModel } from "mongoose";
-import { Tag } from "../@types/models";
+import { Tag as TagType } from "../@types/models";
 import { UniqueErrorRaiser } from "../utils/errors";
 import Category from "./category";
 import Pagination from "mongoose-paginate-v2";
@@ -8,7 +8,7 @@ import Pagination from "mongoose-paginate-v2";
 // debug
 // mongoose.set('debug', true);
 
-const TagSchema = new mongoose.Schema<Tag>(
+const TagSchema = new mongoose.Schema<TagType>(
   {
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -57,9 +57,9 @@ TagSchema.post("save", UniqueErrorRaiser);
 TagSchema.post("updateOne", UniqueErrorRaiser);
 TagSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-const model: PaginateModel<Tag, {}, {}> = mongoose.model<
-  Tag,
-  PaginateModel<Tag>
+export const Tag: PaginateModel<TagType, {}, {}> = mongoose.model<
+  TagType,
+  PaginateModel<TagType>
 >("Tag", TagSchema);
 
-export default model;
+export default Tag;

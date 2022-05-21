@@ -3,9 +3,9 @@ import express from "express";
 import * as Permission from "../utils/permissions";
 import * as Controller from "../controllers/liveSession";
 
-const router = express.Router();
+export const liveSessionRouter = express.Router();
 
-router
+liveSessionRouter
   .route("/")
   .get(Controller.getLiveSessions)
   .post(
@@ -19,7 +19,7 @@ router
     Controller.addLiveSession
   );
 
-router
+liveSessionRouter
   .route("/:id")
   .get(Controller.getLiveSession)
   .patch(
@@ -39,4 +39,4 @@ router
     Controller.deleteLiveSession
   );
 
-export default router;
+export default liveSessionRouter;

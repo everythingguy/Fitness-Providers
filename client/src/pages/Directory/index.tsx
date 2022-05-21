@@ -1,37 +1,61 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { Searchbar, Category, ResultList, Result } from "../../components";
+import { Searchbar, Category as CategoryComp, Card } from "../../components";
+import { Category, Provider, Course, Session } from "../../API";
+import {
+  Category as CategoryType,
+  Tag as TagType,
+  Course as CourseType,
+  Session as SessionType,
+  Provider as ProviderType,
+} from "../../@types/Models";
+import Button from "react-bootstrap/Button";
+import { Link } from "react-router-dom";
 
 interface Props {}
 
-// TODO:
-
 export const Directory: React.FC<Props> = () => {
-  /*
-  // State so we can use data from the backend in our components.
-  const [instructorCategories, setInstructorCategories] = useState([]);
-  const [courseCategories, setCourseCategories] = useState([]);
-  const [courseSearchResults, setCourseSearchResults] = useState([]);
-  const [sessionSearchResults, setSessionSearchResults] = useState([]);
-  const [instructorSearchResults, setInstructorSearchResults] = useState([]);
-  const [page, setPage] = useState({
-    instructor: 1,
+  const [providerCategories, setProviderCategories] = useState<CategoryType[]>(
+    []
+  );
+  const [courseCategories, setCourseCategories] = useState<CategoryType[]>([]);
+  const [courseSearchResults, setCourseSearchResults] = useState<CourseType[]>(
+    []
+  );
+  const [sessionSearchResults, setSessionSearchResults] = useState<
+    SessionType[]
+  >([]);
+  const [providerSearchResults, setProviderSearchResults] = useState<
+    ProviderType[]
+  >([]);
+  const [page, setPage] = useState<{
+    provider: number | null;
+    course: number | null;
+    session: number | null;
+  }>({
+    provider: 1,
     course: 1,
     session: 1,
   });
-  const [search, setSearch] = useState("");
-  const [tags, setTags] = useState({
-    instructor: {},
+  const [search, setSearch] = useState<string>("");
+  const [tags, setTags] = useState<{
+    provider: { [key: string]: boolean };
+    course: { [key: string]: boolean };
+  }>({
+    provider: {},
     course: {},
   });
-  const timeout = useRef(null);
-  const firstRender = useRef(true);
+  const timeout = useRef<number | null>(null);
+  const firstRender = useRef<boolean>(true);
+  const [display, setDisplay] = useState<"providers" | "courses" | "sessions">(
+    "courses"
+  );
 
-  const filterInstructor = (e) => {
+  const filterProvider = (e) => {
     setTags({
-      course: tags.course,
-      instructor: {
-        ...tags.instructor,
+      ...tags,
+      provider: {
+        ...tags.provider,
         [e.target.getAttribute("data-id")]: e.target.checked,
       },
     });
@@ -39,7 +63,7 @@ export const Directory: React.FC<Props> = () => {
 
   const filterCourse = (e) => {
     setTags({
-      instructor: tags.instructor,
+      ...tags,
       course: {
         ...tags.course,
         [e.target.getAttribute("data-id")]: e.target.checked,
@@ -47,7 +71,7 @@ export const Directory: React.FC<Props> = () => {
     });
   };
 
-  const createFilterURL = (tags) => {
+  const createFilterURL = (tags: TagType[]) => {
     let URL = "";
 
     for (const tag in tags) {
@@ -59,181 +83,118 @@ export const Directory: React.FC<Props> = () => {
     return URL;
   };
 
-  const searchInstructors = () => {
-    // populate instructors list
-    let request = new DataRequest(
-      "GET",
-      "instructors/?search=" +
-        search +
-        createFilterURL(tags.instructor) +
-        "&page=" +
-        page.instructor
-    );
-    APIManager.sendRequest(
-      request,
-      (res) => {
-        const instructors = res.data.results;
-        let instructorArr = [];
+  const searchProviders = () => {
+    // populate providers list
+    const tagsArr: string[] = [];
+    for (const tag in tags.provider) if (tags.provider[tag]) tagsArr.push(tag);
 
-        if (page.instructor > 1) instructorArr = [...instructorSearchResults];
+    Provider.getProviders({
+      search,
+      tags: tagsArr,
+      page: page.provider,
+    }).then((resp) => {
+      if (resp.success) {
+        if (page.provider === null || page.provider > 1)
+          setProviderSearchResults([
+            ...providerSearchResults,
+            ...resp.data.providers,
+          ]);
+        else setProviderSearchResults(resp.data.providers);
 
-        for (const instructor of instructors) {
-          instructorArr.push({
-            id: instructor.id,
-            text: `${instructor.firstName} ${instructor.lastName}`,
-            author: instructor.bio,
-            img_url: instructor.image || "https://via.placeholder.com/500x500",
-            href: `/profile/${instructor.id}`,
-            value: instructor.tags,
-            checked: false,
-          });
-        }
-
-        setInstructorSearchResults(instructorArr); // populate instructor list
-      },
-      () => {
-        setPage({
-          ...page,
-          instructor: null,
-        });
+        if (!resp.hasNextPage) setPage({ ...page, provider: null });
       }
-    );
+    });
   };
 
   const searchCourses = () => {
     // populate course list
-    let request = new DataRequest(
-      "GET",
-      "courses/?search=" +
-        search +
-        createFilterURL(tags.course) +
-        "&page=" +
-        page.course
-    );
-    APIManager.sendRequest(
-      request,
-      (res) => {
-        const courses = res.data.results;
-        let courseArr = [];
+    const tagsArr: string[] = [];
+    for (const tag in tags.course) if (tags.course[tag]) tagsArr.push(tag);
 
-        if (page.course > 1) courseArr = [...courseSearchResults];
+    Course.getCourses({
+      search,
+      tags: tagsArr,
+      page: page.course,
+    }).then((resp) => {
+      if (resp.success) {
+        if (page.course === null || page.course > 1)
+          setCourseSearchResults([
+            ...courseSearchResults,
+            ...resp.data.courses,
+          ]);
+        else setCourseSearchResults(resp.data.courses);
 
-        for (const course of courses) {
-          courseArr.push({
-            id: course.id,
-            text: course.name,
-            author: `${course.instructor.firstName} ${course.instructor.lastName}`,
-            img_url: course.image || "https://via.placeholder.com/500x500",
-            href: `/class/${course.id}/details`,
-            value: course.tags,
-            checked: false,
-            date: convertDate(course.createdAt),
-          });
-        }
-
-        setCourseSearchResults(courseArr); // populate course list
-      },
-      () => {
-        setPage({
-          ...page,
-          course: null,
-        });
+        if (!resp.hasNextPage) setPage({ ...page, course: null });
       }
-    );
+    });
   };
 
   const searchSessions = () => {
     // populate session list
-    let request = new DataRequest(
-      "GET",
-      "sessions/?search=" + search + "&page=" + page.session
-    );
-    APIManager.sendRequest(
-      request,
-      (res) => {
-        const sessions = res.data.results;
-        let sessionArr = [];
+    const tagsArr: string[] = [];
+    for (const tag in tags.course) if (tags.course[tag]) tagsArr.push(tag);
 
-        if (page.session > 1) sessionArr = [...sessionSearchResults];
+    Session.getSessions({
+      search,
+      tags: tagsArr,
+      live: false,
+      page: page.session,
+    }).then((resp) => {
+      if (resp.success) {
+        if (page.session === null || page.session > 1)
+          setSessionSearchResults([
+            ...sessionSearchResults,
+            ...resp.data.sessions,
+          ]);
+        else setSessionSearchResults(resp.data.sessions);
 
-        for (const session of sessions) {
-          if (!session.liveSession) {
-            sessionArr.push({
-              id: session.id,
-              text: session.name,
-              author: `${session.course.instructor.firstName} ${session.course.instructor.lastName}`,
-              img_url: session.image || "https://via.placeholder.com/500x500",
-              href: session.sessionURL,
-              checked: false,
-            });
-          }
-        }
-
-        setSessionSearchResults(sessionArr);
-
-        if (sessionSearchResults.length < 50 && res.data.next) {
-          setPage({
-            ...page,
-            session: page.session + 1,
-          });
-        }
-      },
-      () => {
-        setPage({
-          ...page,
-          session: null,
-        });
+        if (!resp.hasNextPage) setPage({ ...page, session: null });
       }
-    );
+    });
   };
 
   useEffect(() => {
-    // populate instructor checklist from instructors api route
-    let request = new DataRequest("GET", "instructortagcategories/");
-    request.setOrdering("name");
-    APIManager.getAllResults(request, (results) => {
-      setInstructorCategories(results);
+    Category.getProviderCategories().then((resp) => {
+      if (resp.success) {
+        setProviderCategories(resp.data.categories);
+      }
     });
 
-    // populate category checklist from coursetagcategories api route
-    request = new DataRequest("GET", "coursetagcategories/");
-    request.setOrdering("name");
-    APIManager.getAllResults(request, (results) => {
-      setCourseCategories(results);
+    Category.getCourseCategories().then((resp) => {
+      if (resp.success) {
+        setCourseCategories(resp.data.categories);
+      }
     });
   }, []);
 
   useEffect(() => {
     if (timeout.current) window.clearTimeout(timeout.current);
 
-    timeout.current = window.setTimeout(() => {
-      setPage({
-        instructor: 1,
-        course: 1,
-        session: 1,
-      });
-
-      searchInstructors();
-      searchCourses();
-      searchSessions();
-    }, 250);
+    if (!firstRender.current) {
+      timeout.current = window.setTimeout(() => {
+        setPage({
+          provider: 1,
+          course: 1,
+          session: 1,
+        });
+      }, 250);
+    }
   }, [search]);
 
   useEffect(() => {
     if (!firstRender.current) {
       setPage({
         ...page,
-        instructor: 1,
+        provider: 1,
       });
-      searchInstructors();
     }
-  }, [tags.instructor]);
+  }, [tags.provider]);
 
   useEffect(() => {
-    if (page.instructor && page.instructor != 1) {
-      searchInstructors();
+    if (page.provider) {
+      searchProviders();
     }
-  }, [page.instructor]);
+  }, [page.provider]);
 
   useEffect(() => {
     if (!firstRender.current) {
@@ -241,21 +202,22 @@ export const Directory: React.FC<Props> = () => {
         ...page,
         course: 1,
       });
-      searchCourses();
     } else firstRender.current = false;
   }, [tags.course]);
 
   useEffect(() => {
-    if (page.course && page.course != 1) {
+    if (page.course) {
       searchCourses();
     }
   }, [page.course]);
 
   useEffect(() => {
-    if (page.session && page.session != 1) {
+    if (page.session) {
       searchSessions();
     }
   }, [page.session]);
+
+  // TODO: add categorys to the side and only show the correct ones for what is displayed
 
   return (
     <div className="container">
@@ -269,78 +231,103 @@ export const Directory: React.FC<Props> = () => {
           />
         </div>
       </div>
+      <div className="row mb-5">
+        <Button
+          variant="dark"
+          className="text-light fw-bold d-inline w-25"
+          onClick={() => setDisplay("providers")}
+        >
+          Providers
+        </Button>
+        <Button
+          variant="dark"
+          className="text-light fw-bold d-inline w-25 active"
+          onClick={() => setDisplay("courses")}
+        >
+          Courses
+        </Button>
+        <Button
+          variant="dark"
+          className="text-light fw-bold d-inline w-25"
+          onClick={() => setDisplay("sessions")}
+        >
+          Async Sessions
+        </Button>
+        <Link
+          to="/calendar"
+          className="btn btn-dark text-light fw-bold d-inline w-25"
+        >
+          Live Sessions
+        </Link>
+      </div>
+      {/* TODO: Pagination on scroll event */}
       <div className="row">
-        <div className="col-xs-6 col-sm-4 col-md-5 col-lg-3 col-xl-3 col-xxl-3">
-          <div className="card side-bar search mb-2">
-            {instructorCategories.map((category) => (
-              <Category
-                category={category.name}
-                items={category.tags}
-                onChange={filterInstructor}
-                key={category.id}
-                id={"instr"}
-              />
-            ))}
-            {courseCategories.map((category) => (
-              <Category
-                category={category.name}
-                items={category.tags}
-                onChange={filterCourse}
-                key={category.id}
-                id={"course"}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="col-xs-6 col-sm-8 col-md-7 col-lg-9 col-xl-9 col-xxl-9">
-          <div className="card">
-            <ResultList
-              title="Providers"
-              component={InstructorResult}
-              items={instructorSearchResults}
-              onScrollBottom={(e) => {
-                if (page.instructor)
-                  setPage({
-                    ...page,
-                    instructor: page.instructor + 1,
-                  });
-              }}
-            />
-          </div>
-          <div className="card">
-            <ResultList
-              title="Classes"
-              component={Result}
-              items={courseSearchResults}
-              onScrollBottom={(e) => {
-                if (page.course)
-                  setPage({
-                    ...page,
-                    course: page.course + 1,
-                  });
-              }}
-            />
-          </div>
-          <div className="card mb-2">
-            <ResultList
-              title="Asynchronous Sessions"
-              component={Result}
-              items={sessionSearchResults}
-              onScrollBottom={(e) => {
-                if (page.session)
-                  setPage({
-                    ...page,
-                    session: page.session + 1,
-                  });
-              }}
-            />
-          </div>
-        </div>
+        {display === "providers" &&
+          providerSearchResults.map((p) => (
+            <Card
+              _id={p._id}
+              image={p.image || "https://via.placeholder.com/500x500"}
+              href={`/provider/profile/${p._id}`}
+              title={typeof p.user === "object" ? p.user.name : ""}
+              subtitle={
+                p.address && typeof p.address === "object"
+                  ? `${p.address.city}, ${p.address.state}`
+                  : ""
+              }
+              text={
+                p.bio && p.bio.length < 50
+                  ? p.bio
+                  : p.bio
+                  ? `${p.bio.substring(0, 49)}...`
+                  : undefined
+              }
+            ></Card>
+          ))}
+        {display === "courses" &&
+          courseSearchResults.map((c) => (
+            <Card
+              _id={c._id}
+              image={c.image || "https://via.placeholder.com/500x500"}
+              href={`/course/${c._id}`}
+              title={c.name}
+              subtitle={
+                c.location && typeof c.location === "object"
+                  ? `${c.location.city}, ${c.location.state}`
+                  : ""
+              }
+              text={
+                c.description && c.description.length < 50
+                  ? c.description
+                  : `${c.description.substring(0, 49)}...`
+              }
+            ></Card>
+          ))}
+        {display === "sessions" &&
+          sessionSearchResults.map((s) => (
+            <Card
+              _id={s._id}
+              image={s.image || "https://via.placeholder.com/500x500"}
+              href={
+                s.URL
+                  ? s.URL
+                  : typeof s.course === "object"
+                  ? `/course/${s.course._id}`
+                  : ""
+              }
+              title={s.name}
+              subtitle={typeof s.course === "object" ? s.course.name : ""}
+              text={
+                typeof s.course === "object" && s.course.description
+                  ? s.course.description.length < 50
+                    ? s.course.description
+                    : `${s.course.description.substring(0, 49)}...`
+                  : ""
+              }
+            ></Card>
+          ))}
       </div>
     </div>
   );
-  */
-  return <></>;
 };
 
 export default Directory;

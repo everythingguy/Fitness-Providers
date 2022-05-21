@@ -1,6 +1,6 @@
 import express from "express";
 
-import Provider from "../models/provider";
+import { Provider, Address, User } from "../models";
 import { Request, RequestBody } from "../@types/request";
 import { Provider as ProviderType } from "../@types/models";
 import * as CRUD from "../utils/crud";
@@ -84,12 +84,13 @@ export async function getProvider(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
+  const { search } = req.query;
   // filter based on tags
   const tagFilter: Types.ObjectId[] = filterTags(req);
 
   // hide providers that are not enrolled
   // unless logged in user is admin or the provider
-  const query: FilterQuery<ProviderType>[] = [
+  let query: FilterQuery<ProviderType>[] | FilterQuery<ProviderType> = [
     tagFilter.length > 0
       ? { isEnrolled: true, tags: tagFilter }
       : { isEnrolled: true },
@@ -103,16 +104,56 @@ export async function getProviders(req: Request, res: express.Response) {
   if (req.user && req.user.isAdmin)
     query.push(tagFilter.length > 0 ? { tags: tagFilter } : {});
 
+  if (search) {
+    const searchUsers = await User.aggregate([
+      {
+        $addFields: {
+          name: {
+            $concat: ["$firstName", " ", "$lastName"],
+          },
+        },
+      },
+      {
+        $match: {
+          name: { $regex: search, $options: "i" },
+        },
+      },
+      {
+        $project: { _id: 1 },
+      },
+    ]);
+
+    const searchAddresses = await Address.find({
+      $or: [
+        { city: { $regex: search, $options: "i" } },
+        { state: { $regex: search, $options: "i" } },
+      ],
+    }).select("_id");
+
+    query = {
+      $and: [
+        { $or: query as FilterQuery<ProviderType>[] },
+        {
+          $or: [{ user: searchUsers }, { address: searchAddresses }],
+        },
+      ],
+    };
+  } else
+    query = {
+      $or: query as FilterQuery<ProviderType>[],
+    };
+
   await CRUD.readAll<ProviderType>(
     req,
     res,
     "provider",
     Provider,
-    {
-      $or: query,
-    },
+    query,
     undefined,
-    ["address"]
+    [
+      { path: "address" },
+      { path: "user", select: "firstName lastName name email username" },
+    ]
   );
 }
 

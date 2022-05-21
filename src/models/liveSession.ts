@@ -1,6 +1,6 @@
 import mongoose, { PaginateModel } from "mongoose";
 import validator from "validator";
-import { LiveSession, Recurring } from "../@types/models";
+import { LiveSession as LiveSessionType, Recurring } from "../@types/models";
 import { WeekDays } from "../@types/enums";
 import { refValidator } from "../utils/validators";
 import Session from "./session";
@@ -31,7 +31,7 @@ const RecurringSchema = new mongoose.Schema<Recurring>({
   },
 });
 
-const LiveSessionSchema = new mongoose.Schema<LiveSession>(
+const LiveSessionSchema = new mongoose.Schema<LiveSessionType>(
   {
     session: {
       type: mongoose.Schema.Types.ObjectId,
@@ -79,7 +79,7 @@ const LiveSessionSchema = new mongoose.Schema<LiveSession>(
 
 LiveSessionSchema.plugin(Pagination);
 
-LiveSessionSchema.post("validate", function (this: LiveSession, doc, next) {
+LiveSessionSchema.post("validate", function (this: LiveSessionType, doc, next) {
   if (this.beginDateTime > this.endDateTime) {
     const errorMsg = "The event must start before it ends";
     next(
@@ -97,7 +97,7 @@ LiveSessionSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
 LiveSessionSchema.post(
   "save",
-  async function (this: LiveSession, doc: LiveSession, next) {
+  async function (this: LiveSessionType, doc: LiveSessionType, next) {
     await Session.findByIdAndUpdate(this.session, { liveSession: this._id });
 
     next();
@@ -113,9 +113,10 @@ LiveSessionSchema.post("remove", async function (res, next) {
   next();
 });
 
-const model: PaginateModel<LiveSession, {}, {}> = mongoose.model<
-  LiveSession,
-  PaginateModel<LiveSession>
->("LiveSession", LiveSessionSchema);
+export const LiveSession: PaginateModel<LiveSessionType, {}, {}> =
+  mongoose.model<LiveSessionType, PaginateModel<LiveSessionType>>(
+    "LiveSession",
+    LiveSessionSchema
+  );
 
-export default model;
+export default LiveSession;

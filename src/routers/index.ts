@@ -8,7 +8,7 @@ import liveSessionRouter from "./liveSession";
 import categoryRouter from "./category";
 import tagRouter from "./tag";
 
-const router = express.Router();
+export const router = express.Router();
 
 router.use("/users", userRouter);
 router.use("/providers", providerRouter);
@@ -24,3 +24,12 @@ router.route("/health").get((req: express.Request, res: express.Response) => {
 });
 
 export default router;
+
+export * from "./user";
+export * from "./provider";
+export * from "./address";
+export * from "./course";
+export * from "./session";
+export * from "./liveSession";
+export * from "./category";
+export * from "./tag";

@@ -3,9 +3,9 @@ import express from "express";
 import * as Permission from "../utils/permissions";
 import * as Controller from "../controllers/provider";
 
-const router = express.Router();
+export const providerRouter = express.Router();
 
-router
+providerRouter
   .route("/")
   .get(Controller.getProviders)
   .post(
@@ -25,7 +25,7 @@ router
     Controller.addProvider
   );
 
-router
+providerRouter
   .route("/:id")
   .get(Controller.getProvider)
   .patch(
@@ -51,4 +51,4 @@ router
     Controller.deleteProvider
   );
 
-export default router;
+export default providerRouter;

@@ -4,27 +4,27 @@ import * as Permission from "../utils/permissions";
 
 import * as Controller from "../controllers/user";
 
-const router = express.Router();
+export const userRouter = express.Router();
 
-router.route("/login").post(Permission.isLoggedOut, Controller.loginUser);
+userRouter.route("/login").post(Permission.isLoggedOut, Controller.loginUser);
 
-router
+userRouter
   .route("/refresh_token")
   .post(Controller.authRefreshToken, Controller.refresh_token);
 
-router.route("/logout").post(Permission.isLoggedIn, Controller.logoutUser);
+userRouter.route("/logout").post(Permission.isLoggedIn, Controller.logoutUser);
 
-router.route("/register").post(Controller.addUser);
+userRouter.route("/register").post(Controller.addUser);
 
-router.route("/resendConfirmation").post(Controller.resendConfirmation);
+userRouter.route("/resendConfirmation").post(Controller.resendConfirmation);
 
-router.route("/password/forgot").post(Controller.forgotPassword);
+userRouter.route("/password/forgot").post(Controller.forgotPassword);
 
-router.route("/password/reset/:code").post(Controller.resetPassword);
+userRouter.route("/password/reset/:code").post(Controller.resetPassword);
 
-router
+userRouter
   .route("/")
   .get(Permission.isLoggedIn, Controller.getUser)
   .delete(Permission.isLoggedIn, Controller.deleteUser);
 
-export default router;
+export default userRouter;

@@ -1,5 +1,5 @@
 import mongoose, { PaginateModel } from "mongoose";
-import { Course } from "../@types/models";
+import { Course as CourseType } from "../@types/models";
 import Tag from "./tag";
 import Session from "./session";
 import { refValidator } from "../utils/validators";
@@ -10,7 +10,7 @@ import Pagination from "mongoose-paginate-v2";
 // debug
 // mongoose.set('debug', true);
 
-const CourseSchema = new mongoose.Schema<Course>(
+const CourseSchema = new mongoose.Schema<CourseType>(
   {
     name: {
       type: String,
@@ -84,13 +84,13 @@ CourseSchema.post("remove", function (res, next) {
   next();
 });
 
-CourseSchema.virtual("getSessions", async function (this: Course) {
+CourseSchema.virtual("getSessions", async function (this: CourseType) {
   return await Session.find({ course: this._id });
 });
 
-const model: PaginateModel<Course, {}, {}> = mongoose.model<
-  Course,
-  PaginateModel<Course>
+export const Course: PaginateModel<CourseType, {}, {}> = mongoose.model<
+  CourseType,
+  PaginateModel<CourseType>
 >("Course", CourseSchema);
 
-export default model;
+export default Course;

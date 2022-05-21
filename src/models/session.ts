@@ -1,7 +1,7 @@
 import { refValidator } from "../utils/validators";
 import mongoose, { PaginateModel } from "mongoose";
 import validator from "validator";
-import { Session } from "../@types/models";
+import { Session as SessionType } from "../@types/models";
 import Course from "./course";
 import LiveSession from "./liveSession";
 import Pagination from "mongoose-paginate-v2";
@@ -9,7 +9,7 @@ import Pagination from "mongoose-paginate-v2";
 // debug
 // mongoose.set('debug', true);
 
-const SessionSchema = new mongoose.Schema<Session>(
+const SessionSchema = new mongoose.Schema<SessionType>(
   {
     course: {
       type: mongoose.Schema.Types.ObjectId,
@@ -70,9 +70,9 @@ SessionSchema.post("remove", function (res, next) {
   next();
 });
 
-const model: PaginateModel<Session, {}, {}> = mongoose.model<
-  Session,
-  PaginateModel<Session>
+export const Session: PaginateModel<SessionType, {}, {}> = mongoose.model<
+  SessionType,
+  PaginateModel<SessionType>
 >("Session", SessionSchema);
 
-export default model;
+export default Session;
