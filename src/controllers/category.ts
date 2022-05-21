@@ -12,10 +12,10 @@ import { errorResponse } from "../@types/response";
  * @access Restricted
  */
 export async function addCategory(
-  req: RequestBody<CategoryType>,
-  res: express.Response
+    req: RequestBody<CategoryType>,
+    res: express.Response
 ) {
-  await CRUD.create<CategoryType>(req, res, "category", Category);
+    await CRUD.create<CategoryType>(req, res, "category", Category);
 }
 
 /**
@@ -24,7 +24,7 @@ export async function addCategory(
  * @access Public
  */
 export async function getCategory(req: Request, res: express.Response) {
-  await CRUD.read<CategoryType>(req, res, "category", Category);
+    await CRUD.read<CategoryType>(req, res, "category", Category);
 }
 
 /**
@@ -33,59 +33,65 @@ export async function getCategory(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCategories(req: Request, res: express.Response) {
-  try {
-    const {
-      appliesToProvider,
-      appliesToCourse,
-    }: { appliesToProvider?: string; appliesToCourse?: string } = req.query;
+    try {
+        const {
+            appliesToProvider,
+            appliesToCourse
+        }: { appliesToProvider?: string; appliesToCourse?: string } = req.query;
 
-    const filter: [{ $eq: (string | boolean)[] }] = [
-      { $eq: ["$$categoryID", "$category"] },
-    ];
+        const filter: [{ $eq: (string | boolean)[] }] = [
+            { $eq: ["$$categoryID", "$category"] }
+        ];
 
-    if (appliesToProvider)
-      filter.push({
-        $eq: ["$appliesToProvider", appliesToProvider.toLowerCase() === "true"],
-      });
+        if (appliesToProvider)
+            filter.push({
+                $eq: [
+                    "$appliesToProvider",
+                    appliesToProvider.toLowerCase() === "true"
+                ]
+            });
 
-    if (appliesToCourse)
-      filter.push({
-        $eq: ["$appliesToCourse", appliesToCourse.toLowerCase() === "true"],
-      });
+        if (appliesToCourse)
+            filter.push({
+                $eq: [
+                    "$appliesToCourse",
+                    appliesToCourse.toLowerCase() === "true"
+                ]
+            });
 
-    const categories = await Category.aggregate([
-      {
-        $lookup: {
-          from: "tags",
-          // localField: "_id",
-          // foreignField: "category",
-          let: { categoryID: "$_id" },
-          as: "tags",
-          pipeline: [
+        const categories = await Category.aggregate([
             {
-              $match: {
-                $expr: {
-                  $and: filter,
-                },
-              },
-            },
-          ],
-        },
-      },
-    ]);
+                $lookup: {
+                    from: "tags",
+                    // localField: "_id",
+                    // foreignField: "category",
+                    let: { categoryID: "$_id" },
+                    as: "tags",
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: filter
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]);
 
-    return res.status(200).json({
-      success: true,
-      data: { categories },
-    });
-  } catch (error) {
-    // tslint:disable-next-line: no-console
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
+        return res.status(200).json({
+            success: true,
+            data: { categories }
+        });
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            error: "Server Error"
+        } as errorResponse);
+    }
 }
 
 /**
@@ -94,10 +100,10 @@ export async function getCategories(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function modifyCategory(
-  req: RequestBody<CategoryType>,
-  res: express.Response
+    req: RequestBody<CategoryType>,
+    res: express.Response
 ) {
-  await CRUD.update<CategoryType>(req, res, "category", Category);
+    await CRUD.update<CategoryType>(req, res, "category", Category);
 }
 
 /**
@@ -106,5 +112,5 @@ export async function modifyCategory(
  * @access Restricted
  */
 export async function deleteCategory(req: Request, res: express.Response) {
-  await CRUD.del<CategoryType>(req, res, "category", Category);
+    await CRUD.del<CategoryType>(req, res, "category", Category);
 }

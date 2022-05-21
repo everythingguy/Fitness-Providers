@@ -113,8 +113,6 @@ tslint:
     - amd64
   script:
     - npm run lint
-    - cd client
-    - npm run lint
 
 jest_backend:
   image: node:latest

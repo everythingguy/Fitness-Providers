@@ -6,10 +6,10 @@ import { postPatchErrorHandler } from "../utils/errors";
 import { User as UserType } from "../@types/models";
 import { errorResponse, ResUser } from "../@types/response";
 import {
-  Request,
-  Payload,
-  RequestBody,
-  SimpleRequestBody,
+    Request,
+    Payload,
+    RequestBody,
+    SimpleRequestBody
 } from "../@types/request";
 import { userResponse as userResponseType } from "../@types/response";
 import { sign, verify } from "jsonwebtoken";
@@ -17,141 +17,146 @@ import { apiPath } from "../server";
 import Mail from "../utils/Mail";
 
 const userResponse = (req: Request, userData: UserType): ResUser => {
-  let userRes: ResUser;
-  userRes = {
-    _id: userData._id,
-    name: userData.name,
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    email: userData.email,
-    username: userData.username,
-    isAdmin: userData.isAdmin,
-    isSuperAdmin: userData.isSuperAdmin,
-    provider: req.provider,
-    createdAt: userData.createdAt,
-    updatedAt: userData.updatedAt,
-  };
+    const userRes: ResUser = {
+        _id: userData._id,
+        name: userData.name,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        username: userData.username,
+        isAdmin: userData.isAdmin,
+        isSuperAdmin: userData.isSuperAdmin,
+        provider: req.provider,
+        createdAt: userData.createdAt,
+        updatedAt: userData.updatedAt
+    };
 
-  return userRes;
+    return userRes;
 };
 
 const createRefreshToken = (user: UserType) => {
-  return sign(
-    { userID: user.id, tokenVersion: user.tokenVersion },
-    process.env.REFRESH_TOKEN_SECRET!,
-    {
-      expiresIn: "7d",
-    }
-  );
+    return sign(
+        { userID: user.id, tokenVersion: user.tokenVersion },
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        process.env.REFRESH_TOKEN_SECRET!,
+        {
+            expiresIn: "7d"
+        }
+    );
 };
 
 const createAccessToken = (user: UserType) => {
-  return sign({ userID: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: "15m",
-  });
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return sign({ userID: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
+        expiresIn: "15m"
+    });
 };
 
 const sendRefreshToken = (res: express.Response, token: string) => {
-  res.cookie("jid", token, {
-    httpOnly: true,
-    path: apiPath + "/users/refresh_token",
-  });
+    res.cookie("jid", token, {
+        httpOnly: true,
+        path: apiPath + "/users/refresh_token"
+    });
 };
 
 const clearCookies = (res: express.Response) => {
-  res.clearCookie("connect.sid");
-  res.clearCookie("jid");
+    res.clearCookie("connect.sid");
+    res.clearCookie("jid");
 };
 
 export const authRefreshToken = async (
-  req: Request,
-  res: express.Response,
-  next: express.NextFunction
+    req: Request,
+    res: express.Response,
+    next: express.NextFunction
 ) => {
-  const token = req.cookies.jid;
-  if (!token) {
-    return res.status(401).send({
-      success: false,
-      error: "Not authenticated",
-    } as errorResponse);
-  }
+    const token = req.cookies.jid;
+    if (!token) {
+        return res.status(401).send({
+            success: false,
+            error: "Not authenticated"
+        } as errorResponse);
+    }
 
-  let payload: Payload;
-  try {
-    payload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as Payload;
-  } catch (err) {
-    // tslint:disable-next-line: no-console
-    console.log(err);
-    return res.status(401).send({
-      success: false,
-      error: "Not authenticated",
-    } as errorResponse);
-  }
+    let payload: Payload;
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        payload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as Payload;
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
+        return res.status(401).send({
+            success: false,
+            error: "Not authenticated"
+        } as errorResponse);
+    }
 
-  const user = await User.findById(payload.userID);
+    const user = await User.findById(payload.userID);
 
-  if (!user) {
-    return res.status(500).send({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
+    if (!user) {
+        return res.status(500).send({
+            success: false,
+            error: "Server Error"
+        } as errorResponse);
+    }
 
-  if (user.tokenVersion !== payload.tokenVersion) {
-    return res.status(401).send({
-      success: false,
-      error: "Not authenticated",
-    } as errorResponse);
-  }
+    if (user.tokenVersion !== payload.tokenVersion) {
+        return res.status(401).send({
+            success: false,
+            error: "Not authenticated"
+        } as errorResponse);
+    }
 
-  req.payload = payload;
+    req.payload = payload;
 
-  return next();
+    return next();
 };
 
 // middleware
 export async function ReqUser(
-  req: Request,
-  res: express.Response,
-  next: express.NextFunction
+    req: Request,
+    res: express.Response,
+    next: express.NextFunction
 ) {
-  // look for access token and create req.user
-  const authHeader = req.headers.authorization;
+    // look for access token and create req.user
+    const authHeader = req.headers.authorization;
 
-  // if access token in header
-  if (authHeader) {
-    try {
-      // parse token
-      const token = authHeader.split(" ")[1];
-      // read payload from token
-      const payload: Payload = verify(
-        token,
-        process.env.ACCESS_TOKEN_SECRET!
-      ) as Payload;
-      // get the user that owns the token
-      const user = await User.findById(payload.userID);
+    // if access token in header
+    if (authHeader) {
+        try {
+            // parse token
+            const token = authHeader.split(" ")[1];
+            // read payload from token
+            const payload: Payload = verify(
+                token,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                process.env.ACCESS_TOKEN_SECRET!
+            ) as Payload;
+            // get the user that owns the token
+            const user = await User.findById(payload.userID);
 
-      // if user found
-      if (user) {
-        // set the user to the request
-        req.user = userResponse(req, user);
-        // create logout function
-        req.logout = (resp: express.Response) => {
-          sendRefreshToken(resp, "");
-        };
-      }
-    } catch (err) {
-      req.user = undefined;
+            // if user found
+            if (user) {
+                // set the user to the request
+                req.user = userResponse(req, user);
+                // create logout function
+                req.logout = (resp: express.Response) => {
+                    sendRefreshToken(resp, "");
+                };
+            }
+        } catch (err) {
+            req.user = undefined;
+        }
     }
-  }
 
-  next();
+    next();
 }
 
-async function revokeRefreshTokensForUser(req: Request) {
-  const u = await User.findById(req.user._id);
-  u.tokenVersion = u.tokenVersion + 1;
-  await u.save();
+async function revokeRefreshTokensForUser(req: Request, user?: UserType) {
+    let u: UserType;
+    if (user) u = user;
+    else u = await User.findById(req.user._id);
+    u.tokenVersion = u.tokenVersion + 1;
+    await u.save();
 }
 
 /**
@@ -160,46 +165,46 @@ async function revokeRefreshTokensForUser(req: Request) {
  * @access Public
  */
 export async function loginUser(req: Request, res: express.Response) {
-  try {
-    const user = await User.findOne({ username: req.body.username });
+    try {
+        const user = await User.findOne({ username: req.body.username });
 
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        error: "Inncorrect Username or Password",
-      } as errorResponse);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                error: "Inncorrect Username or Password"
+            } as errorResponse);
+        }
+
+        if (await user.isValidPassword(req.body.password)) {
+            if (!user.emailConfirmed)
+                return res.status(400).json({
+                    success: false,
+                    error: "Email not confirmed"
+                });
+
+            sendRefreshToken(res, createRefreshToken(user));
+
+            return res.status(200).json({
+                success: true,
+                data: {
+                    user: userResponse(req, user),
+                    accessToken: createAccessToken(user)
+                }
+            } as userResponseType);
+        } else {
+            return res.status(401).json({
+                success: false,
+                error: "Inncorrect Username or Password"
+            } as errorResponse);
+        }
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            error: "Server Error"
+        } as errorResponse);
     }
-
-    if (await user.isValidPassword(req.body.password)) {
-      if (!user.emailConfirmed)
-        return res.status(400).json({
-          success: false,
-          error: "Email not confirmed",
-        });
-
-      sendRefreshToken(res, createRefreshToken(user));
-
-      return res.status(200).json({
-        success: true,
-        data: {
-          user: userResponse(req, user),
-          accessToken: createAccessToken(user),
-        },
-      } as userResponseType);
-    } else {
-      return res.status(401).json({
-        success: false,
-        error: "Inncorrect Username or Password",
-      } as errorResponse);
-    }
-  } catch (err) {
-    // tslint:disable-next-line: no-console
-    console.log(err);
-    return res.status(500).json({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
 }
 
 /**
@@ -208,18 +213,18 @@ export async function loginUser(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function refresh_token(req: Request, res: express.Response) {
-  // get user from req.payload, set by the authRefreshToken middleware
-  const user = await User.findById(req.payload.userID);
-  // comment out if you do not want users staying logged in forever if they use the site every week
-  sendRefreshToken(res, createRefreshToken(user));
+    // get user from req.payload, set by the authRefreshToken middleware
+    const user = await User.findById(req.payload.userID);
+    // comment out if you do not want users staying logged in forever if they use the site every week
+    sendRefreshToken(res, createRefreshToken(user));
 
-  return res.status(200).send({
-    success: true,
-    data: {
-      user: userResponse(req, user),
-      accessToken: createAccessToken(user),
-    },
-  } as userResponseType);
+    return res.status(200).send({
+        success: true,
+        data: {
+            user: userResponse(req, user),
+            accessToken: createAccessToken(user)
+        }
+    } as userResponseType);
 }
 
 /**
@@ -228,18 +233,18 @@ export async function refresh_token(req: Request, res: express.Response) {
  * @access Public
  */
 export function logoutUser(req: Request, res: express.Response) {
-  req.logout(res);
+    req.logout(res);
 
-  req.session.destroy(() => {
-    clearCookies(res);
+    req.session.destroy(() => {
+        clearCookies(res);
 
-    res.status(200).json({
-      success: true,
-      data: {
-        accessToken: "",
-      },
-    } as userResponseType);
-  });
+        res.status(200).json({
+            success: true,
+            data: {
+                accessToken: ""
+            }
+        } as userResponseType);
+    });
 }
 
 /**
@@ -248,37 +253,39 @@ export function logoutUser(req: Request, res: express.Response) {
  * @access Public
  */
 export async function addUser(
-  req: RequestBody<UserType & { re_password: string }>,
-  res: express.Response
+    req: RequestBody<UserType & { re_password: string }>,
+    res: express.Response
 ) {
-  try {
-    if (!req.user || (req.user && !req.user.isAdmin)) {
-      delete req.body.isAdmin;
-      delete req.body.isSuperAdmin;
-      delete req.body.emailConfirmed;
+    try {
+        if (!req.user || (req.user && !req.user.isAdmin)) {
+            delete req.body.isAdmin;
+            delete req.body.isSuperAdmin;
+            delete req.body.emailConfirmed;
+        }
+
+        // automatically confirm email when running jest or the pipeline
+        if (process.env.CI || process.env.NODE_ENV === "test")
+            req.body.emailConfirmed = true;
+
+        if (req.body.password !== req.body.re_password)
+            return res.status(400).json({
+                success: false,
+                error: {
+                    password: "password and confirm password do not match"
+                }
+            });
+
+        const user = await User.create(req.body);
+
+        Mail.sendConfirmation(user);
+
+        return res.status(201).json({
+            success: true,
+            data: { user: userResponse(req, user) }
+        } as userResponseType);
+    } catch (error) {
+        postPatchErrorHandler(res, error);
     }
-
-    // automatically confirm email when running jest or the pipeline
-    if (process.env.CI || process.env.NODE_ENV === "test")
-      req.body.emailConfirmed = true;
-
-    if (req.body.password !== req.body.re_password)
-      return res.status(400).json({
-        success: false,
-        error: { password: "password and confirm password do not match" },
-      });
-
-    const user = await User.create(req.body);
-
-    Mail.sendConfirmation(user);
-
-    return res.status(201).json({
-      success: true,
-      data: { user: userResponse(req, user) },
-    } as userResponseType);
-  } catch (error) {
-    postPatchErrorHandler(res, error);
-  }
 }
 
 /**
@@ -287,37 +294,37 @@ export async function addUser(
  * @access Public
  */
 export async function resendConfirmation(
-  req: SimpleRequestBody<{ username: string }>,
-  res: express.Response
+    req: SimpleRequestBody<{ username: string }>,
+    res: express.Response
 ) {
-  try {
-    // TODO: add timeout per user
-    const user = await User.findOne({ username: req.body.username });
+    try {
+        // TODO: add timeout per user
+        const user = await User.findOne({ username: req.body.username });
 
-    if (user) {
-      const confirmation = await Mail.sendConfirmation(user);
+        if (user) {
+            const confirmation = await Mail.sendConfirmation(user);
 
-      if (!confirmation)
+            if (!confirmation)
+                return res.status(500).json({
+                    success: false,
+                    error: "Server was unable to send the email"
+                } as errorResponse);
+
+            return res.status(200).json({
+                success: true
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                error: "No user found by that username"
+            } as errorResponse);
+        }
+    } catch (error) {
         return res.status(500).json({
-          success: false,
-          error: "Server was unable to send the email",
+            success: false,
+            error: "Server error"
         } as errorResponse);
-
-      return res.status(200).json({
-        success: true,
-      });
-    } else {
-      return res.status(404).json({
-        success: false,
-        error: "No user found by that username",
-      } as errorResponse);
     }
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: "Server error",
-    } as errorResponse);
-  }
 }
 
 /**
@@ -326,19 +333,19 @@ export async function resendConfirmation(
  * @access Restricted
  */
 export async function getUser(req: Request, res: express.Response) {
-  // TODO: handle admin
-  if (!req.user)
-    return res.status(404).json({
-      success: false,
-      error: "No user found",
-    } as errorResponse);
+    // TODO: handle admin
+    if (!req.user)
+        return res.status(404).json({
+            success: false,
+            error: "No user found"
+        } as errorResponse);
 
-  return res.status(200).json({
-    success: true,
-    data: {
-      user: { ...req.user, provider: req.provider ? req.provider : null },
-    },
-  } as userResponseType);
+    return res.status(200).json({
+        success: true,
+        data: {
+            user: { ...req.user, provider: req.provider ? req.provider : null }
+        }
+    } as userResponseType);
 }
 
 /**
@@ -347,36 +354,36 @@ export async function getUser(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteUser(req: Request, res: express.Response) {
-  // TODO: handle admin
-  try {
-    let user: UserType;
-    if (req.user) user = await User.findById(req.user._id);
+    // TODO: handle admin
+    try {
+        let user: UserType;
+        if (req.user) user = await User.findById(req.user._id);
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: "No user found",
-      } as errorResponse);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: "No user found"
+            } as errorResponse);
+        }
+
+        await user.remove();
+
+        req.logout(res);
+
+        req.session.destroy(() => {
+            clearCookies(res);
+
+            res.status(200).json({
+                success: true,
+                data: { user: userResponse(req, user), accessToken: "" }
+            } as userResponseType);
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            error: "Server Error"
+        } as errorResponse);
     }
-
-    await user.remove();
-
-    req.logout(res);
-
-    req.session.destroy(() => {
-      clearCookies(res);
-
-      res.status(200).json({
-        success: true,
-        data: { user: userResponse(req, user), accessToken: "" },
-      } as userResponseType);
-    });
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      error: "Server Error",
-    } as errorResponse);
-  }
 }
 
 /**
@@ -385,36 +392,36 @@ export async function deleteUser(req: Request, res: express.Response) {
  * @access Public
  */
 export async function forgotPassword(
-  req: SimpleRequestBody<{ email: string }>,
-  res: express.Response
+    req: SimpleRequestBody<{ email: string }>,
+    res: express.Response
 ) {
-  try {
-    const user = await User.findOne({ email: req.body.email });
+    try {
+        const user = await User.findOne({ email: req.body.email });
 
-    if (user) {
-      const confirmation = await Mail.forgotPassword(user);
+        if (user) {
+            const confirmation = await Mail.forgotPassword(user);
 
-      if (!confirmation)
+            if (!confirmation)
+                return res.status(500).json({
+                    success: false,
+                    error: "Server was unable to send the email"
+                } as errorResponse);
+
+            return res.status(200).json({
+                success: true
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                error: "No user found by that email"
+            } as errorResponse);
+        }
+    } catch (error) {
         return res.status(500).json({
-          success: false,
-          error: "Server was unable to send the email",
+            success: false,
+            error: "Server error"
         } as errorResponse);
-
-      return res.status(200).json({
-        success: true,
-      });
-    } else {
-      return res.status(404).json({
-        success: false,
-        error: "No user found by that email",
-      } as errorResponse);
     }
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: "Server error",
-    } as errorResponse);
-  }
 }
 
 /**
@@ -423,50 +430,53 @@ export async function forgotPassword(
  * @access Public
  */
 export async function resetPassword(
-  req: SimpleRequestBody<{ password: string; re_password: string }>,
-  res: express.Response
+    req: SimpleRequestBody<{ password: string; re_password: string }>,
+    res: express.Response
 ) {
-  try {
-    const { code } = req.params;
-    const { password, re_password } = req.body;
+    try {
+        const { code } = req.params;
+        const { password, re_password } = req.body;
 
-    if (code === null || code === undefined)
-      return res.status(400).json({
-        success: false,
-        error: { code: "Invalid Password Reset Code" },
-      } as errorResponse);
+        if (code === null || code === undefined)
+            return res.status(400).json({
+                success: false,
+                error: { code: "Invalid Password Reset Code" }
+            } as errorResponse);
 
-    const resetCode = await PasswordResetCode.findOne({ code });
+        const resetCode = await PasswordResetCode.findOne({ code });
 
-    if (!resetCode || resetCode.code !== code)
-      return res.status(400).json({
-        success: false,
-        error: { code: "Invalid Password Reset Code" },
-      } as errorResponse);
+        if (!resetCode || resetCode.code !== code)
+            return res.status(400).json({
+                success: false,
+                error: { code: "Invalid Password Reset Code" }
+            } as errorResponse);
 
-    if (password !== re_password)
-      return res.status(400).json({
-        success: false,
-        error: { password: "password and confirm password do not match" },
-      } as errorResponse);
+        if (password !== re_password)
+            return res.status(400).json({
+                success: false,
+                error: {
+                    password: "password and confirm password do not match"
+                }
+            } as errorResponse);
 
-    const user = await User.findById(resetCode.user);
+        const user = await User.findById(resetCode.user);
 
-    if (!user)
-      return res.status(500).json({
-        success: false,
-        error: "Server Error",
-      });
+        if (!user)
+            return res.status(500).json({
+                success: false,
+                error: "Server Error"
+            });
 
-    user.password = password;
-    await user.validate();
-    await user.save();
+        user.password = password;
+        await user.validate();
 
-    return res.status(200).json({
-      success: true,
-      data: userResponse(req, user),
-    } as userResponseType);
-  } catch (error) {
-    postPatchErrorHandler(res, error);
-  }
+        revokeRefreshTokensForUser(req);
+
+        return res.status(200).json({
+            success: true,
+            data: userResponse(req, user)
+        } as userResponseType);
+    } catch (error) {
+        postPatchErrorHandler(res, error);
+    }
 }

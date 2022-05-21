@@ -16,6 +16,7 @@
     "moment": "^2.29.3",
     "postcss": "^8.3.6",
     "postcss-cli": "^8.3.1",
+    "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.3.1",
     "react-dom": "^17.0.2",
@@ -27,8 +28,6 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "lint": "tslint -c ../tslint.json -p tsconfig.json",
-    "lint-fix": "tslint -c ../tslint.json -p tsconfig.json --fix",
     "watch-scss": "sass --watch scss:src/assets",
     "build-scss": "sass scss:src/assets",
     "build-css": "postcss tailwind-src/tailwind.css -o src/assets/tailwind.css && npm run build-scss",
@@ -46,12 +45,6 @@
   },
   "author": "everythingguy",
   "license": "ISC",
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",

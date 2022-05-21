@@ -1,28 +1,29 @@
 {
-  "editor.insertSpaces": true,
-  "editor.tabSize": 4,
-  "editor.useTabStops": true,
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "emmet.includeLanguages": {
-    "javascript": "javascriptreact"
-  },
-  "liveSassCompile.settings.formats": [
-    {
-      "format": "expanded",
-      "extensionName": ".css",
-      "savePath": "/client/src/assets"
+    "eslint.validate": [ "javascript", "javascriptreact", "html", "typescriptreact" ],
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.useTabStops": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
     },
-    {
-      "format": "compressed",
-      "extensionName": ".min.css",
-      "savePath": "/client/src/assets"
-    }
-  ],
-  "liveSassCompile.settings.showOutputWindow": false,
-  "browser-preview.startUrl": "http://localhost",
-  "files.associations": {
-    "*.tfvars": "terraform"
-  },
-  "workbench.iconTheme": "material-icon-theme"
+    "liveSassCompile.settings.formats": [
+        {
+            "format": "expanded",
+            "extensionName": ".css",
+            "savePath": "/client/src/assets"
+        },
+        {
+            "format": "compressed",
+            "extensionName": ".min.css",
+            "savePath": "/client/src/assets"
+        }
+    ],
+    "liveSassCompile.settings.showOutputWindow": false,
+    "browser-preview.startUrl": "http://localhost",
+    "files.associations": {
+        "*.tfvars": "terraform"
+    },
+    "workbench.iconTheme": "material-icon-theme"
 }

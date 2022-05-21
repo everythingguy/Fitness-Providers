@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-unused-vars */
 const webpack = require("webpack");
 const path = require("path");
@@ -8,7 +9,6 @@ const {
 } = require("clean-webpack-plugin");
 
 module.exports = () => {
-  // eslint-disable-next-line no-unused-expressions
   dotenv.config({
     path: path.resolve(__dirname, "../.env"),
     override: false

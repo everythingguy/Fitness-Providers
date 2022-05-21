@@ -1,9 +1,10 @@
+import React from "react";
 import { Navigate } from "react-router-dom";
 
 // TODO:
 
 export const Home: React.FC = () => {
-  return <Navigate to="/directory" />;
+    return <Navigate to="/directory" />;
 };
 
 export default Home;

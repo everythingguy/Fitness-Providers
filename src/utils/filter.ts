@@ -14,7 +14,7 @@ export function filterTags(req: Request) {
       : [];
 
     for (const tag of tagSplit) tagFilter.push(new Types.ObjectId(tag));
-    // tslint:disable-next-line: no-empty
+    // eslint-disable-next-line no-empty
   } catch (error) {}
 
   return tagFilter;

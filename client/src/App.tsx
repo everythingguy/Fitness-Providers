@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header";
@@ -10,7 +11,7 @@ import {
   Profile,
   Management,
   MyProfile,
-  LiveManagement,
+  LiveManagement
 } from "./pages/Profile";
 import * as UserPages from "./pages/User";
 import Terms from "./pages/Terms";

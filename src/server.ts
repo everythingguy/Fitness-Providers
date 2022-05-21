@@ -24,44 +24,47 @@ const app = express();
 
 // middleware
 app.use(
-  cors({
-    origin: process.env.BASE_URL,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
+    cors({
+        origin: process.env.BASE_URL,
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        credentials: true
+    })
 );
 
 app.use(express.json());
 app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
+    bodyParser.urlencoded({
+        extended: true
+    })
 );
 app.use(bodyParser.json());
 app.use(flash());
 app.use(cookieParser(process.env.SECRET));
 app.use(
-  session({
-    secret: process.env.SECRET,
-    saveUninitialized: true,
-    resave: true,
-    cookie: {
-      maxAge: 15 * 24 * 60 * 60 * 1000,
-    },
-    store: MongoStore.create({
-      mongoUrl: getMongoURI(),
-      collectionName: "cookie-sessions",
-    }),
-  })
+    session({
+        secret: process.env.SECRET,
+        saveUninitialized: true,
+        resave: true,
+        cookie: {
+            maxAge: 15 * 24 * 60 * 60 * 1000
+        },
+        store: MongoStore.create({
+            mongoUrl: getMongoURI(),
+            collectionName: "cookie-sessions"
+        })
+    })
 );
 
 app.use(
-  mongoSanitize({
-    onSanitize: ({ req, key }: any) => {
-      // tslint:disable-next-line: no-console
-      console.log(`SANITIZED: This request[${key}] is sanitized`, req[key]);
-    },
-  })
+    mongoSanitize({
+        onSanitize: ({ req, key }: any) => {
+            // eslint-disable-next-line no-console
+            console.log(
+                `SANITIZED: This request[${key}] is sanitized`,
+                req[key]
+            );
+        }
+    })
 );
 
 app.use(ReqUser);
@@ -77,24 +80,25 @@ app.set("views", path.join(__dirname, "views"));
 
 // logger
 app.use(
-  async (req: Request, res: express.Response, next: express.NextFunction) => {
-    // tslint:disable-next-line: no-console
-    if (req.user) console.log(`${req.user.username} ${req.method} ${req.url}`);
-    // tslint:disable-next-line: no-console
-    else console.log(`${req.method} ${req.url}`);
-    next();
-  }
+    async (req: Request, res: express.Response, next: express.NextFunction) => {
+        if (req.user)
+            // eslint-disable-next-line no-console
+            console.log(`${req.user.username} ${req.method} ${req.url}`);
+        // eslint-disable-next-line no-console
+        else console.log(`${req.method} ${req.url}`);
+        next();
+    }
 );
 
 // router
-export let apiPath = "/api/v1";
+export const apiPath = "/api/v1";
 app.use(apiPath, mainRouter);
 
 // serve react front end
 app.get("*", (req, res) => {
-  res.render("index", {
-    title: `${capitalize(process.env.PROVIDER_TYPE)} Providers`,
-  });
+    res.render("index", {
+        title: `${capitalize(process.env.PROVIDER_TYPE)} Providers`
+    });
 });
 
 export default app;

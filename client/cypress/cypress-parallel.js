@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs');
 const path = require('path');
 
@@ -9,6 +10,7 @@ const TEST_FOLDER = './cypress/integration';
 // so that cypress will know which files will be run.
 // Also, since getSpecFiles returns an array, the paths are
 // joined with comma
+// eslint-disable-next-line no-console
 console.log(getSpecFiles().join(','));
 
 function getSpecFiles() {

@@ -4,17 +4,13 @@ import { Searchbar, Category as CategoryComp, Card } from "../../components";
 import { Category, Provider, Course, Session } from "../../API";
 import {
   Category as CategoryType,
-  Tag as TagType,
   Course as CourseType,
   Session as SessionType,
-  Provider as ProviderType,
+  Provider as ProviderType
 } from "../../@types/Models";
-import Button from "react-bootstrap/Button";
 import { Link, useMatch } from "react-router-dom";
 
-interface Props {}
-
-export const Directory: React.FC<Props> = () => {
+export const Directory: React.FC = () => {
   const match = useMatch("/directory/:type");
   const displayParam: "providers" | "courses" | "sessions" =
     match &&
@@ -43,7 +39,7 @@ export const Directory: React.FC<Props> = () => {
   }>({
     provider: 1,
     course: 1,
-    session: 1,
+    session: 1
   });
   const [search, setSearch] = useState<string>("");
   const [tags, setTags] = useState<{
@@ -51,7 +47,7 @@ export const Directory: React.FC<Props> = () => {
     course: { [key: string]: boolean };
   }>({
     provider: {},
-    course: {},
+    course: {}
   });
   const timeout = useRef<number | null>(null);
   const firstRender = useRef<boolean>(true);
@@ -64,8 +60,8 @@ export const Directory: React.FC<Props> = () => {
       ...tags,
       provider: {
         ...tags.provider,
-        [e.target.getAttribute("data-id")]: e.target.checked,
-      },
+        [e.target.getAttribute("data-id")]: e.target.checked
+      }
     });
   };
 
@@ -74,21 +70,9 @@ export const Directory: React.FC<Props> = () => {
       ...tags,
       course: {
         ...tags.course,
-        [e.target.getAttribute("data-id")]: e.target.checked,
-      },
-    });
-  };
-
-  const createFilterURL = (tags: TagType[]) => {
-    let URL = "";
-
-    for (const tag in tags) {
-      if (tags[tag]) {
-        URL += "&tags__id__exact=" + tag;
+        [e.target.getAttribute("data-id")]: e.target.checked
       }
-    }
-
-    return URL;
+    });
   };
 
   const searchProviders = () => {
@@ -99,13 +83,13 @@ export const Directory: React.FC<Props> = () => {
     Provider.getProviders({
       search,
       tags: tagsArr,
-      page: page.provider,
+      page: page.provider
     }).then((resp) => {
       if (resp.success) {
         if (page.provider === null || page.provider > 1)
           setProviderSearchResults([
             ...providerSearchResults,
-            ...resp.data.providers,
+            ...resp.data.providers
           ]);
         else setProviderSearchResults(resp.data.providers);
 
@@ -122,13 +106,13 @@ export const Directory: React.FC<Props> = () => {
     Course.getCourses({
       search,
       tags: tagsArr,
-      page: page.course,
+      page: page.course
     }).then((resp) => {
       if (resp.success) {
         if (page.course === null || page.course > 1)
           setCourseSearchResults([
             ...courseSearchResults,
-            ...resp.data.courses,
+            ...resp.data.courses
           ]);
         else setCourseSearchResults(resp.data.courses);
 
@@ -146,13 +130,13 @@ export const Directory: React.FC<Props> = () => {
       search,
       tags: tagsArr,
       live: false,
-      page: page.session,
+      page: page.session
     }).then((resp) => {
       if (resp.success) {
         if (page.session === null || page.session > 1)
           setSessionSearchResults([
             ...sessionSearchResults,
-            ...resp.data.sessions,
+            ...resp.data.sessions
           ]);
         else setSessionSearchResults(resp.data.sessions);
 
@@ -183,7 +167,7 @@ export const Directory: React.FC<Props> = () => {
         setPage({
           provider: 1,
           course: 1,
-          session: 1,
+          session: 1
         });
       }, 250);
     }
@@ -193,7 +177,7 @@ export const Directory: React.FC<Props> = () => {
     if (!firstRender.current) {
       setPage({
         ...page,
-        provider: 1,
+        provider: 1
       });
     }
   }, [tags.provider]);
@@ -208,7 +192,7 @@ export const Directory: React.FC<Props> = () => {
     if (!firstRender.current) {
       setPage({
         ...page,
-        course: 1,
+        course: 1
       });
     } else firstRender.current = false;
   }, [tags.course]);
