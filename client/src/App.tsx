@@ -39,6 +39,10 @@ function App() {
               <Route path="/" element={<Home />} />
 
               <Route path="/directory" element={<Directory />} />
+              <Route path="/directory/providers" element={<Directory />} />
+              <Route path="/directory/courses" element={<Directory />} />
+              <Route path="/directory/sessions" element={<Directory />} />
+
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/course/:id" element={<Course />} />
               <Route path="/provider/profile/me" element={<MyProfile />} />

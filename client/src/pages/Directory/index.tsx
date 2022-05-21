@@ -10,11 +10,19 @@ import {
   Provider as ProviderType,
 } from "../../@types/Models";
 import Button from "react-bootstrap/Button";
-import { Link } from "react-router-dom";
+import { Link, useMatch } from "react-router-dom";
 
 interface Props {}
 
 export const Directory: React.FC<Props> = () => {
+  const match = useMatch("/directory/:type");
+  const displayParam: "providers" | "courses" | "sessions" =
+    match &&
+    match.params.type &&
+    ["providers", "courses", "sessions"].includes(match.params.type)
+      ? (match.params.type as "providers" | "courses" | "sessions")
+      : "courses";
+
   const [providerCategories, setProviderCategories] = useState<CategoryType[]>(
     []
   );
@@ -48,7 +56,7 @@ export const Directory: React.FC<Props> = () => {
   const timeout = useRef<number | null>(null);
   const firstRender = useRef<boolean>(true);
   const [display, setDisplay] = useState<"providers" | "courses" | "sessions">(
-    "courses"
+    displayParam
   );
 
   const filterProvider = (e) => {
@@ -218,6 +226,26 @@ export const Directory: React.FC<Props> = () => {
   }, [page.session]);
 
   // TODO: add categorys to the side and only show the correct ones for what is displayed
+  /*
+    {instructorCategories.map((category) => (
+      <Category
+        category={category.name}
+        items={category.tags}
+        onChange={filterInstructor}
+        key={category.id}
+        id={"instr"}
+      />
+    ))}
+    {courseCategories.map((category) => (
+      <Category
+        category={category.name}
+        items={category.tags}
+        onChange={filterCourse}
+        key={category.id}
+        id={"course"}
+      />
+    ))}
+  */
 
   return (
     <div className="container">
@@ -232,27 +260,27 @@ export const Directory: React.FC<Props> = () => {
         </div>
       </div>
       <div className="row mb-5">
-        <Button
-          variant="dark"
-          className="text-light fw-bold d-inline w-25"
+        <Link
+          className="btn btn-dark text-light fw-bold d-inline w-25"
+          to="/directory/providers"
           onClick={() => setDisplay("providers")}
         >
           Providers
-        </Button>
-        <Button
-          variant="dark"
-          className="text-light fw-bold d-inline w-25 active"
+        </Link>
+        <Link
+          className="btn btn-dark text-light fw-bold d-inline w-25 active"
+          to="/directory/courses"
           onClick={() => setDisplay("courses")}
         >
           Courses
-        </Button>
-        <Button
-          variant="dark"
-          className="text-light fw-bold d-inline w-25"
+        </Link>
+        <Link
+          className="btn btn-dark text-light fw-bold d-inline w-25"
+          to="/directory/sessions"
           onClick={() => setDisplay("sessions")}
         >
           Async Sessions
-        </Button>
+        </Link>
         <Link
           to="/calendar"
           className="btn btn-dark text-light fw-bold d-inline w-25"
@@ -265,6 +293,7 @@ export const Directory: React.FC<Props> = () => {
         {display === "providers" &&
           providerSearchResults.map((p) => (
             <Card
+              key={p._id}
               _id={p._id}
               image={p.image || "https://via.placeholder.com/500x500"}
               href={`/provider/profile/${p._id}`}
@@ -286,6 +315,7 @@ export const Directory: React.FC<Props> = () => {
         {display === "courses" &&
           courseSearchResults.map((c) => (
             <Card
+              key={c._id}
               _id={c._id}
               image={c.image || "https://via.placeholder.com/500x500"}
               href={`/course/${c._id}`}
@@ -305,6 +335,7 @@ export const Directory: React.FC<Props> = () => {
         {display === "sessions" &&
           sessionSearchResults.map((s) => (
             <Card
+              key={s._id}
               _id={s._id}
               image={s.image || "https://via.placeholder.com/500x500"}
               href={
