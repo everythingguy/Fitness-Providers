@@ -1,42 +1,42 @@
 version: "3"
 services:
-  web:
-    build:
-      context: .
-      args:
-        MAIL_CONTACT_EMAIL: contact@fitnessproviders.net
-    image: fitness
-    container_name: fitness
-    ports:
-      - 80:80
-    environment:
-      BASE_URL: http://localhost
-      API_URL: /api/v1
-      MAIL_HOST: smtp.mailgun.org
-      MAIL_PORT: 465
-      MAIL_POSTMASTER: YOUR_POSTMASTER
-      MAIL_POSTMASTER_PASSWORD: YOUR_PASSWORD
-      MAIL_FROM_EMAIL: noreply@fitnessproviders.net
-      MAIL_CONTACT_EMAIL: contact@fitnessproviders.net
-      PROVIDER_TYPE: fitness
-      DB_USERNAME: root
-      DB_PASSWORD: rootpassword
-      DB_AUTHSOURCE: admin
-      DB_IP: mongo
-      DB_PORT: 27017
-      DB_COLLECTION: fitness_local
-      SECRET: PLEASECHANGE2LONG&RANDOMSECRET
-      REFRESH_TOKEN_SECRET: PLEASECHANGE2LONG&RANDOMSECRET
-      ACCESS_TOKEN_SECRET: PLEASECHANGE2LONG&RANDOMSECRET
-      PORT: 80
+    web:
+        build:
+            context: .
+            args:
+                MAIL_CONTACT_EMAIL: contact@fitnessproviders.net
+        image: fitness
+        container_name: fitness
+        ports:
+            - 80:80
+        environment:
+            BASE_URL: http://localhost
+            API_URL: /api/v1
+            MAIL_HOST: smtp.mailgun.org
+            MAIL_PORT: 465
+            MAIL_POSTMASTER: YOUR_POSTMASTER
+            MAIL_POSTMASTER_PASSWORD: YOUR_PASSWORD
+            MAIL_FROM_EMAIL: noreply@fitnessproviders.net
+            MAIL_CONTACT_EMAIL: contact@fitnessproviders.net
+            PROVIDER_TYPE: fitness
+            DB_USERNAME: root
+            DB_PASSWORD: rootpassword
+            DB_AUTHSOURCE: admin
+            DB_IP: mongo
+            DB_PORT: 27017
+            DB_COLLECTION: fitness_local
+            SECRET: PLEASECHANGE2LONG&RANDOMSECRET
+            REFRESH_TOKEN_SECRET: PLEASECHANGE2LONG&RANDOMSECRET
+            ACCESS_TOKEN_SECRET: PLEASECHANGE2LONG&RANDOMSECRET
+            PORT: 80
 
-  mongo:
-    image: mongo:latest
-    container_name: fitness_mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - ./mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    mongo:
+        image: mongo:latest
+        container_name: fitness_mongo
+        ports:
+            - 27017:27017
+        volumes:
+            - ./mongodb_data:/data/db
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: rootpassword

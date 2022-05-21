@@ -5,7 +5,7 @@ interface Props {}
 // TODO:
 
 export const Profile: React.FC<Props> = () => {
-  return <></>;
+    return <></>;
 };
 
 export * from "./Management";

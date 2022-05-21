@@ -11,7 +11,7 @@ import * as CRUD from "../utils/crud";
  * @access Restricted
  */
 export async function addTag(req: RequestBody<TagType>, res: express.Response) {
-  await CRUD.create<TagType>(req, res, "tag", Tag);
+    await CRUD.create<TagType>(req, res, "tag", Tag);
 }
 
 /**
@@ -20,7 +20,7 @@ export async function addTag(req: RequestBody<TagType>, res: express.Response) {
  * @access Public
  */
 export async function getTag(req: Request, res: express.Response) {
-  await CRUD.read<TagType>(req, res, "tag", Tag);
+    await CRUD.read<TagType>(req, res, "tag", Tag);
 }
 
 /**
@@ -29,19 +29,20 @@ export async function getTag(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getTags(req: Request, res: express.Response) {
-  const {
-    appliesToProvider,
-    appliesToCourse,
-  }: { appliesToProvider?: string; appliesToCourse?: string } = req.query;
+    const {
+        appliesToProvider,
+        appliesToCourse
+    }: { appliesToProvider?: string; appliesToCourse?: string } = req.query;
 
-  const query: { appliesToProvider?: boolean; appliesToCourse?: boolean } = {};
+    const query: { appliesToProvider?: boolean; appliesToCourse?: boolean } =
+        {};
 
-  if (appliesToProvider)
-    query.appliesToProvider = appliesToProvider.toLowerCase() === "true";
-  if (appliesToCourse)
-    query.appliesToCourse = appliesToCourse.toLowerCase() === "true";
+    if (appliesToProvider)
+        query.appliesToProvider = appliesToProvider.toLowerCase() === "true";
+    if (appliesToCourse)
+        query.appliesToCourse = appliesToCourse.toLowerCase() === "true";
 
-  await CRUD.readAll<TagType>(req, res, "tag", Tag, query);
+    await CRUD.readAll<TagType>(req, res, "tag", Tag, query);
 }
 
 /**
@@ -50,10 +51,10 @@ export async function getTags(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function modifyTag(
-  req: RequestBody<TagType>,
-  res: express.Response
+    req: RequestBody<TagType>,
+    res: express.Response
 ) {
-  await CRUD.update<TagType>(req, res, "tag", Tag);
+    await CRUD.update<TagType>(req, res, "tag", Tag);
 }
 
 /**
@@ -62,5 +63,5 @@ export async function modifyTag(
  * @access Restricted
  */
 export async function deleteTag(req: Request, res: express.Response) {
-  await CRUD.del<TagType>(req, res, "tag", Tag);
+    await CRUD.del<TagType>(req, res, "tag", Tag);
 }

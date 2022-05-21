@@ -10,12 +10,12 @@ import "./assets/style.css";
 import "./assets/bootstrap.css";
 
 ReactDOM.render(
-  <Router>
-    <React.StrictMode>
-      <UserProvider>
-        <App />
-      </UserProvider>
-    </React.StrictMode>
-  </Router>,
-  document.getElementById("app")
+    <Router>
+        <React.StrictMode>
+            <UserProvider>
+                <App />
+            </UserProvider>
+        </React.StrictMode>
+    </Router>,
+    document.getElementById("app")
 );

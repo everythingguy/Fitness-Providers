@@ -20,7 +20,7 @@ router.use("/categories", categoryRouter);
 router.use("/tags", tagRouter);
 
 router.route("/health").get((req: express.Request, res: express.Response) => {
-  res.send({ success: true });
+    res.send({ success: true });
 });
 
 export default router;

@@ -5,7 +5,7 @@ interface Props {}
 // TODO:
 
 export const ResetPassword: React.FC<Props> = () => {
-  return <></>;
+    return <></>;
 };
 
 export default ResetPassword;

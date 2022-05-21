@@ -2,49 +2,49 @@ import { CategoryResponse, ErrorResponse } from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
 export class Category {
-  static async getProviderCategories(): Promise<
-    CategoryResponse | ErrorResponse
-  > {
-    const request = new DataRequest("GET", "categories");
+    static async getProviderCategories(): Promise<
+        CategoryResponse | ErrorResponse
+    > {
+        const request = new DataRequest("GET", "categories");
 
-    request.setParams({
-      appliesToProvider: true,
-    });
+        request.setParams({
+            appliesToProvider: true
+        });
 
-    return new Promise((res) => {
-      APIManager.sendRequest<CategoryResponse>(
-        request,
-        (resp) => {
-          res(resp);
-        },
-        (resp) => {
-          res(resp);
-        }
-      );
-    });
-  }
+        return new Promise((res) => {
+            APIManager.sendRequest<CategoryResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
 
-  static async getCourseCategories(): Promise<
-    CategoryResponse | ErrorResponse
-  > {
-    const request = new DataRequest("GET", "categories");
+    static async getCourseCategories(): Promise<
+        CategoryResponse | ErrorResponse
+    > {
+        const request = new DataRequest("GET", "categories");
 
-    request.setParams({
-      appliesToCourse: true,
-    });
+        request.setParams({
+            appliesToCourse: true
+        });
 
-    return new Promise((res) => {
-      APIManager.sendRequest<CategoryResponse>(
-        request,
-        (resp) => {
-          res(resp);
-        },
-        (resp) => {
-          res(resp);
-        }
-      );
-    });
-  }
+        return new Promise((res) => {
+            APIManager.sendRequest<CategoryResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
 }
 
 export default Category;

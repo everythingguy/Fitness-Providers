@@ -5,7 +5,7 @@ interface Props {}
 // TODO:
 
 export const Terms: React.FC<Props> = () => {
-  return <></>;
+    return <></>;
 };
 
 export default Terms;
