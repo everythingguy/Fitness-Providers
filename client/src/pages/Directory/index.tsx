@@ -12,6 +12,8 @@ import {
 import { Link, useMatch } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
+// ugly on mobile
+
 export const Directory: React.FC = () => {
     const match = useMatch("/directory/:type");
     const displayParam: "providers" | "courses" | "sessions" =
