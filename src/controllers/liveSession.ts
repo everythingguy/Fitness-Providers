@@ -12,6 +12,7 @@ import {
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
 import { FilterQuery } from "mongoose";
+import { errorResponse } from "../@types/response.d";
 
 const populate = [
     {
@@ -125,7 +126,20 @@ export async function getLiveSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getLiveSessions(req: Request, res: express.Response) {
-    const { provider, course, session } = req.query;
+    const { provider, course, session, day } = req.query;
+
+    let date: Date | null;
+
+    if (day) {
+        try {
+            date = new Date(day as string);
+        } catch (error) {
+            return res.status(400).json({
+                success: false,
+                error: { date: "unable to parse date" }
+            } as errorResponse);
+        }
+    }
 
     // hide sessions that belong to unenrolled providers
     // unless the logged in user is admin or the owner of the session
@@ -186,6 +200,31 @@ export async function getLiveSessions(req: Request, res: express.Response) {
                 $and: [{ session: approvedSessions }, { session }]
             };
         else query = { session: approvedSessions };
+    }
+
+    if (day) {
+        let nextDay = new Date(date);
+        nextDay = new Date(nextDay.setDate(date.getDate() + 1));
+
+        if (query.$and)
+            query.$and.push({
+                beginDateTime: {
+                    $gte: date,
+                    $lt: nextDay
+                }
+            });
+        else
+            query = {
+                $and: [
+                    query,
+                    {
+                        beginDateTime: {
+                            $gte: date,
+                            $lt: nextDay
+                        }
+                    }
+                ]
+            };
     }
 
     await CRUD.readAll<LiveSessionType>(

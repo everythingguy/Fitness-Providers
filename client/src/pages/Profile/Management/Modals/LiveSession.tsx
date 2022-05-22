@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
-import Session from "../../../../API/Session";
-import { Course as CourseType } from "../../../../@types/Models";
 import { DatePicker, TimePicker } from "antd";
-import CircleToggle from "./../../../../components/CircleToggle";
 import moment from "moment";
 
-import "antd/dist/antd.css";
+import Session from "../../../../API/Session";
+import { Course as CourseType } from "../../../../@types/Models";
+import CircleToggle from "./../../../../components/CircleToggle";
+import LiveSession from "../../../../API/LiveSession";
 import { WeekDays } from "../../../../@types/enums";
 import {
     ErrorResponse,
     LiveSessionResponse,
     SessionResponse
 } from "../../../../@types/Response";
-import LiveSession from "../../../../API/LiveSession";
+
+import "antd/dist/antd.css";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -27,8 +28,6 @@ interface Props {
 }
 
 // TODO: image upload
-
-// TODO: edit live session
 
 export const LiveSessionModal: React.FC<Props> = ({
     setModal,

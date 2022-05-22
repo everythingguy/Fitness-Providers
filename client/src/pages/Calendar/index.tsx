@@ -1,27 +1,38 @@
 import React, { useEffect, useState } from "react";
 import ReactCalendar from "react-calendar";
 import ResultList from "../../components/ResultList";
-
-import "react-calendar/dist/Calendar.css";
 import { LiveSession } from "../../API/LiveSession";
 import { LiveSession as LiveSessionType } from "../../@types/Models";
 
-interface Props {}
+import "react-calendar/dist/Calendar.css";
 
-// TODO:
+interface Props {}
 
 export const Calendar: React.FC<Props> = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [liveSessions, setLiveSessions] = useState<LiveSessionType[]>([]);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState<number | null>(1);
 
-    useEffect(() => {
-        LiveSession.getLiveSessions().then((resp) => {
+    const searchLiveSessions = () => {
+        LiveSession.getLiveSessions({
+            day: selectedDate.toISOString(),
+            page
+        }).then((resp) => {
             if (resp.success) {
                 setLiveSessions(resp.data.liveSessions);
+                if (!resp.hasNextPage) setPage(null);
             }
         });
+    };
+
+    useEffect(() => {
+        if (page !== 1) setPage(1);
+        else searchLiveSessions();
     }, [selectedDate]);
+
+    useEffect(() => {
+        if (page) searchLiveSessions();
+    }, [page]);
 
     return (
         <>
@@ -49,6 +60,9 @@ export const Calendar: React.FC<Props> = () => {
                 >
                     <ResultList
                         title="Live Sessions"
+                        onScrollBottom={() => {
+                            if (page) setPage(page + 1);
+                        }}
                         items={liveSessions.map((s) => ({
                             _id: s._id,
                             title: s.session.name,

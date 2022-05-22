@@ -92,10 +92,12 @@ export class LiveSession {
         });
     }
 
-    static async getLiveSessions(): Promise<
-        LiveSessionsResponse | ErrorResponse
-    > {
+    static async getLiveSessions(
+        params: { [key: string]: any } = {}
+    ): Promise<LiveSessionsResponse | ErrorResponse> {
         const request = new DataRequest("GET", "live-sessions");
+
+        request.setParams(params);
 
         return new Promise((res) => {
             APIManager.sendRequest<LiveSessionsResponse>(
