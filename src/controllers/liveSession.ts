@@ -233,18 +233,15 @@ export async function getLiveSessions(req: Request, res: express.Response) {
         const courses = await Course.find({
             name: { $regex: search, $options: "i" }
         });
-        const courseSessions = await Session.find({ course: courses });
         const sessions = await Session.find({
-            name: { $regex: search, $options: "i" }
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { course: courses }
+            ]
         });
 
         query = appendQuery(query, {
-            $or: [
-                { session: { $in: sessions } },
-                {
-                    session: { $in: courseSessions }
-                }
-            ]
+            session: { $in: sessions }
         });
     }
 
