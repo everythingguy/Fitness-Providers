@@ -222,6 +222,8 @@ export const Directory: React.FC = () => {
             timeout.current = window.setTimeout(() => {
                 pageRef.current = { provider: 1, course: 1, session: 1 };
                 setPage(pageRef.current);
+
+                timeout.current = null;
             }, 250);
         }
     }, [search]);

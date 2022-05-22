@@ -1,22 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactCalendar from "react-calendar";
+import Modal from "react-bootstrap/Modal";
 import ResultList from "../../components/ResultList";
-import { LiveSession } from "../../API/LiveSession";
-import { LiveSession as LiveSessionType } from "../../@types/Models";
+import Searchbar from "../../components/Searchbar";
+import CategoryComp from "../../components/Category";
+import LiveSession from "../../API/LiveSession";
+import Category from "../../API/Category";
+import {
+    LiveSession as LiveSessionType,
+    Category as CategoryType,
+    Tag as TagType
+} from "../../@types/Models";
 
 import "react-calendar/dist/Calendar.css";
 
 interface Props {}
 
+// TODO: implement tag and search filtering on the backend
+
 export const Calendar: React.FC<Props> = () => {
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [liveSessions, setLiveSessions] = useState<LiveSessionType[]>([]);
+    const [categories, setCategories] = useState<CategoryType[]>([]);
+    const [tags, setTags] = useState<{ [key: string]: boolean }>({});
+    const [search, setSearch] = useState("");
     const [page, setPage] = useState<number | null>(1);
+    const [showFilterModal, setFilterModal] = useState(false);
+
+    const searchTimeout = useRef<number | null>(null);
 
     const searchLiveSessions = () => {
+        const tagsArr: string[] = [];
+        for (const tag in tags) if (tags[tag]) tagsArr.push(tag);
+
         LiveSession.getLiveSessions({
-            day: selectedDate.toISOString(),
-            page
+            day: selectedDate ? selectedDate.toISOString() : undefined,
+            page,
+            tags: tagsArr,
+            search
         }).then((resp) => {
             if (resp.success) {
                 setLiveSessions(resp.data.liveSessions);
@@ -26,13 +47,40 @@ export const Calendar: React.FC<Props> = () => {
     };
 
     useEffect(() => {
-        if (page !== 1) setPage(1);
-        else searchLiveSessions();
-    }, [selectedDate]);
+        if (searchTimeout.current) window.clearTimeout(searchTimeout.current);
+
+        searchTimeout.current = window.setTimeout(() => {
+            if (page !== 1) setPage(1);
+            else searchLiveSessions();
+
+            searchTimeout.current = null;
+        }, 250);
+    }, [selectedDate, search, tags]);
 
     useEffect(() => {
         if (page) searchLiveSessions();
     }, [page]);
+
+    useEffect(() => {
+        Category.getCourseCategories().then((resp) => {
+            if (resp.success) setCategories(resp.data.categories);
+        });
+    }, []);
+
+    const dicHasTruthyKey = (dic: { [key: string]: boolean }) => {
+        for (const key in dic) {
+            if (dic[key] && dic[key] === true) return true;
+        }
+
+        return false;
+    };
+
+    const filter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTags({
+            ...tags,
+            [e.target.getAttribute("data-id") as string]: e.target.checked
+        });
+    };
 
     return (
         <>
@@ -48,10 +96,25 @@ export const Calendar: React.FC<Props> = () => {
                         next2Label={null}
                         calendarType="US"
                         selectRange={false}
-                        onChange={(date) => setSelectedDate(date)}
+                        onChange={(date) => {
+                            if (
+                                selectedDate &&
+                                date.getTime() === selectedDate.getTime()
+                            )
+                                setSelectedDate(null);
+                            else setSelectedDate(date);
+                        }}
                         value={selectedDate}
                     ></ReactCalendar>
                 </div>
+            </div>
+            <div className="row">
+                <Searchbar
+                    placeholder="search"
+                    onChange={(e) => setSearch(e.target.value)}
+                    onFilterClick={() => setFilterModal(true)}
+                    filtered={dicHasTruthyKey(tags)}
+                />
             </div>
             <div className="row">
                 <div
@@ -76,6 +139,24 @@ export const Calendar: React.FC<Props> = () => {
                     />
                 </div>
             </div>
+            <Modal
+                size="lg"
+                show={showFilterModal}
+                onHide={() => setFilterModal(false)}
+            >
+                {categories.map((category) => (
+                    <CategoryComp
+                        category={category.name}
+                        items={(category.tags as TagType[]).map((t) => ({
+                            ...t,
+                            checked: tags[t._id] || false
+                        }))}
+                        onChange={filter}
+                        key={category._id}
+                        id={"course"}
+                    />
+                ))}
+            </Modal>
         </>
     );
 };
