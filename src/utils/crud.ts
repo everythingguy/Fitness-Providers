@@ -1,5 +1,12 @@
 import express from "express";
-import { Types, Model, FilterQuery, PaginateModel } from "mongoose";
+import {
+    Types,
+    Model,
+    FilterQuery,
+    PaginateModel,
+    PaginateResult,
+    HydratedDocument
+} from "mongoose";
 import { postPatchErrorHandler } from "./errors";
 import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
@@ -110,7 +117,8 @@ export async function readAll<T extends Base>(
     model: PaginateModel<T, unknown, unknown>,
     query: FilterQuery<T> = {},
     plural?: string,
-    populate?: string[] | Populate[] | Populate
+    populate?: string[] | Populate[] | Populate,
+    aggregate = false
 ) {
     const pageLimit = 50;
     let page = 1;
@@ -124,12 +132,32 @@ export async function readAll<T extends Base>(
     }
 
     try {
-        const objs = await model.paginate(query, {
+        const options = {
             page,
             limit: pageLimit,
             sort,
             populate
-        });
+        };
+
+        let objs: PaginateResult<
+            HydratedDocument<
+                T,
+                unknown,
+                {
+                    page: number;
+                    limit: number;
+                    sort: any;
+                    populate: string[] | Populate | Populate[];
+                }
+            >
+        >;
+
+        if (aggregate) {
+            objs = await (model as any).aggregatePaginate(
+                model.aggregate(query as any),
+                options
+            );
+        } else objs = await model.paginate(query, options);
 
         let resJSON: any = {
             success: true,

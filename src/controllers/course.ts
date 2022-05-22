@@ -10,6 +10,7 @@ import {
 import * as CRUD from "../utils/crud";
 import { FilterQuery, Types } from "mongoose";
 import { filterTags } from "./../utils/filter";
+import { appendQuery } from "./../utils/query";
 
 const populate = [
     { path: "location" },
@@ -147,17 +148,12 @@ export async function getCourses(req: Request, res: express.Response) {
     }
 
     if (search)
-        query = {
-            $and: [
-                query,
-                {
-                    $or: [
-                        { name: { $regex: search, $options: "i" } },
-                        { description: { $regex: search, $options: "i" } }
-                    ]
-                }
+        query = appendQuery(query, {
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } }
             ]
-        };
+        });
 
     await CRUD.readAll(req, res, "course", Course, query, undefined, populate);
 }

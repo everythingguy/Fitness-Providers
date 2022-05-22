@@ -589,7 +589,10 @@ export const LiveSessionModal: React.FC<Props> = ({
                                 value={formData.recurring.frequency}
                                 onChange={(e) => {
                                     if (
-                                        Number.isInteger(e.target.value) &&
+                                        !isNaN(e.target.value as any) &&
+                                        Number.isInteger(
+                                            parseInt(e.target.value, 10)
+                                        ) &&
                                         parseInt(e.target.value, 10) > 0
                                     ) {
                                         setFormData({

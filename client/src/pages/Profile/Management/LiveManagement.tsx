@@ -71,18 +71,18 @@ export const LiveManagement: React.FC<Props> = () => {
                         <ResultList
                             title="Live Sessions"
                             component={Result}
-                            items={liveSessions.map((liveSession) => ({
-                                _id: liveSession.liveSession._id,
-                                title: liveSession.name,
-                                href:
-                                    liveSession.URL ||
-                                    `/course/${liveSession._id}`,
-                                external: liveSession.URL ? true : false,
+                            items={liveSessions.map((session) => ({
+                                _id: session.liveSession._id,
+                                title: session.name,
+                                href: session.URL || `/course/${session._id}`,
+                                external: session.URL ? true : false,
                                 image:
-                                    liveSession.image ||
+                                    session.image ||
                                     "https://via.placeholder.com/500x500",
-                                subtitle: liveSession.course.name,
-                                date: liveSessionDateToString(liveSession)
+                                subtitle: session.course.name,
+                                date: liveSessionDateToString(
+                                    session.liveSession
+                                )
                             }))}
                             onEdit={(id) => {
                                 setEditDeleteInfo({ id, type: "live session" });

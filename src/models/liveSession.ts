@@ -4,8 +4,9 @@ import { LiveSession as LiveSessionType, Recurring } from "../@types/models";
 import { WeekDays } from "../@types/enums";
 import { refValidator } from "../utils/validators";
 import Session from "./session";
-import Pagination from "mongoose-paginate-v2";
 import { UniqueErrorRaiser, ValidationError } from "../utils/errors";
+import Pagination from "mongoose-paginate-v2";
+import AggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 // debug
 // mongoose.set('debug', true);
@@ -54,11 +55,13 @@ const LiveSessionSchema = new mongoose.Schema<LiveSessionType>(
                     return value.getTime() > Date.now();
                 },
                 "You cannot create a event in the past"
-            ]
+            ],
+            index: true
         },
         endDateTime: {
             type: Date,
-            required: [true, "Missing endDateTime"]
+            required: [true, "Missing endDateTime"],
+            index: true
         },
         recurring: {
             type: RecurringSchema,
@@ -79,6 +82,7 @@ const LiveSessionSchema = new mongoose.Schema<LiveSessionType>(
     }
 );
 
+LiveSessionSchema.plugin(AggregatePaginate);
 LiveSessionSchema.plugin(Pagination);
 
 LiveSessionSchema.post("validate", function (this: LiveSessionType, doc, next) {

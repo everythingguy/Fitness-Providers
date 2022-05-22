@@ -13,13 +13,14 @@ import {
 } from "../../@types/Models";
 
 import "react-calendar/dist/Calendar.css";
+import { liveSessionDateToString } from "../../utils/Date";
 
 interface Props {}
 
-// TODO: implement tag and search filtering on the backend
-
 export const Calendar: React.FC<Props> = () => {
-    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | null>(
+        new Date(new Date().setHours(0, 0, 0, 0))
+    );
     const [liveSessions, setLiveSessions] = useState<LiveSessionType[]>([]);
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const [tags, setTags] = useState<{ [key: string]: boolean }>({});
@@ -129,9 +130,12 @@ export const Calendar: React.FC<Props> = () => {
                         items={liveSessions.map((s) => ({
                             _id: s._id,
                             title: s.session.name,
+                            subtitle: s.session.course.name,
+                            date: liveSessionDateToString(s),
                             href:
                                 s.session.URL ||
                                 `/course/${s.session.course._id}`,
+                            external: s.session.URL ? true : false,
                             image:
                                 s.session.course.image ||
                                 "https://via.placeholder.com/500x500"

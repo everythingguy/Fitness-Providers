@@ -12,6 +12,7 @@ import {
 import * as CRUD from "../utils/crud";
 import { filterTags } from "../utils/filter";
 import { FilterQuery, Types } from "mongoose";
+import { appendQuery } from "./../utils/query";
 
 const populate = [
     {
@@ -187,59 +188,23 @@ export async function getSessions(req: Request, res: express.Response) {
         const searchCourses = await Course.find({
             name: { $regex: search, $options: "i" }
         });
-        if ("$and" in query)
-            query.$and.push({
-                $or: [
-                    { name: { $regex: search, $options: "i" } },
-                    { course: searchCourses }
-                ]
-            });
-        else {
-            query = {
-                $and: [
-                    query,
-                    {
-                        $or: [
-                            { name: { $regex: search, $options: "i" } },
-                            { course: searchCourses }
-                        ]
-                    }
-                ]
-            };
-        }
+
+        query = appendQuery(query, {
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { course: searchCourses }
+            ]
+        });
     }
 
-    if (blnLive) {
-        if ("$and" in query)
-            query.$and.push({
-                liveSession: { $ne: null }
-            });
-        else {
-            query = {
-                $and: [
-                    query,
-                    {
-                        liveSession: { $ne: null }
-                    }
-                ]
-            };
-        }
-    } else if (blnLive === false) {
-        if ("$and" in query)
-            query.$and.push({
-                liveSession: { $eq: null }
-            });
-        else {
-            query = {
-                $and: [
-                    query,
-                    {
-                        liveSession: { $eq: null }
-                    }
-                ]
-            };
-        }
-    }
+    if (blnLive)
+        query = appendQuery(query, {
+            liveSession: { $ne: null }
+        });
+    else if (blnLive === false)
+        query = appendQuery(query, {
+            liveSession: { $eq: null }
+        });
 
     await CRUD.readAll<SessionType>(
         req,

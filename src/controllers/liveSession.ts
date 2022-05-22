@@ -7,13 +7,19 @@ import LiveSession from "../models/liveSession";
 import { Request, RequestBody } from "../@types/request";
 import {
     Provider as ProviderType,
+    Course as CourseType,
     Session as SessionType,
     LiveSession as LiveSessionType
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import { errorResponse } from "../@types/response.d";
+import { appendQuery } from "../utils/query";
+import { filterTags } from "../utils/filter";
+import { getDay } from "../utils/date";
+import { WeekDays } from "../@types/enums";
 
+// WARNING: Get all live sessions with a day filter manually populates using a aggregate
 const populate = [
     {
         path: "session",
@@ -126,7 +132,11 @@ export async function getLiveSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getLiveSessions(req: Request, res: express.Response) {
-    const { provider, course, session, day } = req.query;
+    const { provider, course, session, day, search } = req.query;
+
+    if (req.query.sort === undefined) req.query.sort = "beginDateTime";
+
+    const tagFilter: Types.ObjectId[] = filterTags(req);
 
     let date: Date | null;
 
@@ -152,16 +162,26 @@ export async function getLiveSessions(req: Request, res: express.Response) {
             if (session) query.$and.push({ session });
             if (course) {
                 const courseSessions = await Session.find({ course });
-                query.$and.push({ session: courseSessions });
+                query.$and.push({ session: { $in: courseSessions } });
             }
             if (provider) {
-                const providerCourses = await Course.find({ provider });
+                const courseQuery: FilterQuery<CourseType> = { provider };
+                if (tagFilter.length > 0) courseQuery.tags = tagFilter;
+
+                const providerCourses = await Course.find(courseQuery);
+
                 const courseSessions = await Session.find({
                     course: providerCourses
                 });
 
-                query.$and.push({ session: courseSessions });
+                query.$and.push({ session: { $in: courseSessions } });
             }
+        }
+        if (tagFilter.length > 0 && !provider) {
+            const tagCourses = await Course.find({ tags: tagFilter });
+            const tagSessions = await Session.find({ course: tagCourses });
+
+            query = appendQuery(query, { session: { $in: tagSessions } });
         }
     } else {
         const providerFilter: FilterQuery<ProviderType>[] = [
@@ -180,9 +200,16 @@ export async function getLiveSessions(req: Request, res: express.Response) {
 
         const approvedProviders = await Provider.find(provFilter).select("_id");
 
-        const approvedCourses = await Course.find({
-            provider: approvedProviders
-        }).select("_id");
+        let approvedCourses: CourseType[];
+        if (tagFilter.length > 0)
+            approvedCourses = await Course.find({
+                provider: approvedProviders,
+                tags: tagFilter
+            });
+        else
+            approvedCourses = await Course.find({
+                provider: approvedProviders
+            }).select("_id");
 
         let sessionFilter: FilterQuery<SessionType> = {
             course: approvedCourses
@@ -197,34 +224,122 @@ export async function getLiveSessions(req: Request, res: express.Response) {
 
         if (session)
             query = {
-                $and: [{ session: approvedSessions }, { session }]
+                $and: [{ session: { $in: approvedSessions } }, { session }]
             };
-        else query = { session: approvedSessions };
+        else query = { session: { $in: approvedSessions } };
     }
 
+    if (search && search.length > 0) {
+        const courses = await Course.find({
+            name: { $regex: search, $options: "i" }
+        });
+        const courseSessions = await Session.find({ course: courses });
+        const sessions = await Session.find({
+            name: { $regex: search, $options: "i" }
+        });
+
+        query = appendQuery(query, {
+            $or: [
+                { session: { $in: sessions } },
+                {
+                    session: { $in: courseSessions }
+                }
+            ]
+        });
+    }
+
+    let isAggregate = false;
+
     if (day) {
+        isAggregate = true;
+
         let nextDay = new Date(date);
         nextDay = new Date(nextDay.setDate(date.getDate() + 1));
 
-        if (query.$and)
-            query.$and.push({
-                beginDateTime: {
-                    $gte: date,
-                    $lt: nextDay
+        const dayEnum = getDay(date);
+
+        query = appendQuery(query, {
+            $or: [
+                {
+                    beginDateTime: {
+                        $gte: date,
+                        $lt: nextDay
+                    }
+                },
+                {
+                    endDateTime: {
+                        $gte: date
+                    },
+                    beginDateTime: {
+                        $lte: date
+                    },
+                    onFrequency: true,
+                    "recurring.weekDays": dayEnum
                 }
-            });
-        else
-            query = {
-                $and: [
-                    query,
-                    {
-                        beginDateTime: {
-                            $gte: date,
-                            $lt: nextDay
+            ]
+        });
+
+        query = [
+            {
+                $lookup: {
+                    from: "sessions",
+                    localField: "session",
+                    foreignField: "_id",
+                    as: "session"
+                }
+            },
+            { $unwind: "$session" },
+            {
+                $lookup: {
+                    from: "courses",
+                    localField: "session.course",
+                    foreignField: "_id",
+                    as: "course"
+                }
+            },
+            { $unwind: "$course" },
+            {
+                $addFields: {
+                    "session.course": "$course",
+                    date
+                }
+            },
+            {
+                $addFields: {
+                    onFrequency: {
+                        $function: {
+                            body: function (
+                                beginDateTime: Date,
+                                recurring: {
+                                    weekDays: WeekDays[];
+                                    frequency: number;
+                                } | null,
+                                date: Date
+                            ) {
+                                // determine if date is within frequency
+                                if (recurring) {
+                                    return (
+                                        Math.round(
+                                            (beginDateTime.getTime() -
+                                                date.getTime()) /
+                                                (7 * 24 * 60 * 60 * 1000)
+                                        ) %
+                                            recurring.frequency ===
+                                        0
+                                    );
+                                } else return false;
+                            },
+                            args: ["$beginDateTime", "$recurring", "$date"],
+                            lang: "js"
                         }
                     }
-                ]
-            };
+                }
+            },
+            { $match: query },
+            {
+                $project: { course: 0, onFrequency: 0, date: 0 }
+            }
+        ];
     }
 
     await CRUD.readAll<LiveSessionType>(
@@ -234,7 +349,8 @@ export async function getLiveSessions(req: Request, res: express.Response) {
         LiveSession,
         query,
         undefined,
-        populate
+        populate,
+        isAggregate
     );
 }
 
