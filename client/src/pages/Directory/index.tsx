@@ -12,6 +12,8 @@ import {
 import { Link, useMatch } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
+// TODO: add live sessions
+
 export const Directory: React.FC = () => {
     const match = useMatch("/directory/:type");
     const displayParam: "providers" | "courses" | "sessions" =
@@ -266,7 +268,7 @@ export const Directory: React.FC = () => {
     }, [page.session]);
 
     return (
-        <div className="container">
+        <>
             <div className="h3">Directory</div>
             <div className="divider-border"></div>
             <div className="row mb-3">
@@ -322,11 +324,9 @@ export const Directory: React.FC = () => {
                                 p.image || "https://via.placeholder.com/500x500"
                             }
                             href={`/provider/profile/${p._id}`}
-                            title={
-                                typeof p.user === "object" ? p.user.name : ""
-                            }
+                            title={p.user.name}
                             subtitle={
-                                p.address && typeof p.address === "object"
+                                p.address
                                     ? `${p.address.city}, ${p.address.state}`
                                     : ""
                             }
@@ -350,7 +350,7 @@ export const Directory: React.FC = () => {
                             href={`/course/${c._id}`}
                             title={c.name}
                             subtitle={
-                                c.location && typeof c.location === "object"
+                                c.location
                                     ? `${c.location.city}, ${c.location.state}`
                                     : ""
                             }
@@ -369,21 +369,10 @@ export const Directory: React.FC = () => {
                             image={
                                 s.image || "https://via.placeholder.com/500x500"
                             }
-                            href={
-                                s.URL
-                                    ? s.URL
-                                    : typeof s.course === "object"
-                                    ? `/course/${s.course._id}`
-                                    : ""
-                            }
+                            href={s.URL ? s.URL : `/course/${s.course._id}`}
                             title={s.name}
-                            subtitle={
-                                typeof s.course === "object"
-                                    ? s.course.name
-                                    : ""
-                            }
+                            subtitle={s.course.name}
                             text={
-                                typeof s.course === "object" &&
                                 s.course.description
                                     ? s.course.description.length < 50
                                         ? s.course.description
@@ -429,7 +418,7 @@ export const Directory: React.FC = () => {
                       ))
                     : undefined}
             </Modal>
-        </div>
+        </>
     );
 };
 

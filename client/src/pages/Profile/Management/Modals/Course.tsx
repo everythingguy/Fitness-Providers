@@ -90,10 +90,7 @@ export const CourseModal: React.FC<Props> = ({
                         })
                     );
 
-                    if (
-                        course.location &&
-                        typeof course.location === "object"
-                    ) {
+                    if (course.location) {
                         const location = course.location;
                         setSelectedAddress(
                             providerAddresses.filter(
@@ -136,12 +133,7 @@ export const CourseModal: React.FC<Props> = ({
         if (providerAddresses.length > 0 && first.current) {
             setSelectedAddress(
                 providerAddresses.filter((val) => {
-                    if (
-                        user &&
-                        user.provider &&
-                        user.provider.address &&
-                        typeof user.provider.address === "object"
-                    )
+                    if (user && user.provider && user.provider.address)
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         return val._id === user!.provider!.address._id;
                     return val._id === "online";
@@ -199,12 +191,7 @@ export const CourseModal: React.FC<Props> = ({
 
                 setModal(false);
                 setSelectedTags([]);
-                if (
-                    user &&
-                    user.provider &&
-                    user.provider.address &&
-                    typeof user.provider.address === "object"
-                )
+                if (user && user.provider && user.provider.address)
                     setSelectedAddress(user.provider.address);
                 else
                     setSelectedAddress({
@@ -243,12 +230,7 @@ export const CourseModal: React.FC<Props> = ({
                     setModal(!showModal);
                     setInfo(false);
                     setSelectedTags([]);
-                    if (
-                        user &&
-                        user.provider &&
-                        user.provider.address &&
-                        typeof user.provider.address === "object"
-                    )
+                    if (user && user.provider && user.provider.address)
                         setSelectedAddress(user.provider.address);
                     else
                         setSelectedAddress({
@@ -382,12 +364,7 @@ export const CourseModal: React.FC<Props> = ({
                             setModal(false);
                             setInfo(false);
                             setSelectedTags([]);
-                            if (
-                                user &&
-                                user.provider &&
-                                user.provider.address &&
-                                typeof user.provider.address === "object"
-                            )
+                            if (user && user.provider && user.provider.address)
                                 setSelectedAddress(user.provider.address);
                             else
                                 setSelectedAddress({

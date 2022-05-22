@@ -10,6 +10,20 @@ import {
 import * as CRUD from "../utils/crud";
 import { FilterQuery } from "mongoose";
 
+const populate = [
+    {
+        path: "provider",
+        populate: [
+            {
+                path: "user",
+                model: "User",
+                select: "firstName lastName name email username"
+            },
+            { path: "tags", model: "Tag" }
+        ]
+    }
+];
+
 /**
  * @desc Add Address
  * @route POST /api/v1/adresses
@@ -30,7 +44,8 @@ export async function addAddress(
                 source: "provider",
                 value: "provider"
             }
-        ]
+        ],
+        populate
     );
 }
 
@@ -55,9 +70,7 @@ export async function getAddress(req: Request, res: express.Response) {
     };
     if (req.user && req.user.isAdmin) query = { _id: req.params.id };
 
-    await CRUD.read<AddressType>(req, res, "address", Address, query, [
-        "provider"
-    ]);
+    await CRUD.read<AddressType>(req, res, "address", Address, query, populate);
 }
 
 /**
@@ -70,11 +83,10 @@ export async function getAddresses(req: Request, res: express.Response) {
     // unless logged in user is admin or the provider that owns the address
     let query: FilterQuery<AddressType>;
 
-    if (req.user && req.user.isAdmin)
-        query = {
-            provider: req.query.provider ? req.query.provider : undefined
-        };
-    else {
+    if (req.user && req.user.isAdmin) {
+        query = {};
+        if (req.query.provider) query.provider = req.query.provider;
+    } else {
         const providerFilter: FilterQuery<ProviderType>[] = [
             { isEnrolled: true }
         ];
@@ -101,7 +113,7 @@ export async function getAddresses(req: Request, res: express.Response) {
         Address,
         query,
         "addresses",
-        ["provider"]
+        populate
     );
 }
 
@@ -111,7 +123,7 @@ export async function getAddresses(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteAddress(req: Request, res: express.Response) {
-    await CRUD.del(req, res, "address", Address);
+    await CRUD.del(req, res, "address", Address, populate);
 }
 
 /**
@@ -123,5 +135,5 @@ export async function modifyAddress(
     req: RequestBody<AddressType>,
     res: express.Response
 ) {
-    await CRUD.update(req, res, "address", Address, undefined, ["provider"]);
+    await CRUD.update(req, res, "address", Address, undefined, populate);
 }

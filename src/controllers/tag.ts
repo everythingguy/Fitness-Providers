@@ -5,13 +5,23 @@ import { Request, RequestBody } from "../@types/request";
 import { Tag as TagType } from "../@types/models";
 import * as CRUD from "../utils/crud";
 
+const populate = ["category"];
+
 /**
  * @desc Add Tag
  * @route POST /api/v1/tags
  * @access Restricted
  */
 export async function addTag(req: RequestBody<TagType>, res: express.Response) {
-    await CRUD.create<TagType>(req, res, "tag", Tag);
+    await CRUD.create<TagType>(
+        req,
+        res,
+        "tag",
+        Tag,
+        undefined,
+        undefined,
+        populate
+    );
 }
 
 /**
@@ -20,7 +30,7 @@ export async function addTag(req: RequestBody<TagType>, res: express.Response) {
  * @access Public
  */
 export async function getTag(req: Request, res: express.Response) {
-    await CRUD.read<TagType>(req, res, "tag", Tag);
+    await CRUD.read<TagType>(req, res, "tag", Tag, undefined, populate);
 }
 
 /**
@@ -42,7 +52,15 @@ export async function getTags(req: Request, res: express.Response) {
     if (appliesToCourse)
         query.appliesToCourse = appliesToCourse.toLowerCase() === "true";
 
-    await CRUD.readAll<TagType>(req, res, "tag", Tag, query);
+    await CRUD.readAll<TagType>(
+        req,
+        res,
+        "tag",
+        Tag,
+        query,
+        undefined,
+        populate
+    );
 }
 
 /**
@@ -54,7 +72,7 @@ export async function modifyTag(
     req: RequestBody<TagType>,
     res: express.Response
 ) {
-    await CRUD.update<TagType>(req, res, "tag", Tag);
+    await CRUD.update<TagType>(req, res, "tag", Tag, undefined, populate);
 }
 
 /**
@@ -63,5 +81,5 @@ export async function modifyTag(
  * @access Restricted
  */
 export async function deleteTag(req: Request, res: express.Response) {
-    await CRUD.del<TagType>(req, res, "tag", Tag);
+    await CRUD.del<TagType>(req, res, "tag", Tag, populate);
 }

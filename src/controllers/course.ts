@@ -11,6 +11,22 @@ import * as CRUD from "../utils/crud";
 import { FilterQuery, Types } from "mongoose";
 import { filterTags } from "./../utils/filter";
 
+const populate = [
+    { path: "location" },
+    { path: "tags" },
+    {
+        path: "provider",
+        populate: [
+            {
+                path: "user",
+                model: "User",
+                select: "firstName lastName name email username"
+            },
+            { path: "tags", model: "Tag" }
+        ]
+    }
+];
+
 /**
  * @desc Add a course to a provider
  * @route POST /api/v1/courses
@@ -31,7 +47,8 @@ export async function addCourse(
                 source: "provider",
                 value: "provider"
             }
-        ]
+        ],
+        populate
     );
 }
 
@@ -44,7 +61,14 @@ export async function modifyCourse(
     req: RequestBody<CourseType>,
     res: express.Response
 ) {
-    await CRUD.update<CourseType>(req, res, "course", Course, ["image"]);
+    await CRUD.update<CourseType>(
+        req,
+        res,
+        "course",
+        Course,
+        ["image"],
+        populate
+    );
 }
 
 /**
@@ -68,10 +92,7 @@ export async function getCourse(req: Request, res: express.Response) {
     };
     if (req.user && req.user.isAdmin) query = { _id: req.params.id };
 
-    await CRUD.read<CourseType>(req, res, "course", Course, query, [
-        "location",
-        "tags"
-    ]);
+    await CRUD.read<CourseType>(req, res, "course", Course, query, populate);
 }
 
 /**
@@ -138,17 +159,7 @@ export async function getCourses(req: Request, res: express.Response) {
             ]
         };
 
-    await CRUD.readAll(req, res, "course", Course, query, undefined, [
-        { path: "location" },
-        {
-            path: "provider",
-            populate: {
-                path: "user",
-                model: "User",
-                select: "firstName lastName name email username"
-            }
-        }
-    ]);
+    await CRUD.readAll(req, res, "course", Course, query, undefined, populate);
 }
 
 /**
@@ -157,5 +168,5 @@ export async function getCourses(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteCourse(req: Request, res: express.Response) {
-    await CRUD.del(req, res, "course", Course);
+    await CRUD.del(req, res, "course", Course, populate);
 }

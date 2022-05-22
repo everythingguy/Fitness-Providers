@@ -71,33 +71,19 @@ export const LiveManagement: React.FC<Props> = () => {
                         <ResultList
                             title="Live Sessions"
                             component={Result}
-                            items={liveSessions.map((liveSession) =>
-                                typeof liveSession.liveSession === "object" &&
-                                typeof liveSession.course === "object"
-                                    ? {
-                                          _id: liveSession.liveSession._id,
-                                          title: liveSession.name,
-                                          href:
-                                              liveSession.URL ||
-                                              `/course/${liveSession._id}`,
-                                          external: liveSession.URL
-                                              ? true
-                                              : false,
-                                          image:
-                                              liveSession.image ||
-                                              "https://via.placeholder.com/500x500",
-                                          subtitle: liveSession.course.name,
-                                          date: liveSessionDateToString(
-                                              liveSession
-                                          )
-                                      }
-                                    : {
-                                          _id: "",
-                                          title: "",
-                                          href: "",
-                                          image: ""
-                                      }
-                            )}
+                            items={liveSessions.map((liveSession) => ({
+                                _id: liveSession.liveSession._id,
+                                title: liveSession.name,
+                                href:
+                                    liveSession.URL ||
+                                    `/course/${liveSession._id}`,
+                                external: liveSession.URL ? true : false,
+                                image:
+                                    liveSession.image ||
+                                    "https://via.placeholder.com/500x500",
+                                subtitle: liveSession.course.name,
+                                date: liveSessionDateToString(liveSession)
+                            }))}
                             onEdit={(id) => {
                                 setEditDeleteInfo({ id, type: "live session" });
                                 setLiveSessionModal(true);

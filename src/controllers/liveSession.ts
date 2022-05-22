@@ -13,6 +13,31 @@ import {
 import * as CRUD from "../utils/crud";
 import { FilterQuery } from "mongoose";
 
+const populate = [
+    {
+        path: "session",
+        populate: {
+            path: "course",
+            model: "Course",
+            populate: [
+                {
+                    path: "provider",
+                    model: "Provider",
+                    populate: [
+                        {
+                            path: "user",
+                            model: "User",
+                            select: "firstName lastName name email username"
+                        },
+                        { path: "tags", model: "Tag" }
+                    ]
+                },
+                { path: "tags", model: "Tag" }
+            ]
+        }
+    }
+];
+
 /**
  * @desc Add a live session to a session
  * @route POST /api/v1/live-sessions
@@ -22,7 +47,15 @@ export async function addLiveSession(
     req: RequestBody<LiveSessionType>,
     res: express.Response
 ) {
-    await CRUD.create<LiveSessionType>(req, res, "liveSession", LiveSession);
+    await CRUD.create<LiveSessionType>(
+        req,
+        res,
+        "liveSession",
+        LiveSession,
+        undefined,
+        undefined,
+        populate
+    );
 }
 
 /**
@@ -34,7 +67,14 @@ export async function modifyLiveSession(
     req: RequestBody<LiveSessionType>,
     res: express.Response
 ) {
-    await CRUD.update<LiveSessionType>(req, res, "liveSession", LiveSession);
+    await CRUD.update<LiveSessionType>(
+        req,
+        res,
+        "liveSession",
+        LiveSession,
+        undefined,
+        populate
+    );
 }
 
 /**
@@ -74,7 +114,8 @@ export async function getLiveSession(req: Request, res: express.Response) {
         res,
         "liveSession",
         LiveSession,
-        query
+        query,
+        populate
     );
 }
 
@@ -154,24 +195,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
         LiveSession,
         query,
         undefined,
-        [
-            {
-                path: "session",
-                populate: {
-                    path: "course",
-                    model: "Course",
-                    populate: {
-                        path: "provider",
-                        model: "Provider",
-                        populate: {
-                            path: "user",
-                            model: "User",
-                            select: "firstName lastName name email username"
-                        }
-                    }
-                }
-            }
-        ]
+        populate
     );
 }
 
@@ -181,5 +205,11 @@ export async function getLiveSessions(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteLiveSession(req: Request, res: express.Response) {
-    await CRUD.del<LiveSessionType>(req, res, "liveSession", LiveSession);
+    await CRUD.del<LiveSessionType>(
+        req,
+        res,
+        "liveSession",
+        LiveSession,
+        populate
+    );
 }

@@ -6,6 +6,28 @@ import { Request, RequestBody } from "../@types/request";
 import { errorResponse } from "../@types/response";
 import { KeysOfMultiType } from "../@types/misc";
 
+type Populate = {
+    path: string;
+    select?: string;
+    populate?:
+        | {
+              path: string;
+              model: string;
+              select?: string;
+              populate?:
+                  | (Populate & { model: string })[]
+                  | (Populate & { model: string });
+          }[]
+        | {
+              path: string;
+              model: string;
+              select?: string;
+              populate?:
+                  | (Populate & { model: string })[]
+                  | (Populate & { model: string });
+          };
+};
+
 export async function create<T extends Base>(
     req: RequestBody<any>, // for some reason I had to set to any instead of T
     res: express.Response,
@@ -16,7 +38,7 @@ export async function create<T extends Base>(
         value: KeysOfMultiType<T, Types.ObjectId>;
         source: "user" | "provider";
     }[] = [],
-    populate?: string[],
+    populate?: string[] | Populate[] | Populate,
     succResponse = true
 ) {
     try {
@@ -36,8 +58,7 @@ export async function create<T extends Base>(
         if (succResponse) {
             obj = await obj.save();
 
-            if (populate)
-                for (const pop of populate) obj = await obj.populate(pop);
+            if (populate) obj = await obj.populate(populate);
 
             res.status(201).json({
                 success: true,
@@ -57,12 +78,12 @@ export async function read<T extends Base>(
     modelName: string,
     model: Model<T>,
     query: FilterQuery<T> = { _id: req.params.id },
-    populate?: string[]
+    populate?: string[] | Populate[] | Populate
 ) {
     try {
         let obj = await model.findOne(query);
 
-        if (populate) for (const pop of populate) obj = await obj.populate(pop);
+        if (populate) obj = await obj.populate(populate);
 
         if (!obj)
             return res.status(404).json({
@@ -82,17 +103,6 @@ export async function read<T extends Base>(
     }
 }
 
-type Populate = {
-    path: string;
-    select?: string;
-    populate?: {
-        path: string;
-        model: string;
-        select?: string;
-        populate?: Populate & { model: string };
-    };
-};
-
 export async function readAll<T extends Base>(
     req: Request,
     res: express.Response,
@@ -100,7 +110,7 @@ export async function readAll<T extends Base>(
     model: PaginateModel<T, unknown, unknown>,
     query: FilterQuery<T> = {},
     plural?: string,
-    populate?: string[] | Populate[]
+    populate?: string[] | Populate[] | Populate
 ) {
     const pageLimit = 50;
     let page = 1;
@@ -145,7 +155,7 @@ export async function update<T extends Base>(
     modelName: string,
     model: Model<T>,
     ignoreFields: (keyof T)[] = [],
-    populate?: string[],
+    populate?: string[] | Populate[] | Populate,
     succResponse = true
 ) {
     if (!req.user.isAdmin) {
@@ -158,7 +168,7 @@ export async function update<T extends Base>(
         });
 
         let obj = await model.findById(req.params.id);
-        if (populate) for (const pop of populate) obj = await obj.populate(pop);
+        if (populate) obj = await obj.populate(populate);
 
         if (!obj) {
             res.status(404).json({
@@ -185,10 +195,12 @@ export async function del<T extends Base>(
     req: Request,
     res: express.Response,
     modelName: string,
-    model: Model<T>
+    model: Model<T>,
+    populate?: string[] | Populate[] | Populate,
+    succResponse = true
 ) {
     try {
-        const obj = await model.findById(req.params.id);
+        let obj = await model.findById(req.params.id);
 
         if (!obj)
             return res.status(404).json({
@@ -196,12 +208,16 @@ export async function del<T extends Base>(
                 error: `No ${modelName} found by that id`
             } as errorResponse);
 
+        if (populate) obj = await obj.populate(populate);
+
         await obj.remove();
 
-        return res.status(200).json({
-            success: true,
-            data: { [modelName]: obj }
-        });
+        if (succResponse)
+            return res.status(200).json({
+                success: true,
+                data: { [modelName]: obj }
+            });
+        else return obj;
     } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({

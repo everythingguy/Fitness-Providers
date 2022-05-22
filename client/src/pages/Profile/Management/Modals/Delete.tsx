@@ -26,15 +26,7 @@ export const DeleteModal: React.FC<Props> = ({
             else if (type === "session") await Session.deleteSession(id);
             else if (type === "live session") {
                 const resp = await LiveSession.deleteLiveSession(id);
-                if (
-                    resp.success &&
-                    typeof resp.data.liveSession.session === "string"
-                )
-                    await Session.deleteSession(resp.data.liveSession.session);
-                else if (
-                    resp.success &&
-                    typeof resp.data.liveSession.session === "object"
-                )
+                if (resp.success)
                     await Session.deleteSession(
                         resp.data.liveSession.session._id
                     );

@@ -215,30 +215,16 @@ export const Management: React.FC<Props> = () => {
                         />
                         <ResultList
                             title="Sessions"
-                            items={sessions.map((s) => {
-                                if (typeof s.course === "object")
-                                    return {
-                                        _id: s._id,
-                                        title: s.name,
-                                        subtitle: s.course.name,
-                                        href:
-                                            s.URL || `/course/${s.course._id}`,
-                                        image:
-                                            s.image ||
-                                            "https://via.placeholder.com/500x500",
-                                        external: s.URL ? true : false
-                                    };
-                                else
-                                    return {
-                                        _id: s._id,
-                                        title: s.name,
-                                        href: s.URL || `/course/${s.course}`,
-                                        image:
-                                            s.image ||
-                                            "https://via.placeholder.com/500x500",
-                                        external: s.URL ? true : false
-                                    };
-                            })}
+                            items={sessions.map((s) => ({
+                                _id: s._id,
+                                title: s.name,
+                                subtitle: s.course.name,
+                                href: s.URL || `/course/${s.course._id}`,
+                                image:
+                                    s.image ||
+                                    "https://via.placeholder.com/500x500",
+                                external: s.URL ? true : false
+                            }))}
                             onEdit={(id) => {
                                 setEditDeleteInfo({ id, type: "session" });
                                 setSessionModal(true);

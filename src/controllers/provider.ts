@@ -7,6 +7,12 @@ import * as CRUD from "../utils/crud";
 import { FilterQuery, Types } from "mongoose";
 import { filterTags } from "../utils/filter";
 
+const populate = [
+    { path: "address" },
+    { path: "tags" },
+    { path: "user", select: "firstName lastName name email username" }
+];
+
 // middleware
 // attach provider to req
 export async function ReqProvider(
@@ -48,7 +54,8 @@ export async function addProvider(
                 source: "user",
                 value: "user"
             }
-        ]
+        ],
+        populate
     );
 }
 
@@ -74,7 +81,7 @@ export async function getProvider(req: Request, res: express.Response) {
         {
             $or: query
         },
-        ["address"]
+        populate
     );
 }
 
@@ -150,10 +157,7 @@ export async function getProviders(req: Request, res: express.Response) {
         Provider,
         query,
         undefined,
-        [
-            { path: "address" },
-            { path: "user", select: "firstName lastName name email username" }
-        ]
+        populate
     );
 }
 
@@ -163,7 +167,7 @@ export async function getProviders(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteProvider(req: Request, res: express.Response) {
-    await CRUD.del(req, res, "provider", Provider);
+    await CRUD.del(req, res, "provider", Provider, populate);
 }
 
 /**
@@ -175,5 +179,12 @@ export async function modifyProvider(
     req: RequestBody<ProviderType>,
     res: express.Response
 ) {
-    await CRUD.update(req, res, "provider", Provider, ["isEnrolled", "image"]);
+    await CRUD.update(
+        req,
+        res,
+        "provider",
+        Provider,
+        ["isEnrolled", "image"],
+        populate
+    );
 }

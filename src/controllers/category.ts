@@ -6,6 +6,9 @@ import { Category as CategoryType } from "../@types/models";
 import * as CRUD from "../utils/crud";
 import { errorResponse } from "../@types/response";
 
+// WARNING GET ALL is not using the variable
+const populate = { path: "tags" };
+
 /**
  * @desc Add Category
  * @route POST /api/v1/categories
@@ -15,7 +18,15 @@ export async function addCategory(
     req: RequestBody<CategoryType>,
     res: express.Response
 ) {
-    await CRUD.create<CategoryType>(req, res, "category", Category);
+    await CRUD.create<CategoryType>(
+        req,
+        res,
+        "category",
+        Category,
+        undefined,
+        undefined,
+        populate
+    );
 }
 
 /**
@@ -24,7 +35,14 @@ export async function addCategory(
  * @access Public
  */
 export async function getCategory(req: Request, res: express.Response) {
-    await CRUD.read<CategoryType>(req, res, "category", Category);
+    await CRUD.read<CategoryType>(
+        req,
+        res,
+        "category",
+        Category,
+        undefined,
+        populate
+    );
 }
 
 /**
@@ -103,7 +121,14 @@ export async function modifyCategory(
     req: RequestBody<CategoryType>,
     res: express.Response
 ) {
-    await CRUD.update<CategoryType>(req, res, "category", Category);
+    await CRUD.update<CategoryType>(
+        req,
+        res,
+        "category",
+        Category,
+        undefined,
+        populate
+    );
 }
 
 /**
@@ -112,5 +137,5 @@ export async function modifyCategory(
  * @access Restricted
  */
 export async function deleteCategory(req: Request, res: express.Response) {
-    await CRUD.del<CategoryType>(req, res, "category", Category);
+    await CRUD.del<CategoryType>(req, res, "category", Category, populate);
 }

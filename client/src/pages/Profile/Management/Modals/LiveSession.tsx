@@ -133,20 +133,7 @@ export const LiveSessionModal: React.FC<Props> = ({
             );
         else {
             const resp = await LiveSession.getLiveSession(info.id);
-            if (
-                resp.success &&
-                typeof resp.data.liveSession.session === "string"
-            ) {
-                sessionResp = await Session.updateSession(
-                    resp.data.liveSession.session,
-                    formData.name,
-                    formData.URL,
-                    selectedCourse ? selectedCourse._id : undefined
-                );
-            } else if (
-                resp.success &&
-                typeof resp.data.liveSession.session === "object"
-            ) {
+            if (resp.success) {
                 sessionResp = await Session.updateSession(
                     resp.data.liveSession.session._id,
                     formData.name,
@@ -263,63 +250,55 @@ export const LiveSessionModal: React.FC<Props> = ({
     useEffect(() => {
         if (showModal && info) {
             LiveSession.getLiveSession(info.id).then((liveResp) => {
-                if (
-                    liveResp.success &&
-                    typeof liveResp.data.liveSession.session === "string"
-                ) {
-                    Session.getSession(liveResp.data.liveSession.session).then(
-                        (resp) => {
-                            if (resp.success) {
-                                const session = resp.data.session;
-                                const { course } = session;
+                if (liveResp.success) {
+                    Session.getSession(
+                        liveResp.data.liveSession.session._id
+                    ).then((resp) => {
+                        if (resp.success) {
+                            const session = resp.data.session;
+                            const { course } = session;
 
-                                if (typeof course === "object")
-                                    setSelectedCourse(
-                                        providerCourses.filter(
-                                            (c) => c._id === course._id
-                                        )[0]
-                                    );
+                            setSelectedCourse(
+                                providerCourses.filter(
+                                    (c) => c._id === course._id
+                                )[0]
+                            );
 
-                                setFormData({
-                                    ...formData,
-                                    name: session.name,
-                                    URL: session.URL || "",
-                                    date: moment(
+                            setFormData({
+                                ...formData,
+                                name: session.name,
+                                URL: session.URL || "",
+                                date: moment(
+                                    liveResp.data.liveSession.beginDateTime
+                                ),
+                                isRecurring: liveResp.data.liveSession.recurring
+                                    ? true
+                                    : false,
+                                time: [
+                                    moment(
                                         liveResp.data.liveSession.beginDateTime
                                     ),
-                                    isRecurring: liveResp.data.liveSession
-                                        .recurring
-                                        ? true
-                                        : false,
-                                    time: [
-                                        moment(
-                                            liveResp.data.liveSession
-                                                .beginDateTime
-                                        ),
-                                        moment(
-                                            liveResp.data.liveSession
-                                                .endDateTime
-                                        )
-                                    ],
-                                    recurring: liveResp.data.liveSession
-                                        .recurring
-                                        ? {
-                                              ...liveResp.data.liveSession
-                                                  .recurring,
-                                              endDate: moment(
-                                                  liveResp.data.liveSession
-                                                      .endDateTime
-                                              )
-                                          }
-                                        : {
-                                              frequency: 1,
-                                              weekDays: [],
-                                              endDate: null
-                                          }
-                                });
-                            }
+                                    moment(
+                                        liveResp.data.liveSession.endDateTime
+                                    )
+                                ],
+                                recurring: liveResp.data.liveSession.recurring
+                                    ? {
+                                          ...liveResp.data.liveSession
+                                              .recurring,
+                                          endDate: moment(
+                                              liveResp.data.liveSession
+                                                  .endDateTime
+                                          )
+                                      }
+                                    : {
+                                          frequency: 1,
+                                          weekDays: [],
+                                          endDate: null
+                                      }
+                            });
                         }
-                    );
+                    });
                 }
             });
         }
