@@ -1,11 +1,12 @@
 import React, { useContext, Fragment } from "react";
 import { UserContext } from "../context/UserState";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import User from "../API/User";
 
 export const Header: React.FC = () => {
     const { loggedIn, user, logout } = useContext(UserContext);
+    const navigate = useNavigate();
 
     return (
         <Navbar collapseOnSelect expand="lg" fixed="top" bg="dark">
@@ -106,6 +107,7 @@ export const Header: React.FC = () => {
                                         onClick={async () => {
                                             await User.logoutUser();
                                             if (logout) await logout();
+                                            navigate("/", { replace: true });
                                         }}
                                         eventKey="link-10"
                                         active={false}
