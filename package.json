@@ -16,7 +16,7 @@
     "silent-dev": "concurrently \"npm run server\" \"npm run silent-client\"",
     "test": "jest",
     "coverage": "jest --collectCoverage",
-    "postinstall": "copyfiles -u 1 node_patch/**/* node_modules"
+    "postinstall": "copyfiles -u 1 'node_patch/**/*' 'node_modules'"
   },
   "repository": {
     "type": "git",
