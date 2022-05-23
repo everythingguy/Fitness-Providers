@@ -72,7 +72,8 @@ export const LiveManagement: React.FC<Props> = () => {
                             title="Live Sessions"
                             component={Result}
                             items={liveSessions.map((session) => ({
-                                _id: session.liveSession._id,
+                                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                _id: session.liveSession!._id,
                                 title: session.name,
                                 href: session.URL || `/course/${session._id}`,
                                 external: session.URL ? true : false,
@@ -82,7 +83,8 @@ export const LiveManagement: React.FC<Props> = () => {
                                         session._id,
                                 subtitle: session.course.name,
                                 date: liveSessionDateToString(
-                                    session.liveSession
+                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                    session.liveSession!
                                 )
                             }))}
                             onEdit={(id) => {

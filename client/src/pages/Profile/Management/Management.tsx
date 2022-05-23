@@ -143,7 +143,7 @@ export const Management: React.FC<Props> = () => {
                             className="btn btn-dark m-2 text-light fw-bold"
                             to="/provider/management/live"
                         >
-                            Schedule Live Sessions
+                            Schedule
                         </Link>
                     </div>
                 </div>

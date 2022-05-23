@@ -3,7 +3,7 @@ import Result from "./Result";
 
 interface ComponentProps {
     _id: string;
-    href: string;
+    href?: string;
     image: string;
     title: string;
     subtitle?: string;
@@ -16,7 +16,7 @@ interface ComponentProps {
 
 interface Item {
     _id: string;
-    href: string;
+    href?: string;
     image: string;
     title: string;
     subtitle?: string;
@@ -29,6 +29,7 @@ interface Props {
     title: string;
     items: Item[];
     component?: React.FC<ComponentProps>;
+    style?: React.CSSProperties;
     onEdit?: (id: string) => void;
     onDelete?: (id: string) => void;
     onScrollBottom?: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
@@ -38,6 +39,7 @@ export const ResultList: React.FC<Props> = ({
     title,
     items,
     component = Result,
+    style,
     onEdit,
     onDelete,
     onScrollBottom
@@ -50,14 +52,16 @@ export const ResultList: React.FC<Props> = ({
         }
     };
     return (
-        <div className="ResultList">
-            <div className="d-grid gap-1 p-2">
+        <div className="ResultList" style={style}>
+            <div className="gap-1 p-2 w-100 h-100">
                 <h4 className="my-2">{title}</h4>
-                <div className="divider-border"></div>
+                <div style={{ minHeight: "20px" }}>
+                    <div className="divider-border"></div>
+                </div>
                 <div
                     onScroll={onScroll}
                     className="list-group rounded-2 import w-100 overflow-auto"
-                    style={{ maxHeight: "30vh" }}
+                    style={{ maxHeight: "80%" }}
                 >
                     {items.map((item) =>
                         React.createElement(component, {

@@ -302,7 +302,17 @@ export async function getLiveSessions(req: Request, res: express.Response) {
                 }
             },
             {
+                $lookup: {
+                    from: "addresses",
+                    localField: "session.course.location",
+                    foreignField: "_id",
+                    as: "location"
+                }
+            },
+            { $unwind: "$location" },
+            {
                 $addFields: {
+                    "session.course.location": "$location",
                     onFrequency: {
                         $function: {
                             body: function (
@@ -334,7 +344,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
             },
             { $match: query },
             {
-                $project: { course: 0, onFrequency: 0, date: 0 }
+                $project: { course: 0, location: 0, onFrequency: 0, date: 0 }
             }
         ];
     }

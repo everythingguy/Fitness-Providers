@@ -13,7 +13,7 @@ import {
 } from "../../@types/Models";
 
 import "react-calendar/dist/Calendar.css";
-import { liveSessionDateToString } from "../../utils/Date";
+import { liveSessionTimeToString } from "../../utils/Date";
 
 interface Props {}
 
@@ -129,9 +129,11 @@ export const Calendar: React.FC<Props> = () => {
                         }}
                         items={liveSessions.map((s) => ({
                             _id: s._id,
-                            title: s.session.name,
-                            subtitle: s.session.course.name,
-                            date: liveSessionDateToString(s),
+                            title: `${s.session.course.name} - ${s.session.name}`,
+                            subtitle: s.session.course.location
+                                ? `${s.session.course.location.city}, ${s.session.course.location.state} ${s.session.course.location.zip}`
+                                : "online",
+                            date: liveSessionTimeToString(s),
                             href:
                                 s.session.URL ||
                                 `/course/${s.session.course._id}`,

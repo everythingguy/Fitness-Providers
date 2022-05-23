@@ -22,6 +22,7 @@ import * as ErrorPages from "./pages/ErrorPages";
 
 import { UserContext } from "./context/UserState";
 import { useContext } from "react";
+import Loading from "./components/Loading";
 
 function App() {
     const { loading } = useContext(UserContext);
@@ -32,9 +33,7 @@ function App() {
             <div id="main" className="bg-light">
                 <div className="container">
                     {loading ? (
-                        <div className="row text-center">
-                            <h1>Loading...</h1>
-                        </div>
+                        <Loading />
                     ) : (
                         <Routes>
                             <Route path="/" element={<Home />} />

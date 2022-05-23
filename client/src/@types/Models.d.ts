@@ -40,7 +40,7 @@ export interface Session extends Base {
     URL?: string;
     name: string;
     image?: string;
-    liveSession: LiveSession;
+    liveSession?: LiveSession;
 }
 
 export interface Recurring {

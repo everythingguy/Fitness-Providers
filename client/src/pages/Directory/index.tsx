@@ -330,7 +330,7 @@ export const Directory: React.FC = () => {
                             title={p.user.name}
                             subtitle={
                                 p.address
-                                    ? `${p.address.city}, ${p.address.state}`
+                                    ? `${p.address.city}, ${p.address.state} ${p.address.zip}`
                                     : ""
                             }
                             text={
@@ -355,7 +355,7 @@ export const Directory: React.FC = () => {
                             title={c.name}
                             subtitle={
                                 c.location
-                                    ? `${c.location.city}, ${c.location.state}`
+                                    ? `${c.location.city}, ${c.location.state} ${c.location.zip}`
                                     : ""
                             }
                             text={
