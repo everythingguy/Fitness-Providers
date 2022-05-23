@@ -31,6 +31,7 @@ const InnerCard: React.FC<innerProps> = ({
                 variant="top"
                 src={image}
                 alt={title}
+                style={{ maxWidth: "500px", maxHeight: "500px" }}
             ></BootstrapCard.Img>
             <BootstrapCard.Header>
                 <BootstrapCard.Title>{title}</BootstrapCard.Title>

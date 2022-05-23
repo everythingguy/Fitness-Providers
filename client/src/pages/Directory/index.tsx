@@ -323,7 +323,8 @@ export const Directory: React.FC = () => {
                             key={p._id}
                             _id={p._id}
                             image={
-                                p.image || "https://via.placeholder.com/500x500"
+                                p.image ||
+                                "https://picsum.photos/500/500?" + p._id
                             }
                             href={`/provider/profile/${p._id}`}
                             title={p.user.name}
@@ -347,7 +348,8 @@ export const Directory: React.FC = () => {
                             key={c._id}
                             _id={c._id}
                             image={
-                                c.image || "https://via.placeholder.com/500x500"
+                                c.image ||
+                                "https://picsum.photos/500/500?" + c._id
                             }
                             href={`/course/${c._id}`}
                             title={c.name}
@@ -369,7 +371,8 @@ export const Directory: React.FC = () => {
                             key={s._id}
                             _id={s._id}
                             image={
-                                s.image || "https://via.placeholder.com/500x500"
+                                s.image ||
+                                "https://picsum.photos/500/500?" + s._id
                             }
                             href={s.URL ? s.URL : `/course/${s.course._id}`}
                             title={s.name}

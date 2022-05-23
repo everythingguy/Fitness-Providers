@@ -201,7 +201,8 @@ export const Management: React.FC<Props> = () => {
                                     href: `/course/${course._id}`,
                                     image:
                                         course.image ||
-                                        "https://via.placeholder.com/500x500"
+                                        "https://picsum.photos/500/500?" +
+                                            course._id
                                 };
                             })}
                             onEdit={(id) => {
@@ -222,7 +223,7 @@ export const Management: React.FC<Props> = () => {
                                 href: s.URL || `/course/${s.course._id}`,
                                 image:
                                     s.image ||
-                                    "https://via.placeholder.com/500x500",
+                                    "https://picsum.photos/500/500?" + s._id,
                                 external: s.URL ? true : false
                             }))}
                             onEdit={(id) => {

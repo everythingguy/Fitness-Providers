@@ -41,8 +41,8 @@ export const Result: React.FC<Props> = ({
                             className="rounded-3"
                             alt={title}
                             style={{
-                                width: "4em",
-                                height: "4em",
+                                maxWidth: "100px",
+                                maxHeight: "100px",
                                 objectFit: "cover"
                             }}
                         />

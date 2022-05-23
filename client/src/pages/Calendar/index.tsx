@@ -138,7 +138,7 @@ export const Calendar: React.FC<Props> = () => {
                             external: s.session.URL ? true : false,
                             image:
                                 s.session.course.image ||
-                                "https://via.placeholder.com/500x500"
+                                "https://picsum.photos/500/500?" + s._id
                         }))}
                     />
                 </div>

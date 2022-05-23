@@ -78,7 +78,8 @@ export const LiveManagement: React.FC<Props> = () => {
                                 external: session.URL ? true : false,
                                 image:
                                     session.image ||
-                                    "https://via.placeholder.com/500x500",
+                                    "https://picsum.photos/500/500?" +
+                                        session._id,
                                 subtitle: session.course.name,
                                 date: liveSessionDateToString(
                                     session.liveSession
