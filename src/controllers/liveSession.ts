@@ -39,6 +39,7 @@ const populate = [
                         { path: "tags", model: "Tag" }
                     ]
                 },
+                { path: "location", model: "Address" },
                 { path: "tags", model: "Tag" }
             ]
         }

@@ -14,6 +14,7 @@ import {
 
 import "react-calendar/dist/Calendar.css";
 import { liveSessionTimeToString } from "../../utils/Date";
+import { liveSessionDateToString } from "./../../utils/Date";
 
 interface Props {}
 
@@ -133,7 +134,9 @@ export const Calendar: React.FC<Props> = () => {
                             subtitle: s.session.course.location
                                 ? `${s.session.course.location.city}, ${s.session.course.location.state} ${s.session.course.location.zip}`
                                 : "online",
-                            date: liveSessionTimeToString(s),
+                            date: selectedDate
+                                ? liveSessionTimeToString(s)
+                                : liveSessionDateToString(s),
                             href:
                                 s.session.URL ||
                                 `/course/${s.session.course._id}`,

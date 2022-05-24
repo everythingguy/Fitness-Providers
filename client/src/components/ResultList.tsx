@@ -52,7 +52,7 @@ export const ResultList: React.FC<Props> = ({
         }
     };
     return (
-        <div className="ResultList" style={style}>
+        <div className="ResultList w-100 h-100" style={style}>
             <div className="gap-1 p-2 w-100 h-100">
                 <h4 className="my-2">{title}</h4>
                 <div style={{ minHeight: "20px" }}>

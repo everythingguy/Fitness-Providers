@@ -165,7 +165,7 @@ export const Course: React.FC<Props> = () => {
                             onScrollBottom={() => {
                                 if (page) setPage(page + 1);
                             }}
-                            style={{ height: "50rem" }}
+                            style={{ maxHeight: "60rem" }}
                         />
                     </div>
                 </div>
