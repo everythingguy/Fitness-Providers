@@ -23,6 +23,20 @@ export const Course: React.FC<Props> = () => {
         null
     );
     const [sessionData, setSessionData] = useState<SessionType[]>([]);
+    const [page, setPage] = useState<number | null>(1);
+
+    const searchSessions = () => {
+        if (courseID && page) {
+            SessionAPI.getCourseSessions(courseID, { page }).then((resp) => {
+                if (resp.success) {
+                    if (page > 1)
+                        setSessionData([...sessionData, ...resp.data.sessions]);
+                    else setSessionData(resp.data.sessions);
+                    if (!resp.hasNextPage) setPage(null);
+                }
+            });
+        }
+    };
 
     useEffect(() => {
         if (courseID) {
@@ -31,18 +45,17 @@ export const Course: React.FC<Props> = () => {
                 else setCourseData(false);
             });
 
-            SessionAPI.getCourseSessions(courseID).then((resp) => {
-                if (resp.success) setSessionData(resp.data.sessions);
-            });
+            searchSessions();
         }
     }, []);
+
+    useEffect(() => {
+        if (page) searchSessions();
+    }, [page]);
 
     if (courseID === null || courseID === undefined) return <Error404 />;
     if (courseData === false) return <Error500 />;
     if (courseData === null) return <Loading />;
-
-    // TODO: list tags
-    // TODO: pagination
 
     return (
         <div className="row w-100">
@@ -59,6 +72,19 @@ export const Course: React.FC<Props> = () => {
                 <h1>{courseData.name}</h1>
 
                 <p className="text-left">{courseData.description}</p>
+                <div className="mb-3">
+                    {courseData.tags.map((t) => (
+                        <Link
+                            className="text-decoration-none"
+                            to={`/directory/courses?course_tags=${t._id}`}
+                            key={t._id}
+                        >
+                            <span className="me-2 p-1 bg-dark text-light rounded">
+                                {t.value}
+                            </span>
+                        </Link>
+                    ))}
+                </div>
                 <h3>Location</h3>
                 {courseData.location ? (
                     <>
@@ -136,7 +162,9 @@ export const Course: React.FC<Props> = () => {
                                     : "Async",
                                 external: true
                             }))}
-                            onScrollBottom={() => console.log("Hello there")}
+                            onScrollBottom={() => {
+                                if (page) setPage(page + 1);
+                            }}
                             style={{ height: "50rem" }}
                         />
                     </div>

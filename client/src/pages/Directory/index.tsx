@@ -9,10 +9,8 @@ import {
     Session as SessionType,
     Provider as ProviderType
 } from "../../@types/Models";
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useSearchParams } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
-
-// ugly on mobile
 
 export const Directory: React.FC = () => {
     const match = useMatch("/directory/:type");
@@ -22,6 +20,8 @@ export const Directory: React.FC = () => {
         ["providers", "courses", "sessions"].includes(match.params.type)
             ? (match.params.type as "providers" | "courses" | "sessions")
             : "courses";
+
+    const [searchParams] = useSearchParams();
 
     const [showFilterModal, setFilterModal] = useState(false);
     const [providerCategories, setProviderCategories] = useState<
@@ -52,8 +52,26 @@ export const Directory: React.FC = () => {
         provider: { [key: string]: boolean };
         course: { [key: string]: boolean };
     }>({
-        provider: {},
-        course: {}
+        provider: searchParams.get("provider_tags")
+            ? Object.assign(
+                  {},
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  ...searchParams
+                      .get("provider_tags")!
+                      .split(",")
+                      .map((t) => ({ [t]: true }))
+              )
+            : {},
+        course: searchParams.get("course_tags")
+            ? Object.assign(
+                  {},
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  ...searchParams
+                      .get("course_tags")!
+                      .split(",")
+                      .map((t) => ({ [t]: true }))
+              )
+            : {}
     });
     const timeout = useRef<number | null>(null);
     const firstRender = useRef<boolean>(true);
