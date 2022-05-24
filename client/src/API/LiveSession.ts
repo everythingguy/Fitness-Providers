@@ -112,6 +112,29 @@ export class LiveSession {
         });
     }
 
+    static async getProviderLiveSessions(
+        providerID: string,
+        params: { [key: string]: any } = {}
+    ): Promise<LiveSessionsResponse | ErrorResponse> {
+        const request = new DataRequest("GET", "live-sessions");
+        request.setParams({
+            ...params,
+            provider: providerID
+        });
+
+        return new Promise((res) => {
+            APIManager.sendRequest<LiveSessionsResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
+
     static async getAllProviderLiveSessions(
         providerID: string,
         params: { [key: string]: string[] | string | number[] | number } = {}

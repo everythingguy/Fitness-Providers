@@ -24,7 +24,7 @@ export interface Provider extends Base {
     image?: string;
     bio?: string;
     website?: string;
-    tags: string[];
+    tags: Tag[];
 }
 
 export interface Course extends Base {

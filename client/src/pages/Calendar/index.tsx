@@ -92,7 +92,7 @@ export const Calendar: React.FC<Props> = () => {
                     style={{ height: "22rem", width: "100vw" }}
                 >
                     <ReactCalendar
-                        className="m-auto w-100 h-100"
+                        className="w-100 h-100"
                         minDetail="year"
                         prev2Label={null}
                         next2Label={null}
@@ -107,7 +107,7 @@ export const Calendar: React.FC<Props> = () => {
                             else setSelectedDate(date);
                         }}
                         value={selectedDate}
-                    ></ReactCalendar>
+                    />
                 </div>
             </div>
             <div className="row">

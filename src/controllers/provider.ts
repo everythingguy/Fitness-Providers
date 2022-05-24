@@ -99,17 +99,17 @@ export async function getProviders(req: Request, res: express.Response) {
     // unless logged in user is admin or the provider
     let query: FilterQuery<ProviderType>[] | FilterQuery<ProviderType> = [
         tagFilter.length > 0
-            ? { isEnrolled: true, tags: tagFilter }
+            ? { isEnrolled: true, tags: { $in: tagFilter } }
             : { isEnrolled: true }
     ];
     if (req.provider)
         query.push(
             tagFilter.length > 0
-                ? { _id: req.provider._id, tags: tagFilter }
+                ? { _id: req.provider._id, tags: { $in: tagFilter } }
                 : { _id: req.provider._id }
         );
     if (req.user && req.user.isAdmin)
-        query.push(tagFilter.length > 0 ? { tags: tagFilter } : {});
+        query.push(tagFilter.length > 0 ? { tags: { $in: tagFilter } } : {});
 
     if (search) {
         const searchUsers = await User.aggregate([

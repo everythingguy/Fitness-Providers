@@ -11,7 +11,6 @@ import { ResultList } from "../../components";
 import Loading from "../../components/Loading";
 import { liveSessionDateToString } from "../../utils/Date";
 import Error404 from "../ErrorPages/404";
-import Error500 from "../ErrorPages/500";
 import { formatPhoneNumber } from "./../../utils/format";
 
 const GOOGLE_MAP_API = process.env.GOOGLE_MAP_API;
@@ -55,8 +54,8 @@ export const Course: React.FC<Props> = () => {
         if (page) searchSessions();
     }, [page]);
 
-    if (courseID === null || courseID === undefined) return <Error404 />;
-    if (courseData === false) return <Error500 />;
+    if (courseID === null || courseID === undefined || courseData === false)
+        return <Error404 />;
     if (courseData === null) return <Loading />;
 
     return (

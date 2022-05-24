@@ -142,7 +142,7 @@ export async function getCourses(req: Request, res: express.Response) {
                 tagFilter.length > 0
                     ? {
                           provider: approvedProviders,
-                          tags: tagFilter.length > 0 ? tagFilter : undefined
+                          tags: tagFilter
                       }
                     : { provider: approvedProviders };
     }
