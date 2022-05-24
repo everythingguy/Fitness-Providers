@@ -80,20 +80,18 @@ const AddressSchema = new mongoose.Schema<AddressType>(
 AddressSchema.plugin(Pagination);
 
 const getGooglePlaceID = async function (this: AddressType) {
-    if (this.googlePlaceID === null || this.googlePlaceID === undefined) {
-        const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURI(
-            this.street2
-                ? `${this.street1} ${this.street2}, ${this.city}, ${this.state} ${this.zip}`
-                : `${this.street1} ${this.city}, ${this.state} ${this.zip}`
-        )}&key=${process.env.GOOGLE_PLACE_API}`;
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURI(
+        this.street2
+            ? `${this.street1} ${this.street2}, ${this.city}, ${this.state} ${this.zip}`
+            : `${this.street1} ${this.city}, ${this.state} ${this.zip}`
+    )}&key=${process.env.GOOGLE_PLACE_API}&quotaUser=${this.provider}`;
 
-        const resp = await fetch(url);
-        const data: any = await resp.json();
+    const resp = await fetch(url);
+    const data: any = await resp.json();
 
-        if (data.status === "OK") {
-            if (data.results.length > 0) {
-                this.googlePlaceID = data.results[0].place_id;
-            }
+    if (data.status === "OK") {
+        if (data.results.length > 0) {
+            this.googlePlaceID = data.results[0].place_id;
         }
     }
 };
