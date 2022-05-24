@@ -14,6 +14,8 @@ import Error404 from "../ErrorPages/404";
 import Error500 from "../ErrorPages/500";
 import { formatPhoneNumber } from "./../../utils/format";
 
+const GOOGLE_MAP_API = process.env.GOOGLE_MAP_API;
+
 interface Props {}
 
 export const Course: React.FC<Props> = () => {
@@ -60,48 +62,74 @@ export const Course: React.FC<Props> = () => {
     return (
         <div className="row w-100">
             <div className="col-sm-12 col-md-6 col-lg-8 text-center mb-3">
-                <img
-                    className="mx-auto rounded"
-                    src={
-                        courseData.image ||
-                        "https://picsum.photos/500/500?" + courseData._id
-                    }
-                    alt={courseData.name}
-                    style={{ width: "100%", maxWidth: "500px" }}
-                />
-                <h1>{courseData.name}</h1>
+                <div>
+                    <img
+                        className="mx-auto rounded"
+                        src={
+                            courseData.image ||
+                            "https://picsum.photos/500/500?" + courseData._id
+                        }
+                        alt={courseData.name}
+                        style={{ width: "100%", maxWidth: "500px" }}
+                    />
+                    <h1>{courseData.name}</h1>
 
-                <p className="text-left">{courseData.description}</p>
-                <div className="mb-3">
-                    {courseData.tags.map((t) => (
-                        <Link
-                            className="text-decoration-none"
-                            to={`/directory/courses?course_tags=${t._id}`}
-                            key={t._id}
-                        >
-                            <span className="me-2 p-1 bg-dark text-light rounded">
-                                {t.value}
-                            </span>
-                        </Link>
-                    ))}
+                    <p className="text-left">{courseData.description}</p>
+                    <div className="mb-3">
+                        {courseData.tags.map((t) => (
+                            <Link
+                                className="text-decoration-none"
+                                to={`/directory/courses?course_tags=${t._id}`}
+                                key={t._id}
+                            >
+                                <span className="me-2 p-1 bg-dark text-light rounded">
+                                    {t.value}
+                                </span>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
-                <h3>Location</h3>
-                {courseData.location ? (
-                    <>
-                        <p className="m-0">{courseData.location.street1}</p>
-                        {courseData.location.street2 && (
-                            <p className="m-0">{courseData.location.street2}</p>
-                        )}
-                        <p className="m-0">
-                            {courseData.location.city},{" "}
-                            {courseData.location.state}{" "}
-                            {courseData.location.zip}
-                        </p>
-                        <p className="m-0">{courseData.location.country}</p>
-                    </>
-                ) : (
-                    <p>Online</p>
-                )}
+                <div>
+                    <h3>Location</h3>
+                    {courseData.location ? (
+                        <>
+                            {courseData.location.googlePlaceID ? (
+                                <iframe
+                                    style={{
+                                        width: "100%",
+                                        maxWidth: "500px",
+                                        height: "500px"
+                                    }}
+                                    className="border-0 mx-auto mt-3"
+                                    loading="lazy"
+                                    allowFullScreen
+                                    src={`https://www.google.com/maps/embed/v1/place?q=place_id:${courseData.location.googlePlaceID}&key=${GOOGLE_MAP_API}`}
+                                />
+                            ) : (
+                                <>
+                                    <p className="m-0">
+                                        {courseData.location.street1}
+                                    </p>
+                                    {courseData.location.street2 && (
+                                        <p className="m-0">
+                                            {courseData.location.street2}
+                                        </p>
+                                    )}
+                                    <p className="m-0">
+                                        {courseData.location.city},{" "}
+                                        {courseData.location.state}{" "}
+                                        {courseData.location.zip}
+                                    </p>
+                                    <p className="m-0">
+                                        {courseData.location.country}
+                                    </p>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <p>Online</p>
+                    )}
+                </div>
             </div>
             <div className="col-sm-12 col-md-6 col-lg-4 text-center container p-0 mb-3">
                 <div className="row h-lg-25 h-md-25">

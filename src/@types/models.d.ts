@@ -47,6 +47,7 @@ export interface Address extends Base {
     state: string;
     zip: string;
     country: string;
+    googlePlaceID: string;
 }
 
 export interface Category extends Base {

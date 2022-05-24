@@ -4,6 +4,7 @@ import Provider from "./provider";
 import Course from "./course";
 import { refValidator } from "../utils/validators";
 import Pagination from "mongoose-paginate-v2";
+import fetch from "node-fetch";
 
 // debug
 // mongoose.set('debug', true);
@@ -55,6 +56,11 @@ const AddressSchema = new mongoose.Schema<AddressType>(
             trim: true,
             maxLength: [60, "Country has max length of 60"],
             required: [true, "Missing country"]
+        },
+        googlePlaceID: {
+            type: String,
+            trim: true,
+            default: null
         }
     },
     {
@@ -72,6 +78,28 @@ const AddressSchema = new mongoose.Schema<AddressType>(
 );
 
 AddressSchema.plugin(Pagination);
+
+const getGooglePlaceID = async function (this: AddressType) {
+    if (this.googlePlaceID === null || this.googlePlaceID === undefined) {
+        const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURI(
+            this.street2
+                ? `${this.street1} ${this.street2}, ${this.city}, ${this.state} ${this.zip}`
+                : `${this.street1} ${this.city}, ${this.state} ${this.zip}`
+        )}&key=${process.env.GOOGLE_PLACE_API}`;
+
+        const resp = await fetch(url);
+        const data: any = await resp.json();
+
+        if (data.status === "OK") {
+            if (data.results.length > 0) {
+                this.googlePlaceID = data.results[0].place_id;
+            }
+        }
+    }
+};
+
+AddressSchema.pre("save", getGooglePlaceID);
+AddressSchema.post("updateOne", getGooglePlaceID);
 
 // delete ref of address on provider and courses
 AddressSchema.post("remove", async function (res, next) {

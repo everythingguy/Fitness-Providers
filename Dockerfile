@@ -17,10 +17,12 @@ RUN npm i -g postcss-cli && \
 
 ARG API_URL=/api/v1
 ARG MAIL_CONTACT_EMAIL "contact@yourdomain.com"
+ARG GOOGLE_MAP_API "AIzaSyDqFL-tMUQap9MktoHDvASzNXgfW9SPtgU"
 
 ENV NODE_ENV "production"
 ENV PORT 80
 ENV MAIL_CONTACT_EMAIL $MAIL_CONTACT_EMAIL
+ENV GOOGLE_MAP_API $GOOGLE_MAP_API
 
 RUN npm run build && \
     cd client && \

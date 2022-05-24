@@ -38,7 +38,7 @@ export async function addAddress(
         res,
         "address",
         Address,
-        [],
+        ["googlePlaceID"],
         [
             {
                 source: "provider",
@@ -135,5 +135,12 @@ export async function modifyAddress(
     req: RequestBody<AddressType>,
     res: express.Response
 ) {
-    await CRUD.update(req, res, "address", Address, undefined, populate);
+    await CRUD.update(
+        req,
+        res,
+        "address",
+        Address,
+        ["googlePlaceID"],
+        populate
+    );
 }

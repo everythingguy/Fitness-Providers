@@ -5,6 +5,7 @@ services:
             context: .
             args:
                 MAIL_CONTACT_EMAIL: contact@fitnessproviders.net
+                GOOGLE_MAP_API: AIzaSyDqFL-tMUQap9MktoHDvASzNXgfW9SPtgU
         image: fitness
         container_name: fitness
         ports:

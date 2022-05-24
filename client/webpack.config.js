@@ -32,7 +32,8 @@ module.exports = () => {
     plugins: [
       new webpack.DefinePlugin({
         "process.env.API_URL": JSON.stringify(process.env.API_URL),
-        "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(process.env.MAIL_CONTACT_EMAIL)
+        "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(process.env.MAIL_CONTACT_EMAIL),
+        "process.env.GOOGLE_MAP_API": JSON.stringify(process.env.GOOGLE_MAP_API)
       }),
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: ["./dist/**", "../public/dist/**"],
