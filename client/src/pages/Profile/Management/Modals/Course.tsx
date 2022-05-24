@@ -41,6 +41,9 @@ export const CourseModal: React.FC<Props> = ({
         _id: "online",
         street1: "Online"
     });
+    const renderedInfo = useRef(false);
+    const currentAddress = useRef<AddressType | null>(null);
+
     const [selectedTags, setSelectedTags] = useState<
         { value: string; label: string }[]
     >([]);
@@ -73,7 +76,7 @@ export const CourseModal: React.FC<Props> = ({
     >([]);
 
     useEffect(() => {
-        if (showModal && info) {
+        if (showModal && info && !renderedInfo.current) {
             Course.getCourse(info.id).then((resp) => {
                 if (resp.success) {
                     const course = resp.data.course;
@@ -92,6 +95,7 @@ export const CourseModal: React.FC<Props> = ({
 
                     if (course.location) {
                         const location = course.location;
+                        currentAddress.current = location;
                         setSelectedAddress(
                             providerAddresses.filter(
                                 (addr) => addr._id === location._id
@@ -104,6 +108,7 @@ export const CourseModal: React.FC<Props> = ({
                         });
                 }
             });
+            renderedInfo.current = true;
         }
     }, [info, showModal]);
 
@@ -200,6 +205,8 @@ export const CourseModal: React.FC<Props> = ({
                     });
                 setFormData({ ...formData, name: "", description: "" });
                 if (info) setInfo(false);
+                renderedInfo.current = false;
+                currentAddress.current = null;
             } else {
                 setError(courseResp.error as any);
             }
@@ -221,6 +228,21 @@ export const CourseModal: React.FC<Props> = ({
                 }}
                 onCancel={() => {
                     setModal(true);
+                    if (info)
+                        if (currentAddress.current)
+                            setSelectedAddress(currentAddress.current);
+                        else
+                            setSelectedAddress({
+                                _id: "online",
+                                street1: "Online"
+                            });
+                    else if (user && user.provider && user.provider.address)
+                        setSelectedAddress(user.provider.address);
+                    else
+                        setSelectedAddress({
+                            _id: "online",
+                            street1: "Online"
+                        });
                 }}
             />
             <Modal
@@ -245,6 +267,8 @@ export const CourseModal: React.FC<Props> = ({
                         image: null,
                         tags: null
                     });
+                    renderedInfo.current = false;
+                    currentAddress.current = null;
                 }}
             >
                 <Modal.Header>
@@ -383,6 +407,8 @@ export const CourseModal: React.FC<Props> = ({
                                 image: null,
                                 tags: null
                             });
+                            renderedInfo.current = false;
+                            currentAddress.current = null;
                         }}
                     >
                         Cancel
