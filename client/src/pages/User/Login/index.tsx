@@ -114,7 +114,7 @@ export const Login: React.FC = () => {
                 </button>
             </form>
             <p>
-                {"Don't have an account? "}
+                Don&apos;t have an account?{" "}
                 <Link to="/user/register">Sign Up</Link>
             </p>
             <p>
