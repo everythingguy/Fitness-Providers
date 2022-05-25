@@ -16,6 +16,8 @@ import "react-calendar/dist/Calendar.css";
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
 
+// TODO: for some reason the calendar does not work on dev.duraken.com
+
 interface Props {}
 
 export const Calendar: React.FC<Props> = () => {
@@ -42,7 +44,13 @@ export const Calendar: React.FC<Props> = () => {
             search
         }).then((resp) => {
             if (resp.success) {
-                setLiveSessions(resp.data.liveSessions);
+                if (page === 1) setLiveSessions(resp.data.liveSessions);
+                else
+                    setLiveSessions([
+                        ...liveSessions,
+                        ...resp.data.liveSessions
+                    ]);
+
                 if (!resp.hasNextPage) setPage(null);
             }
         });
@@ -121,7 +129,7 @@ export const Calendar: React.FC<Props> = () => {
             <div className="row">
                 <div
                     className="col-12"
-                    style={{ height: "22rem", width: "100vw" }}
+                    style={{ height: "25rem", width: "100vw" }}
                 >
                     <ResultList
                         title="Live Sessions"

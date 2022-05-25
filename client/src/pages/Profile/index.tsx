@@ -18,7 +18,7 @@ import { liveSessionDateToString } from "./../../utils/Date";
 
 interface Props {}
 
-// TODO: pagination and ability to edit
+// TODO: ability to edit
 // for some reason tag filtering by provider is not working
 
 export const Profile: React.FC<Props> = () => {
@@ -34,6 +34,50 @@ export const Profile: React.FC<Props> = () => {
     );
 
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [page, setPage] = useState<{
+        course: number | null;
+        liveSession: number | null;
+    }>({ course: 1, liveSession: 1 });
+
+    const searchCourses = () => {
+        if (providerID && page.course)
+            Course.getProvidersCourses(providerID, { page: page.course }).then(
+                (resp) => {
+                    if (resp.success) {
+                        if (page.course === 1) setCourseData(resp.data.courses);
+                        else
+                            setCourseData([
+                                ...courseData,
+                                ...resp.data.courses
+                            ]);
+
+                        if (!resp.hasNextPage)
+                            setPage({ ...page, course: null });
+                    }
+                }
+            );
+    };
+
+    const searchLiveSessions = () => {
+        if (providerID && page.liveSession)
+            LiveSession.getProviderLiveSessions(providerID, {
+                day: selectedDate ? selectedDate.toISOString() : undefined,
+                page: page.liveSession
+            }).then((resp) => {
+                if (resp.success) {
+                    if (page.liveSession === 1)
+                        setLiveSessionData(resp.data.liveSessions);
+                    else
+                        setLiveSessionData([
+                            ...liveSessionData,
+                            ...resp.data.liveSessions
+                        ]);
+
+                    if (!resp.hasNextPage)
+                        setPage({ ...page, liveSession: null });
+                }
+            });
+    };
 
     useEffect(() => {
         if (providerID) {
@@ -42,21 +86,21 @@ export const Profile: React.FC<Props> = () => {
                 else setProviderData(false);
             });
 
-            // TODO: pagination
-            Course.getProvidersCourses(providerID).then((resp) => {
-                if (resp.success) setCourseData(resp.data.courses);
-            });
+            searchCourses();
         }
     }, []);
 
     useEffect(() => {
-        // TODO: pagination
-        if (providerID)
-            LiveSession.getProviderLiveSessions(providerID, {
-                day: selectedDate ? selectedDate.toISOString() : undefined
-            }).then((resp) => {
-                if (resp.success) setLiveSessionData(resp.data.liveSessions);
-            });
+        if (page.course) searchCourses();
+    }, [page.course]);
+
+    useEffect(() => {
+        if (page.liveSession) searchLiveSessions();
+    }, [page.liveSession]);
+
+    useEffect(() => {
+        if (page.liveSession === 1) searchLiveSessions();
+        else setPage({ ...page, liveSession: 1 });
     }, [selectedDate]);
 
     if (!providerID || providerData === false) return <Error404 />;
@@ -96,77 +140,83 @@ export const Profile: React.FC<Props> = () => {
                         ))}
                     </div>
                 </div>
-                <div className="col-lg-6 col-md-12 container p-0">
-                    <div className="row">
-                        <div className="col-12">
-                            <ResultList
-                                title="Courses"
-                                items={courseData.map((c) => ({
-                                    _id: c._id,
-                                    image:
-                                        c.image ||
-                                        "https://picsum.photos/500/500?" +
-                                            c._id,
-                                    title: c.name,
-                                    subtitle: c.location
-                                        ? `${c.location.city}, ${c.location.state} ${c.location.zip}`
-                                        : undefined,
-                                    href: `/course/${c._id}`
-                                }))}
-                            />
-                        </div>
-                    </div>
+                <div className="col-lg-6 col-md-12 p-0">
+                    <ResultList
+                        title="Courses"
+                        items={courseData.map((c) => ({
+                            _id: c._id,
+                            image:
+                                c.image ||
+                                "https://picsum.photos/500/500?" + c._id,
+                            title: c.name,
+                            subtitle: c.location
+                                ? `${c.location.city}, ${c.location.state} ${c.location.zip}`
+                                : undefined,
+                            href: `/course/${c._id}`
+                        }))}
+                        onScrollBottom={() => {
+                            if (page.course)
+                                setPage({
+                                    ...page,
+                                    course: page.course + 1
+                                });
+                        }}
+                    />
                 </div>
             </div>
-            <div className="row container mb-3">
-                <div className="row">
-                    <div className="col-lg-6 col-md-12 d-flex align-items-center">
-                        <div style={{ height: "20rem" }}>
-                            <ReactCalendar
-                                className="w-100 h-100"
-                                minDetail="year"
-                                prev2Label={null}
-                                next2Label={null}
-                                calendarType="US"
-                                selectRange={false}
-                                onChange={(date) => {
-                                    if (
-                                        selectedDate &&
-                                        date.getTime() ===
-                                            selectedDate.getTime()
-                                    )
-                                        setSelectedDate(null);
-                                    else setSelectedDate(date);
-                                }}
-                                value={selectedDate}
-                            />
-                        </div>
-                    </div>
-                    <div className="col-lg-6 col-md-12">
-                        <ResultList
-                            title="Live Sessions"
-                            items={liveSessionData.map((s) => ({
-                                _id: s._id,
-                                image:
-                                    s.session.image ||
-                                    "https://picsum.photos/500/500?" + s._id,
-                                title: s.session.name,
-                                date: selectedDate
-                                    ? liveSessionTimeToString(
-                                          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                          s
-                                      )
-                                    : liveSessionDateToString(
-                                          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                          s
-                                      ),
-                                href:
-                                    s.session.URL ||
-                                    `/course/${s.session.course._id}`,
-                                external: s.session.URL ? true : false
-                            }))}
+            <div className="row mb-3">
+                <div className="col-lg-6 col-md-12 d-flex align-items-center">
+                    <div style={{ height: "20rem" }}>
+                        <ReactCalendar
+                            className="w-100 h-100"
+                            minDetail="year"
+                            prev2Label={null}
+                            next2Label={null}
+                            calendarType="US"
+                            selectRange={false}
+                            onChange={(date) => {
+                                if (
+                                    selectedDate &&
+                                    date.getTime() === selectedDate.getTime()
+                                )
+                                    setSelectedDate(null);
+                                else setSelectedDate(date);
+                            }}
+                            value={selectedDate}
                         />
                     </div>
+                </div>
+                <div className="col-lg-6 col-md-12 p-0">
+                    <ResultList
+                        title="Live Sessions"
+                        items={liveSessionData.map((s) => ({
+                            _id: s._id,
+                            image:
+                                s.session.image ||
+                                "https://picsum.photos/500/500?" + s._id,
+                            title: s.session.name,
+                            date: selectedDate
+                                ? liveSessionTimeToString(
+                                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                      s
+                                  )
+                                : liveSessionDateToString(
+                                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                      s
+                                  ),
+                            href:
+                                s.session.URL ||
+                                `/course/${s.session.course._id}`,
+                            external: s.session.URL ? true : false
+                        }))}
+                        onScrollBottom={() => {
+                            if (page.liveSession)
+                                setPage({
+                                    ...page,
+                                    liveSession: page.liveSession + 1
+                                });
+                        }}
+                    />
                 </div>
             </div>
         </>

@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserState";
 import ProviderApplication from "./ProviderApplication";
 
-// TODO: broken on mobile
-
 export const Footer: React.FC = () => {
     const contactEmail = process.env.MAIL_CONTACT_EMAIL;
     const { loggedIn, user } = useContext(UserContext);

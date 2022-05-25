@@ -61,7 +61,7 @@ export const ResultList: React.FC<Props> = ({
                 <div
                     onScroll={onScroll}
                     className="list-group rounded-2 import w-100 overflow-auto"
-                    style={{ maxHeight: "80%" }}
+                    style={{ maxHeight: "300px" }}
                 >
                     {items.map((item) =>
                         React.createElement(component, {
