@@ -118,10 +118,12 @@ export function fileRemover(modelName: string, postHook = false) {
         next: mongoose.CallbackWithoutResultAndOptionalError
     ) {
         if (postHook) {
-            const split = this.image.split("/");
-            const filename = split[split.length - 1];
+            if (this.image) {
+                const split = this.image.split("/");
+                const filename = split[split.length - 1];
 
-            removeFile(modelName, filename);
+                removeFile(modelName, filename);
+            }
             next();
         } else {
             if ("image" in this._update) {

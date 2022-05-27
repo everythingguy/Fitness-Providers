@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
 import Session from "../../../../API/Session";
 import { Course as CourseType } from "../../../../@types/Models";
-import { ErrorResponse, SessionResponse } from "../../../../@types/Response";
+import {
+    ErrorResponse,
+    ImageResponse,
+    SessionResponse
+} from "../../../../@types/Response";
+import { reloadImage } from "../../../../utils/reload";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -14,8 +19,6 @@ interface Props {
     info: Info;
     setInfo: React.Dispatch<React.SetStateAction<Info>>;
 }
-
-// TODO: image upload
 
 export const SessionModal: React.FC<Props> = ({
     setModal,
@@ -36,10 +39,18 @@ export const SessionModal: React.FC<Props> = ({
         image: null
     });
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<{
+        name: string;
+        URL: string;
+        image: File | null;
+    }>({
         name: "",
-        URL: ""
+        URL: "",
+        image: null
     });
+
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const currentImage = useRef<string | null>(null);
 
     const onChange = (e) => {
         if (e.target.type === "checkbox")
@@ -75,16 +86,48 @@ export const SessionModal: React.FC<Props> = ({
             );
 
         if (sessionResp.success) {
-            setError({
-                name: null,
-                URL: null,
-                course: null,
-                image: null
-            });
+            let imageResp:
+                | ImageResponse
+                | SessionResponse
+                | ErrorResponse
+                | null = null;
 
-            setModal(false);
-            setInfo(false);
-            setFormData({ ...formData, name: "", URL: "" });
+            if (currentImage.current !== null && selectedImage === null) {
+                imageResp = await Session.removeImage(
+                    sessionResp.data.session._id
+                );
+            } else if (
+                currentImage.current !== selectedImage &&
+                formData.image
+            ) {
+                imageResp = await Session.uploadImage(
+                    sessionResp.data.session._id,
+                    formData.image
+                );
+
+                if (imageResp && imageResp.success && imageResp.data.image) {
+                    // reload image on the site
+                    reloadImage(imageResp.data.image);
+                }
+            }
+
+            if ((imageResp && imageResp.success) || imageResp === null) {
+                setError({
+                    name: null,
+                    URL: null,
+                    course: null,
+                    image: null
+                });
+
+                setModal(false);
+                setInfo(false);
+                setFormData({ ...formData, name: "", URL: "" });
+                currentImage.current = null;
+                setSelectedImage(null);
+            } else {
+                setInfo({ type: "session", id: sessionResp.data.session._id });
+                setError(imageResp.error as any);
+            }
         } else {
             setError(sessionResp.error as any);
         }
@@ -100,6 +143,11 @@ export const SessionModal: React.FC<Props> = ({
                     setSelectedCourse(
                         providerCourses.filter((c) => c._id === course._id)[0]
                     );
+
+                    if (session.image) {
+                        currentImage.current = session.image;
+                        setSelectedImage(session.image);
+                    }
 
                     setFormData({
                         ...formData,
@@ -125,6 +173,8 @@ export const SessionModal: React.FC<Props> = ({
                     course: null,
                     image: null
                 });
+                currentImage.current = null;
+                setSelectedImage(null);
             }}
         >
             <Modal.Header>
@@ -205,6 +255,47 @@ export const SessionModal: React.FC<Props> = ({
                         <div className="text-danger">{errors.course}</div>
                     )}
                 </div>
+                <div className="form-group mb-4">
+                    <label className="form-label">Image:</label>
+                    <input
+                        className={
+                            errors.image
+                                ? "form-control is-invalid"
+                                : "form-control"
+                        }
+                        type="file"
+                        name="image"
+                        accept=".jpg,.jpeg,.png"
+                        onChange={(e) => {
+                            if (e.target.files && e.target.files.length > 0) {
+                                setSelectedImage(
+                                    URL.createObjectURL(e.target.files[0])
+                                );
+                                setFormData({
+                                    ...formData,
+                                    image: e.target.files[0]
+                                });
+                            }
+                        }}
+                    />
+                    {selectedImage && (
+                        <>
+                            <img
+                                className="img-thumbnail col-md-3"
+                                src={selectedImage}
+                            />
+                            <br />
+                            <button
+                                className="btn btn-danger mb-4"
+                                type="button"
+                                onClick={() => setSelectedImage(null)}
+                            >
+                                Remove
+                            </button>
+                        </>
+                    )}
+                    <div className="invalid-feedback">{errors.image}</div>
+                </div>
             </Modal.Body>
             <Modal.Footer>
                 <button
@@ -220,6 +311,8 @@ export const SessionModal: React.FC<Props> = ({
                             course: null,
                             image: null
                         });
+                        currentImage.current = null;
+                        setSelectedImage(null);
                     }}
                 >
                     Cancel

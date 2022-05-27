@@ -10,7 +10,7 @@ services:
         container_name: fitness
         ports:
             - 80:80
-        environment:
+        environment: # TODO: update with latest env
             BASE_URL: http://localhost
             API_URL: /api/v1
             MAIL_HOST: smtp.mailgun.org

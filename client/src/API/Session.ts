@@ -1,7 +1,8 @@
 import {
     SessionsResponse,
     SessionResponse,
-    ErrorResponse
+    ErrorResponse,
+    ImageResponse
 } from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
@@ -155,6 +156,42 @@ export class Session {
         id: string
     ): Promise<SessionResponse | ErrorResponse> {
         const request = new DataRequest("DELETE", `sessions/${id}`);
+
+        return new Promise((res) => {
+            APIManager.sendRequest<SessionResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
+
+    static async uploadImage(
+        id: string,
+        file: File
+    ): Promise<ImageResponse | ErrorResponse> {
+        return new Promise((res) => {
+            APIManager.uploadImage(
+                `sessions/${id}/image`,
+                file,
+                (resp) => res(resp),
+                (resp) => res(resp)
+            );
+        });
+    }
+
+    static async removeImage(
+        id: string
+    ): Promise<SessionResponse | ErrorResponse> {
+        const request = new DataRequest("PATCH", `sessions/${id}`);
+
+        request.setBody({
+            image: null
+        });
 
         return new Promise((res) => {
             APIManager.sendRequest<SessionResponse>(

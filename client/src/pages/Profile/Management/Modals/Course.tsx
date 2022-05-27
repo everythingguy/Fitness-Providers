@@ -15,6 +15,7 @@ import {
     ErrorResponse,
     ImageResponse
 } from "../../../../@types/Response";
+import { reloadImage } from "../../../../utils/reload";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -223,25 +224,13 @@ export const CourseModal: React.FC<Props> = ({
                         formData.image
                     );
 
-                    if (imageResp && imageResp.success) {
+                    if (
+                        imageResp &&
+                        imageResp.success &&
+                        imageResp.data.image
+                    ) {
                         // reload image on the site
-                        fetch(imageResp.data.image, {
-                            cache: "reload",
-                            mode: "no-cors"
-                        }).then(() =>
-                            document.body
-                                .querySelectorAll(
-                                    `img[src='${
-                                        (imageResp as ImageResponse).data.image
-                                    }']`
-                                )
-                                .forEach(
-                                    (img: any) =>
-                                        (img.src = (
-                                            imageResp as ImageResponse
-                                        ).data.image)
-                                )
-                        );
+                        reloadImage(imageResp.data.image);
                     }
                 }
 
