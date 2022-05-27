@@ -38,7 +38,7 @@ export async function addAddress(
         res,
         "address",
         Address,
-        ["googlePlaceID"],
+        ["googlePlaceID", "coordinates"],
         [
             {
                 source: "provider",
@@ -140,7 +140,7 @@ export async function modifyAddress(
         res,
         "address",
         Address,
-        ["googlePlaceID"],
+        ["googlePlaceID", "coordinates"],
         populate
     );
 }

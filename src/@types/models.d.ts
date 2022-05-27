@@ -50,7 +50,11 @@ export interface Address extends Base {
     state: string;
     zip: string;
     country: string;
-    googlePlaceID: string;
+    googlePlaceID: string | null;
+    coordinates: {
+        latitude: number;
+        longitude: number;
+    } | null;
 }
 
 export interface Category extends Base {

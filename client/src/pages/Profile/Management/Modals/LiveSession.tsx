@@ -27,8 +27,6 @@ interface Props {
     setInfo: React.Dispatch<React.SetStateAction<Info>>;
 }
 
-// TODO: image upload
-
 export const LiveSessionModal: React.FC<Props> = ({
     setModal,
     showModal,

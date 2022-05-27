@@ -8,6 +8,20 @@ import fetch from "node-fetch";
 
 // debug
 // mongoose.set('debug', true);
+const CoordinateSchema = new mongoose.Schema({
+    latitude: {
+        required: true,
+        type: Number,
+        max: 90,
+        min: 90
+    },
+    longitude: {
+        required: true,
+        type: Number,
+        max: 180,
+        min: 180
+    }
+});
 
 const AddressSchema = new mongoose.Schema<AddressType>(
     {
@@ -61,6 +75,10 @@ const AddressSchema = new mongoose.Schema<AddressType>(
             type: String,
             trim: true,
             default: null
+        },
+        coordinates: {
+            type: CoordinateSchema,
+            default: null
         }
     },
     {
@@ -92,6 +110,8 @@ const getGooglePlaceID = async function (this: AddressType) {
     if (data.status === "OK") {
         if (data.results.length > 0) {
             this.googlePlaceID = data.results[0].place_id;
+            this.coordinates.latitude = data.results[0].geometry.location.lat;
+            this.coordinates.longitude = data.results[0].geometry.location.lng;
         }
     }
 };
