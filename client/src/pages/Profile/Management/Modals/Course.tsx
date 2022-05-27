@@ -10,7 +10,11 @@ import {
 } from "../../../../@types/Models";
 import { UserContext } from "../../../../context/UserState";
 import AddressModal from "./Address";
-import { CourseResponse, ErrorResponse } from "../../../../@types/Response";
+import {
+    CourseResponse,
+    ErrorResponse,
+    ImageResponse
+} from "../../../../@types/Response";
 
 type Info = { type: "course" | "session" | "live session"; id: string } | false;
 
@@ -20,8 +24,6 @@ interface Props {
     setModal: React.Dispatch<React.SetStateAction<boolean>>;
     showModal: boolean;
 }
-
-// TODO: handle image upload
 
 export const CourseModal: React.FC<Props> = ({
     setModal,
@@ -41,8 +43,10 @@ export const CourseModal: React.FC<Props> = ({
         _id: "online",
         street1: "Online"
     });
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const renderedInfo = useRef(false);
     const currentAddress = useRef<AddressType | null>(null);
+    const currentImage = useRef<string | null>(null);
 
     const [selectedTags, setSelectedTags] = useState<
         { value: string; label: string }[]
@@ -60,10 +64,11 @@ export const CourseModal: React.FC<Props> = ({
     const [formData, setFormData] = useState<{
         name: string;
         description: string;
-        image?: string;
+        image: File | null;
     }>({
         name: "",
-        description: ""
+        description: "",
+        image: null
     });
 
     const [courseTags, setCourseTags] = useState<TagType[]>([]);
@@ -92,6 +97,11 @@ export const CourseModal: React.FC<Props> = ({
                             return { value: tag._id, label: tag.value };
                         })
                     );
+
+                    if (course.image) {
+                        currentImage.current = course.image;
+                        setSelectedImage(course.image);
+                    }
 
                     if (course.location) {
                         const location = course.location;
@@ -194,19 +204,67 @@ export const CourseModal: React.FC<Props> = ({
                     tags: null
                 });
 
-                setModal(false);
-                setSelectedTags([]);
-                if (user && user.provider && user.provider.address)
-                    setSelectedAddress(user.provider.address);
-                else
-                    setSelectedAddress({
-                        _id: "online",
-                        street1: "Online"
-                    });
-                setFormData({ ...formData, name: "", description: "" });
-                if (info) setInfo(false);
-                renderedInfo.current = false;
-                currentAddress.current = null;
+                let imageResp:
+                    | ImageResponse
+                    | CourseResponse
+                    | ErrorResponse
+                    | null = null;
+
+                if (currentImage.current !== null && selectedImage === null) {
+                    imageResp = await Course.removeImage(
+                        courseResp.data.course._id
+                    );
+                } else if (
+                    currentImage.current !== selectedImage &&
+                    formData.image
+                ) {
+                    imageResp = await Course.uploadImage(
+                        courseResp.data.course._id,
+                        formData.image
+                    );
+
+                    if (imageResp && imageResp.success) {
+                        // reload image on the site
+                        fetch(imageResp.data.image, {
+                            cache: "reload",
+                            mode: "no-cors"
+                        }).then(() =>
+                            document.body
+                                .querySelectorAll(
+                                    `img[src='${
+                                        (imageResp as ImageResponse).data.image
+                                    }']`
+                                )
+                                .forEach(
+                                    (img: any) =>
+                                        (img.src = (
+                                            imageResp as ImageResponse
+                                        ).data.image)
+                                )
+                        );
+                    }
+                }
+
+                if ((imageResp && imageResp.success) || imageResp === null) {
+                    setModal(false);
+                    setSelectedTags([]);
+                    if (user && user.provider && user.provider.address)
+                        setSelectedAddress(user.provider.address);
+                    else
+                        setSelectedAddress({
+                            _id: "online",
+                            street1: "Online"
+                        });
+                    setFormData({ ...formData, name: "", description: "" });
+                    if (info) setInfo(false);
+                    renderedInfo.current = false;
+                    currentAddress.current = null;
+                    currentImage.current = null;
+                    setSelectedImage(null);
+                } else {
+                    setInfo({ type: "course", id: courseResp.data.course._id });
+                    setError(imageResp.error as any);
+                }
             } else {
                 setError(courseResp.error as any);
             }
@@ -269,6 +327,8 @@ export const CourseModal: React.FC<Props> = ({
                     });
                     renderedInfo.current = false;
                     currentAddress.current = null;
+                    currentImage.current = null;
+                    setSelectedImage(null);
                 }}
             >
                 <Modal.Header>
@@ -379,6 +439,50 @@ export const CourseModal: React.FC<Props> = ({
                             <div className="text-danger">{errors.tags}</div>
                         )}
                     </div>
+                    <div className="form-group mb-4">
+                        <label className="form-label">Image:</label>
+                        <input
+                            className={
+                                errors.image
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                            }
+                            type="file"
+                            name="image"
+                            accept=".jpg,.jpeg,.png"
+                            onChange={(e) => {
+                                if (
+                                    e.target.files &&
+                                    e.target.files.length > 0
+                                ) {
+                                    setSelectedImage(
+                                        URL.createObjectURL(e.target.files[0])
+                                    );
+                                    setFormData({
+                                        ...formData,
+                                        image: e.target.files[0]
+                                    });
+                                }
+                            }}
+                        />
+                        {selectedImage && (
+                            <>
+                                <img
+                                    className="img-thumbnail col-md-3"
+                                    src={selectedImage}
+                                />
+                                <br />
+                                <button
+                                    className="btn btn-danger mb-4"
+                                    type="button"
+                                    onClick={() => setSelectedImage(null)}
+                                >
+                                    Remove
+                                </button>
+                            </>
+                        )}
+                        <div className="invalid-feedback">{errors.image}</div>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <button
@@ -409,6 +513,8 @@ export const CourseModal: React.FC<Props> = ({
                             });
                             renderedInfo.current = false;
                             currentAddress.current = null;
+                            currentImage.current = null;
+                            setSelectedImage(null);
                         }}
                     >
                         Cancel

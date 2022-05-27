@@ -2,6 +2,8 @@ import express from "express";
 
 import * as Permission from "../utils/permissions";
 import * as Controller from "../controllers/provider";
+import Model from "../models/provider";
+import { upload, uploadImageHandler } from "../utils/s3";
 
 export const providerRouter = express.Router();
 
@@ -49,6 +51,15 @@ providerRouter
         Permission.isLoggedInAsProvider,
         Permission.isOwnerOrAdmin(Permission.OwnerOfProvider),
         Controller.deleteProvider
+    );
+
+providerRouter
+    .route("/:id/image")
+    .patch(
+        Permission.isLoggedInAsProvider,
+        Permission.isOwnerOrAdmin(Permission.OwnerOfProvider),
+        upload.single("image"),
+        uploadImageHandler(Model, "provider")
     );
 
 export default providerRouter;

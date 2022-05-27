@@ -65,14 +65,7 @@ export async function modifySession(
     req: RequestBody<SessionType>,
     res: express.Response
 ) {
-    await CRUD.update<SessionType>(
-        req,
-        res,
-        "session",
-        Session,
-        ["image"],
-        populate
-    );
+    await CRUD.update<SessionType>(req, res, "session", Session, [], populate);
 }
 
 /**

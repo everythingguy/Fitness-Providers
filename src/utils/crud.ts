@@ -7,7 +7,7 @@ import {
     PaginateResult,
     HydratedDocument
 } from "mongoose";
-import { postPatchErrorHandler } from "./errors";
+import { postPatchErrorHandler, ValidationError } from "./errors";
 import { Base } from "../@types/models";
 import { Request, RequestBody } from "../@types/request";
 import { errorResponse } from "../@types/response";
@@ -177,7 +177,11 @@ export async function readAll<T extends Base>(
     }
 }
 
-export async function update<T extends Base>(
+type updateType = Base & {
+    image?: string | null;
+};
+
+export async function update<T extends updateType>(
     req: RequestBody<T>,
     res: express.Response,
     modelName: string,
@@ -191,6 +195,13 @@ export async function update<T extends Base>(
         for (const field of ignoreFields) delete req.body[field];
     }
     try {
+        if ("image" in req.body && req.body.image !== null) {
+            const errorMsg =
+                "You can only patch image to null at this endpoint";
+            throw new ValidationError(errorMsg, {
+                image: new Error(errorMsg)
+            });
+        }
         await model.findByIdAndUpdate(req.params.id, req.body as any, {
             runValidators: true
         });

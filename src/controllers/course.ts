@@ -62,14 +62,7 @@ export async function modifyCourse(
     req: RequestBody<CourseType>,
     res: express.Response
 ) {
-    await CRUD.update<CourseType>(
-        req,
-        res,
-        "course",
-        Course,
-        ["image"],
-        populate
-    );
+    await CRUD.update<CourseType>(req, res, "course", Course, [], populate);
 }
 
 /**

@@ -7,6 +7,10 @@ export interface Base extends Document {
     updatedAt: Date;
 }
 
+export interface Image extends Base {
+    image: string | null;
+}
+
 export interface PasswordResetCode extends Base {
     code: string;
     user: Types.ObjectId;
@@ -27,14 +31,13 @@ export interface User extends Base {
     isValidPassword: (password: string) => Promise<boolean>;
 }
 
-export interface Provider extends Base {
+export interface Provider extends Image {
     user: User | Types.ObjectId;
     address: Address | Types.ObjectId;
     isEnrolled: boolean;
     phone: string;
     bio?: string;
     website?: string;
-    image?: string;
     tags: Tag[] | Types.ObjectId[];
     getCourses: () => Promise<Course[]>;
 }
@@ -62,21 +65,19 @@ export interface Tag extends Base {
     appliesToCourse: boolean;
 }
 
-export interface Course extends Base {
+export interface Course extends Image {
     name: string;
     location: Address | Types.ObjectId | "online";
     description: string;
     provider: Provider | Types.ObjectId;
     tags: Tag[] | Types.ObjectId[];
-    image?: string;
     getSessions: () => Promise<Session[]>;
 }
 
-export interface Session extends Base {
+export interface Session extends Image {
     course: Course | Types.ObjectId;
     URL?: string;
     name: string;
-    image?: string;
     liveSession: LiveSession | Types.ObjectId;
 }
 

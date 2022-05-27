@@ -2,6 +2,8 @@ import express from "express";
 
 import * as Permission from "../utils/permissions";
 import * as Controller from "../controllers/session";
+import Model from "../models/session";
+import { upload, uploadImageHandler } from "../utils/s3";
 
 export const sessionRouter = express.Router();
 
@@ -37,6 +39,15 @@ sessionRouter
         Permission.isLoggedInAsProvider,
         Permission.isOwnerOrAdmin(Permission.OwnerOfSession),
         Controller.deleteSession
+    );
+
+sessionRouter
+    .route("/:id/image")
+    .patch(
+        Permission.isLoggedInAsProvider,
+        Permission.isOwnerOrAdmin(Permission.OwnerOfSession),
+        upload.single("image"),
+        uploadImageHandler(Model, "session")
     );
 
 export default sessionRouter;

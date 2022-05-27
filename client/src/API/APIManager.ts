@@ -1,4 +1,4 @@
-import { BaseResponse, ErrorResponse } from "../@types/Response";
+import { BaseResponse, ErrorResponse, ImageResponse } from "../@types/Response";
 import User from "./User";
 import ReqBody from "./../@types/ReqBody.d";
 const API_URL = process.env.API_URL;
@@ -122,6 +122,48 @@ export class APIManager {
                 const errorBody = body as ErrorResponse;
                 onFail(errorBody);
             } else if (!body.error && onSuccess) onSuccess(body);
+
+            return body;
+        } catch (error: any) {
+            const body: ErrorResponse = {
+                success: false,
+                error: error.message
+            };
+            if (onFail) onFail(body);
+            return body;
+        }
+    }
+
+    static async uploadImage(
+        endpoint: string,
+        file: File,
+        onSuccess?: (body: ImageResponse) => void,
+        onFail?: (error: ErrorResponse) => void
+    ): Promise<ImageResponse | ErrorResponse> {
+        const formData = new FormData();
+        formData.append("image", file, file.name);
+
+        const options: any = {
+            headers: {
+                Accept: "application/json"
+            },
+            method: "PATCH",
+            credentials: "include",
+            body: formData
+        };
+
+        if (this.accessToken && this.accessToken.length > 0)
+            options.headers.Authorization = this.accessToken;
+
+        try {
+            const resp = await fetch(`${API_URL}/${endpoint}`, options);
+            const body = await resp.json();
+
+            if (body.error && onFail) {
+                const errorBody = body as ErrorResponse;
+                onFail(errorBody);
+            } else if (!body.error && onSuccess)
+                onSuccess(body as ImageResponse);
 
             return body;
         } catch (error: any) {

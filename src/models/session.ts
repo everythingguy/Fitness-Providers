@@ -5,6 +5,7 @@ import { Session as SessionType } from "../@types/models";
 import Course from "./course";
 import LiveSession from "./liveSession";
 import Pagination from "mongoose-paginate-v2";
+import { fileRemover } from "../utils/s3";
 
 // debug
 // mongoose.set('debug', true);
@@ -70,6 +71,10 @@ SessionSchema.post("remove", function (res, next) {
     LiveSession.findByIdAndRemove(this.liveSession).exec();
     next();
 });
+
+SessionSchema.pre("updateOne", fileRemover("session"));
+SessionSchema.pre("findOneAndUpdate", fileRemover("session"));
+SessionSchema.post("remove", fileRemover("session", true));
 
 export const Session: PaginateModel<SessionType, unknown, unknown> =
     mongoose.model<SessionType, PaginateModel<SessionType>>(

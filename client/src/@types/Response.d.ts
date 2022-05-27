@@ -1,118 +1,124 @@
 import User, {
-  Provider,
-  Address,
-  Course,
-  Session,
-  LiveSession,
-  Category,
-  Tag,
+    Provider,
+    Address,
+    Course,
+    Session,
+    LiveSession,
+    Category,
+    Tag
 } from "./Models";
 
 export interface BaseResponse {
-  success: boolean;
-  data?: { [key: any]: any };
-  error?: string | string[];
+    success: boolean;
+    data?: { [key: any]: any };
+    error?: string | string[];
 }
 
 export interface SuccessfulResponse extends BaseResponse {
-  success: true;
-  data: { [key: any]: any };
-  error?: undefined;
+    success: true;
+    data: { [key: any]: any };
+    error?: undefined;
 }
 
 export interface SuccessfulPaginationResponse extends SuccessfulResponse {
-  totalDocs: number;
-  limit: number;
-  totalPages: number;
-  page: number;
-  pagingCounter: number;
-  hasPrevPage: boolean;
-  hasNextPage: boolean;
-  prevPage: string | null;
-  nextPage: string | null;
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage: string | null;
+    nextPage: string | null;
+}
+
+export interface ImageResponse extends SuccessfulResponse {
+    data: {
+        image: string;
+    };
 }
 
 export interface UserResponse extends SuccessfulResponse {
-  data: {
-    user?: User;
-    accessToken?: string;
-  };
+    data: {
+        user?: User;
+        accessToken?: string;
+    };
 }
 
 export interface ProviderResponse extends SuccessfulResponse {
-  data: {
-    provider: Provider;
-  };
+    data: {
+        provider: Provider;
+    };
 }
 
 export interface ProvidersResponse extends SuccessfulPaginationResponse {
-  data: {
-    providers: Provider[];
-  };
+    data: {
+        providers: Provider[];
+    };
 }
 
 export interface AddressResponse extends SuccessfulResponse {
-  data: {
-    address: Address;
-  };
+    data: {
+        address: Address;
+    };
 }
 
 export interface AddressesResponse extends SuccessfulPaginationResponse {
-  data: {
-    addresses: Address[];
-  };
+    data: {
+        addresses: Address[];
+    };
 }
 
 export interface CourseResponse extends SuccessfulResponse {
-  data: {
-    course: Course;
-  };
+    data: {
+        course: Course;
+    };
 }
 
 export interface CoursesResponse extends SuccessfulPaginationResponse {
-  data: {
-    courses: Course[];
-  };
+    data: {
+        courses: Course[];
+    };
 }
 
 export interface SessionResponse extends SuccessfulResponse {
-  data: {
-    session: Session;
-  };
+    data: {
+        session: Session;
+    };
 }
 
 export interface SessionsResponse extends SuccessfulPaginationResponse {
-  data: {
-    sessions: Session[];
-  };
+    data: {
+        sessions: Session[];
+    };
 }
 
 export interface LiveSessionResponse extends SuccessfulResponse {
-  data: {
-    liveSession: LiveSession;
-  };
+    data: {
+        liveSession: LiveSession;
+    };
 }
 
 export interface LiveSessionsResponse extends SuccessfulPaginationResponse {
-  data: {
-    liveSessions: LiveSession[];
-  };
+    data: {
+        liveSessions: LiveSession[];
+    };
 }
 
 export interface CategoryResponse extends SuccessfulPaginationResponse {
-  data: {
-    categories: Category[];
-  };
+    data: {
+        categories: Category[];
+    };
 }
 
 export interface TagResponse extends SuccessfulPaginationResponse {
-  data: {
-    tags: Tag[];
-  };
+    data: {
+        tags: Tag[];
+    };
 }
 
 export interface ErrorResponse extends BaseResponse {
-  success: false;
-  data?: undefined;
-  error: string | string[] | { [key: string]: string };
+    success: false;
+    data?: undefined;
+    error: string | string[] | { [key: string]: string };
 }

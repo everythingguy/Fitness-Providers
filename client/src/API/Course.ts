@@ -1,7 +1,8 @@
 import {
     CoursesResponse,
     CourseResponse,
-    ErrorResponse
+    ErrorResponse,
+    ImageResponse
 } from "../@types/Response";
 import { Course as CourseType } from "../@types/Models";
 import { APIManager, DataRequest } from "./APIManager";
@@ -164,6 +165,42 @@ export class Course {
         id: string
     ): Promise<CourseResponse | ErrorResponse> {
         const request = new DataRequest("DELETE", `courses/${id}`);
+
+        return new Promise((res) => {
+            APIManager.sendRequest<CourseResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
+
+    static async uploadImage(
+        id: string,
+        file: File
+    ): Promise<ImageResponse | ErrorResponse> {
+        return new Promise((res) => {
+            APIManager.uploadImage(
+                `courses/${id}/image`,
+                file,
+                (resp) => res(resp),
+                (resp) => res(resp)
+            );
+        });
+    }
+
+    static async removeImage(
+        id: string
+    ): Promise<CourseResponse | ErrorResponse> {
+        const request = new DataRequest("PATCH", `courses/${id}`);
+
+        request.setBody({
+            image: null
+        });
 
         return new Promise((res) => {
             APIManager.sendRequest<CourseResponse>(

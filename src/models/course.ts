@@ -6,6 +6,7 @@ import { refValidator } from "../utils/validators";
 import Provider from "./provider";
 import Address from "./address";
 import Pagination from "mongoose-paginate-v2";
+import { fileRemover } from "../utils/s3";
 
 // debug
 // mongoose.set('debug', true);
@@ -87,6 +88,10 @@ CourseSchema.post("remove", function (res, next) {
     Session.remove({ course: this._id }).exec();
     next();
 });
+
+CourseSchema.pre("updateOne", fileRemover("course"));
+CourseSchema.pre("findOneAndUpdate", fileRemover("course"));
+CourseSchema.post("remove", fileRemover("course", true));
 
 CourseSchema.virtual("getSessions", async function (this: CourseType) {
     return await Session.find({ course: this._id });

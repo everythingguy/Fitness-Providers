@@ -179,12 +179,5 @@ export async function modifyProvider(
     req: RequestBody<ProviderType>,
     res: express.Response
 ) {
-    await CRUD.update(
-        req,
-        res,
-        "provider",
-        Provider,
-        ["isEnrolled", "image"],
-        populate
-    );
+    await CRUD.update(req, res, "provider", Provider, ["isEnrolled"], populate);
 }

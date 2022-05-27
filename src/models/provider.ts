@@ -8,6 +8,7 @@ import { UniqueErrorRaiser } from "../utils/errors";
 import User from "./user";
 import Address from "./address";
 import Pagination from "mongoose-paginate-v2";
+import { fileRemover } from "../utils/s3";
 
 // debug
 // mongoose.set('debug', true);
@@ -117,6 +118,10 @@ ProviderSchema.post("remove", function (res, next) {
 ProviderSchema.post("save", UniqueErrorRaiser);
 ProviderSchema.post("updateOne", UniqueErrorRaiser);
 ProviderSchema.post("findOneAndUpdate", UniqueErrorRaiser);
+
+ProviderSchema.pre("updateOne", fileRemover("provider"));
+ProviderSchema.pre("findOneAndUpdate", fileRemover("provider"));
+ProviderSchema.post("remove", fileRemover("provider", true));
 
 ProviderSchema.method("getCourses", async function (this: ProviderType) {
     return await Course.find({ provider: this._id });
