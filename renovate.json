@@ -1,0 +1,11 @@
+{
+    "packageRules": [{
+            "paths": ["client/package.json"],
+            "labels": ["Frontend", "Renovate"]
+        },
+        {
+            "paths": ["package.json"],
+            "labels": ["Backend", "Renovate"]
+        }
+    ]
+}
