@@ -1,6 +1,7 @@
 // TODO: update tests to work with confirmation email and forgot password
 
 import request from "supertest";
+import faker from "faker";
 import { Connection } from "mongoose";
 
 import app, { apiPath } from "../../server";
@@ -10,6 +11,16 @@ import connectDB, { getMongoURI } from "./../../utils/db";
 let authCookie = "";
 let accessToken = "";
 let conn: Connection;
+
+function createFakeUser() {
+    return {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        username: faker.internet.userName()
+    };
+}
 
 beforeAll(async () => {
     conn = await connectDB(getMongoURI("-user-router"));
@@ -116,6 +127,8 @@ describe(`DELETE ${apiPath}/users`, () => {
     });
 });
 
+const user = createFakeUser();
+
 describe(`POST ${apiPath}/users/register`, () => {
     it("should fail to register with mismatch passwords", async () => {
         const res = await request(app)
@@ -139,16 +152,12 @@ describe(`POST ${apiPath}/users/register`, () => {
         });
     });
 
-    it("should register a new user named john doe", async () => {
+    it("should register a new user", async () => {
         const res = await request(app)
             .post(`${apiPath}/users/register`)
             .send({
-                firstName: "John",
-                lastName: "Doe",
-                email: "jdoe@doe.com",
-                username: "john",
-                password: "doe21",
-                re_password: "doe21"
+                ...user,
+                re_password: user.password
             })
             .expect(201)
             .expect("Content-Type", /json/);
@@ -156,24 +165,25 @@ describe(`POST ${apiPath}/users/register`, () => {
         expect(JSON.parse(res.text) as userResponse).toBeDefined();
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
-        expect(resp.data.user.name).toEqual("John Doe");
-        expect(resp.data.user.username).toEqual("john");
-        expect(resp.data.user.email).toEqual("jdoe@doe.com");
+        expect(resp.data.user.name).toEqual(
+            `${user.firstName} ${user.lastName}`
+        );
+        expect(resp.data.user.username).toEqual(user.username);
+        expect(resp.data.user.email).toEqual(user.email);
         expect(resp.data.user._id).toBeDefined();
         const dataAny = resp.data as any;
         expect(dataAny.user.password).toBeUndefined();
     });
 
     it("should fail to register the same username", async () => {
+        const u = createFakeUser();
+
         const res = await request(app)
             .post(`${apiPath}/users/register`)
             .send({
-                firstName: "John",
-                lastName: "Doe",
-                email: "jdoe22@doe.com",
-                username: "john",
-                password: "doe21",
-                re_password: "doe21"
+                ...u,
+                username: user.username,
+                re_password: u.password
             })
             .expect(409)
             .expect("Content-Type", /json/);
@@ -187,15 +197,14 @@ describe(`POST ${apiPath}/users/register`, () => {
     });
 
     it("should fail to register the same email", async () => {
+        const u = createFakeUser();
+
         const res = await request(app)
             .post(`${apiPath}/users/register`)
             .send({
-                firstName: "John",
-                lastName: "Doe",
-                email: "jdoe@doe.com",
-                username: "john12",
-                password: "doe21",
-                re_password: "doe21"
+                ...u,
+                email: user.email,
+                re_password: u.password
             })
             .expect(409)
             .expect("Content-Type", /json/);
@@ -213,8 +222,8 @@ describe(`POST ${apiPath}/users/login`, () => {
             .post(`${apiPath}/users/login`)
             .set("Authorization", "bearer " + accessToken)
             .send({
-                username: "john",
-                password: "doe21"
+                username: user.username,
+                password: user.password
             })
             .expect(200)
             .expect("Content-Type", /json/);
@@ -247,8 +256,8 @@ describe(`POST ${apiPath}/users/login`, () => {
             .post(`${apiPath}/users/login`)
             .set("Authorization", "bearer " + accessToken)
             .send({
-                username: "john",
-                password: "doe21"
+                username: user.username,
+                password: user.password
             })
             .expect(400)
             .expect("Content-Type", /json/);
@@ -272,9 +281,11 @@ describe(`GET ${apiPath}/users`, () => {
         const resp = JSON.parse(res.text) as userResponse;
         expect(resp.success).toBeTruthy();
         expect(resp.data).toBeDefined();
-        expect(resp.data.user.email).toBeDefined();
-        expect(resp.data.user.username).toBeDefined();
-        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user.email).toEqual(user.email);
+        expect(resp.data.user.username).toEqual(user.username);
+        expect(resp.data.user.name).toEqual(
+            `${user.firstName} ${user.lastName}`
+        );
         expect(resp.data.user._id).toBeDefined();
         const dataAny = resp.data as any;
         expect(dataAny.user.password).toBeUndefined();
@@ -320,8 +331,8 @@ describe(`POST ${apiPath}/users/login`, () => {
             .post(`${apiPath}/users/login`)
             .set("Authorization", "bearer " + accessToken)
             .send({
-                username: "john",
-                password: "doe21"
+                username: user.username,
+                password: user.password
             })
             .expect(200)
             .expect("Content-Type", /json/);
