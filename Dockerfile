@@ -1,5 +1,7 @@
 FROM node:latest
 
+ENV TZ="America/Detroit"
+
 RUN apt update && apt upgrade -y && npm i -g npm
 
 WORKDIR /app
