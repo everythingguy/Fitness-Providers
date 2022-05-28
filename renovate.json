@@ -1,5 +1,4 @@
 {
-    "extends": ["config:base"],
     "packageRules": [{
             "paths": ["client/package.json"],
             "labels": ["Frontend", "Renovate"]
