@@ -104,6 +104,7 @@ lint:
 jest_backend:
     image: node:latest
     stage: test
+    retry: 2
     tags:
         - amd64
     services:
