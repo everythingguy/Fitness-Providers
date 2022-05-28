@@ -1,8 +1,9 @@
 FROM node:latest
 
+ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ="America/Detroit"
 
-RUN apt update && apt upgrade -y && npm i -g npm
+RUN apt update && apt upgrade -y && apt install -y tzdata && npm i -g npm
 
 WORKDIR /app
 
