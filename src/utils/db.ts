@@ -20,19 +20,12 @@ export function getMongoURI(suffix = "-testing") {
         process.env.CI.toLowerCase() === "true" &&
         process.env.NODE_ENV === "test"
     )
-        MONGO_URI =
-            "mongodb://mongo:27017/" +
-            process.env.DB_NAME +
-            suffix +
-            "?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+        MONGO_URI = "mongodb://mongo:27017/" + process.env.DB_NAME + suffix;
     else if (
         process.env.CI !== undefined &&
         process.env.CI.toLowerCase() === "true"
     )
-        MONGO_URI =
-            "mongodb://mongo:27017/" +
-            process.env.DB_NAME +
-            "?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+        MONGO_URI = "mongodb://mongo:27017/" + process.env.DB_NAME;
     else if (process.env.NODE_ENV === "test")
         MONGO_URI =
             "mongodb://" +

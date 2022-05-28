@@ -366,7 +366,7 @@ export async function deleteUser(req: Request, res: express.Response) {
             } as errorResponse);
         }
 
-        await user.remove();
+        await User.findByIdAndDelete(user._id);
 
         req.logout(res);
 

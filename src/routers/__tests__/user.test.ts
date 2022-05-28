@@ -54,83 +54,71 @@ describe("env", () => {
 });
 
 describe(`POST ${apiPath}/users/login`, () => {
-    it("should reject the incorrect login", (done) => {
-        request(app)
+    it("should reject the incorrect login", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/login`)
             .send({
                 username: "john",
                 password: "doe21"
             })
-            .expect(401)
-            .end((err, res) => {
-                if (err) return done(err);
-                const resp = JSON.parse(res.text);
-                expect(resp).toEqual({
-                    success: false,
-                    error: "Inncorrect Username or Password"
-                });
-                done();
-            });
+            .expect(401);
+
+        const resp = JSON.parse(res.text);
+        expect(resp).toEqual({
+            success: false,
+            error: "Inncorrect Username or Password"
+        });
     });
 });
 
 describe(`GET ${apiPath}/users`, () => {
-    it("should fail to return the user's info", (done) => {
-        request(app)
+    it("should fail to return the user's info", async () => {
+        const res = await request(app)
             .get(`${apiPath}/users`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual("Please signin to gain access");
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual("Please signin to gain access");
     });
 });
 
 describe(`POST ${apiPath}/users/logout`, () => {
-    it("should fail to logout the user", (done) => {
-        request(app)
+    it("should fail to logout the user", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/logout`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual("Please signin to gain access");
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual("Please signin to gain access");
     });
 });
 
 describe(`DELETE ${apiPath}/users`, () => {
-    it("should fail to delete the user", (done) => {
-        request(app)
+    it("should fail to delete the user", async () => {
+        const res = await request(app)
             .del(`${apiPath}/users`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual("Please signin to gain access");
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual("Please signin to gain access");
     });
 });
 
 describe(`POST ${apiPath}/users/register`, () => {
-    it("should fail to register with mismatch passwords", (done) => {
-        request(app)
+    it("should fail to register with mismatch passwords", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/register`)
             .send({
                 firstName: "John",
@@ -141,22 +129,18 @@ describe(`POST ${apiPath}/users/register`, () => {
                 re_password: "doe212121"
             })
             .expect(400)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err)
-                    return done({ err, resError: JSON.parse(res.text).error });
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual({
-                    password: "password and confirm password do not match"
-                });
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual({
+            password: "password and confirm password do not match"
+        });
     });
 
-    it("should register a new user named john doe", (done) => {
-        request(app)
+    it("should register a new user named john doe", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/register`)
             .send({
                 firstName: "John",
@@ -167,25 +151,21 @@ describe(`POST ${apiPath}/users/register`, () => {
                 re_password: "doe21"
             })
             .expect(201)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err)
-                    return done({ err, resError: JSON.parse(res.text).error });
-                expect(JSON.parse(res.text) as userResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as userResponse;
-                expect(resp.success).toBeTruthy();
-                expect(resp.data.user.name).toEqual("John Doe");
-                expect(resp.data.user.username).toEqual("john");
-                expect(resp.data.user.email).toEqual("jdoe@doe.com");
-                expect(resp.data.user._id).toBeDefined();
-                const dataAny = resp.data as any;
-                expect(dataAny.user.password).toBeUndefined();
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as userResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as userResponse;
+        expect(resp.success).toBeTruthy();
+        expect(resp.data.user.name).toEqual("John Doe");
+        expect(resp.data.user.username).toEqual("john");
+        expect(resp.data.user.email).toEqual("jdoe@doe.com");
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
     });
 
-    it("should fail to register the same username", (done) => {
-        request(app)
+    it("should fail to register the same username", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/register`)
             .send({
                 firstName: "John",
@@ -196,22 +176,18 @@ describe(`POST ${apiPath}/users/register`, () => {
                 re_password: "doe21"
             })
             .expect(409)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err)
-                    return done({ err, resError: JSON.parse(res.text).error });
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual({
-                    username: "username already exists"
-                });
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual({
+            username: "username already exists"
+        });
     });
 
-    it("should fail to register the same email", (done) => {
-        request(app)
+    it("should fail to register the same email", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/register`)
             .send({
                 firstName: "John",
@@ -222,22 +198,18 @@ describe(`POST ${apiPath}/users/register`, () => {
                 re_password: "doe21"
             })
             .expect(409)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err)
-                    return done({ err, resError: JSON.parse(res.text).error });
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual({ email: "email already exists" });
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual({ email: "email already exists" });
     });
 });
 
 describe(`POST ${apiPath}/users/login`, () => {
-    it("should successfully login", (done) => {
-        request(app)
+    it("should successfully login", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/login`)
             .set("Authorization", "bearer " + accessToken)
             .send({
@@ -245,37 +217,33 @@ describe(`POST ${apiPath}/users/login`, () => {
                 password: "doe21"
             })
             .expect(200)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as userResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as userResponse;
-                expect(resp.success).toBeTruthy();
-                expect(resp.data).toBeDefined();
-                expect(resp.data.user.email).toBeDefined();
-                expect(resp.data.user.username).toBeDefined();
-                expect(resp.data.user.name).toBeDefined();
-                expect(resp.data.user._id).toBeDefined();
-                const dataAny = resp.data as any;
-                expect(dataAny.user.password).toBeUndefined();
+            .expect("Content-Type", /json/);
 
-                // set cookie
-                expect(res.headers["set-cookie"]).toBeDefined();
-                const cookies = res.headers["set-cookie"][0]
-                    .split(",")
-                    .map((item: string) => item.split(";")[0]);
-                authCookie = cookies.join(";");
+        expect(JSON.parse(res.text) as userResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as userResponse;
+        expect(resp.success).toBeTruthy();
+        expect(resp.data).toBeDefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
 
-                // set access token
-                expect(resp.data.accessToken).toBeDefined();
-                accessToken = resp.data.accessToken;
+        // set cookie
+        expect(res.headers["set-cookie"]).toBeDefined();
+        const cookies = res.headers["set-cookie"][0]
+            .split(",")
+            .map((item: string) => item.split(";")[0]);
+        authCookie = cookies.join(";");
 
-                done();
-            });
+        // set access token
+        expect(resp.data.accessToken).toBeDefined();
+        accessToken = resp.data.accessToken;
     });
 
-    it("should fail to login twice", (done) => {
-        request(app)
+    it("should fail to login twice", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/login`)
             .set("Authorization", "bearer " + accessToken)
             .send({
@@ -283,85 +251,72 @@ describe(`POST ${apiPath}/users/login`, () => {
                 password: "doe21"
             })
             .expect(400)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual("Please logout before logging in");
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual("Please logout before logging in");
     });
 });
 
 describe(`GET ${apiPath}/users`, () => {
-    it("should return the user's info", (done) => {
-        request(app)
+    it("should return the user's info", async () => {
+        const res = await request(app)
             .get(`${apiPath}/users`)
             .set("Authorization", "bearer " + accessToken)
             .expect(200)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as userResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as userResponse;
-                expect(resp.success).toBeTruthy();
-                expect(resp.data).toBeDefined();
-                expect(resp.data.user.email).toBeDefined();
-                expect(resp.data.user.username).toBeDefined();
-                expect(resp.data.user.name).toBeDefined();
-                expect(resp.data.user._id).toBeDefined();
-                const dataAny = resp.data as any;
-                expect(dataAny.user.password).toBeUndefined();
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as userResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as userResponse;
+        expect(resp.success).toBeTruthy();
+        expect(resp.data).toBeDefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
     });
 });
 
 describe(`POST ${apiPath}/users/logout`, () => {
-    it("should logout the user", (done) => {
-        request(app)
+    it("should logout the user", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/logout`)
             .set("Authorization", "bearer " + accessToken)
             .expect(200)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as userResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as userResponse;
-                expect(resp.success).toBeTruthy();
-                expect(resp.data.user).toBeUndefined();
-                expect(resp.data.accessToken).toBe("");
+            .expect("Content-Type", /json/);
 
-                accessToken = resp.data.accessToken;
+        expect(JSON.parse(res.text) as userResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as userResponse;
+        expect(resp.success).toBeTruthy();
+        expect(resp.data.user).toBeUndefined();
+        expect(resp.data.accessToken).toBe("");
 
-                done();
-            });
+        accessToken = resp.data.accessToken;
     });
 });
 
 describe(`GET ${apiPath}/users`, () => {
-    it("should fail to return the user's info", (done) => {
-        request(app)
+    it("should fail to return the user's info", async () => {
+        const res = await request(app)
             .get(`${apiPath}/users`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual("Please signin to gain access");
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual("Please signin to gain access");
     });
 });
 
 describe(`POST ${apiPath}/users/login`, () => {
-    it("should successfully login", (done) => {
-        request(app)
+    it("should successfully login", async () => {
+        const res = await request(app)
             .post(`${apiPath}/users/login`)
             .set("Authorization", "bearer " + accessToken)
             .send({
@@ -369,75 +324,65 @@ describe(`POST ${apiPath}/users/login`, () => {
                 password: "doe21"
             })
             .expect(200)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as userResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as userResponse;
-                expect(resp.success).toBeTruthy();
-                expect(resp.data).toBeDefined();
-                expect(resp.data.user.email).toBeDefined();
-                expect(resp.data.user.username).toBeDefined();
-                expect(resp.data.user.name).toBeDefined();
-                expect(resp.data.user._id).toBeDefined();
-                const dataAny = resp.data as any;
-                expect(dataAny.user.password).toBeUndefined();
+            .expect("Content-Type", /json/);
 
-                // set refresh token cookie
-                expect(res.headers["set-cookie"]).toBeDefined();
-                const cookies = res.headers["set-cookie"][0]
-                    .split(",")
-                    .map((item: string) => item.split(";")[0]);
-                authCookie = cookies.join(";");
+        expect(JSON.parse(res.text) as userResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as userResponse;
+        expect(resp.success).toBeTruthy();
+        expect(resp.data).toBeDefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
 
-                // set access token
-                expect(resp.data.accessToken).toBeDefined();
-                accessToken = resp.data.accessToken;
+        // set refresh token cookie
+        expect(res.headers["set-cookie"]).toBeDefined();
+        const cookies = res.headers["set-cookie"][0]
+            .split(",")
+            .map((item: string) => item.split(";")[0]);
+        authCookie = cookies.join(";");
 
-                done();
-            });
+        // set access token
+        expect(resp.data.accessToken).toBeDefined();
+        accessToken = resp.data.accessToken;
     });
 });
 
 describe(`DELETE ${apiPath}/users`, () => {
-    it("should delete the user", (done) => {
-        request(app)
+    it("should delete the user", async () => {
+        const res = await request(app)
             .del(`${apiPath}/users`)
             .set("Authorization", "bearer " + accessToken)
             .set("Cookie", authCookie)
             .expect(200)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as userResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as userResponse;
-                expect(resp.success).toBeTruthy();
-                expect(resp.data).toBeDefined();
-                expect(resp.data.user.email).toBeDefined();
-                expect(resp.data.user.username).toBeDefined();
-                expect(resp.data.user.name).toBeDefined();
-                expect(resp.data.user._id).toBeDefined();
-                const dataAny = resp.data as any;
-                expect(dataAny.user.password).toBeUndefined();
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as userResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as userResponse;
+        expect(resp.success).toBeTruthy();
+        expect(resp.data).toBeDefined();
+        expect(resp.data.user.email).toBeDefined();
+        expect(resp.data.user.username).toBeDefined();
+        expect(resp.data.user.name).toBeDefined();
+        expect(resp.data.user._id).toBeDefined();
+        const dataAny = resp.data as any;
+        expect(dataAny.user.password).toBeUndefined();
     });
 });
 
 describe(`GET ${apiPath}/users`, () => {
-    it("should fail to return the user's info", (done) => {
-        request(app)
+    it("should fail to return the user's info", async () => {
+        const res = await request(app)
             .get(`${apiPath}/users`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
-            .expect("Content-Type", /json/)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(JSON.parse(res.text) as errorResponse).toBeDefined();
-                const resp = JSON.parse(res.text) as errorResponse;
-                expect(resp.success).toBeFalsy();
-                expect(resp.error).toEqual("Please signin to gain access");
-                done();
-            });
+            .expect("Content-Type", /json/);
+
+        expect(JSON.parse(res.text) as errorResponse).toBeDefined();
+        const resp = JSON.parse(res.text) as errorResponse;
+        expect(resp.success).toBeFalsy();
+        expect(resp.error).toEqual("Please signin to gain access");
     });
 });

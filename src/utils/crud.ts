@@ -249,7 +249,7 @@ export async function del<T extends Base>(
 
         if (populate) obj = await obj.populate(populate);
 
-        await obj.remove();
+        await model.findByIdAndDelete(obj._id);
 
         if (succResponse)
             return res.status(200).json({
