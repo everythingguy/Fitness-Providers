@@ -242,7 +242,7 @@ build_branch:
         - staging
         - dev
         - tags
-        - renovate/*
+        - /renovate.*/
     services:
         - docker:dind
     before_script:
@@ -505,7 +505,7 @@ deploy_branch:
         - staging
         - dev
         - tags
-        - renovate/*
+        - /renovate.*/
     before_script:
         #Download curl
         - apk add --update curl && rm -rf /var/cache/apk/*
@@ -558,7 +558,7 @@ stop_branch:
         - staging
         - dev
         - tags
-        - renovate/*
+        - /renovate.*/
     when: manual
     cache: []
     before_script:
