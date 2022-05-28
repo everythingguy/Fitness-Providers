@@ -1,12 +1,7 @@
 {
-    "packageRules": [{
-            "paths": ["client/package.json"],
-            "labels": ["Frontend", "Renovate"]
-        },
-        {
-            "paths": ["package.json"],
-            "labels": ["Backend", "Renovate"]
-        }
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:base"
     ],
     "baseBranches": ["dev"],
     "rangeStrategy": "bump"
