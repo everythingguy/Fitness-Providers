@@ -2,7 +2,7 @@
 
 import request from "supertest";
 import faker from "faker";
-import { Connection } from "mongoose";
+import { Connection, Model } from "mongoose";
 
 import app, { apiPath } from "../../server";
 import { errorResponse, userResponse } from "../../@types/response";
@@ -24,6 +24,13 @@ function createFakeUser() {
 
 beforeAll(async () => {
     conn = await connectDB(getMongoURI("-user-router"));
+
+    const promises: Promise<void>[] = [];
+    for (const modelStr of conn.modelNames()) {
+        const model: Model<unknown> = conn.model(modelStr);
+        promises.push(model.ensureIndexes());
+    }
+    await Promise.all(promises);
 });
 
 afterAll(async () => {
