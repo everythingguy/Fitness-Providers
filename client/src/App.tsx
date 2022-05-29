@@ -88,8 +88,16 @@ function App() {
                                 element={<UserPages.ResetPassword />}
                             />
                             <Route
+                                path="/user/password/change"
+                                element={<UserPages.ChangePassword />}
+                            />
+                            <Route
                                 path="/user/settings"
                                 element={<UserPages.Settings />}
+                            />
+                            <Route
+                                path="/user/settings/address"
+                                element={<UserPages.AddressManagement />}
                             />
                             <Route path="/terms" element={<Terms />} />
 

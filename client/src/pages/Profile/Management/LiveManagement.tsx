@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import LiveSchedule from "./LiveSchedule";
 import {
@@ -18,7 +18,7 @@ import { liveSessionDateToString } from "../../../utils/Date";
 interface Props {}
 
 export const LiveManagement: React.FC<Props> = () => {
-    const { user } = useContext(UserContext);
+    const { user, loggedIn } = useContext(UserContext);
 
     const [showLiveSessionModal, setLiveSessionModal] = useState(false);
     const [showDeleteModal, setDeleteModal] = useState(false);
@@ -45,6 +45,8 @@ export const LiveManagement: React.FC<Props> = () => {
             );
         }
     }, [showLiveSessionModal, showDeleteModal]);
+
+    if (!loggedIn) return <Navigate to="/user/login" />;
 
     return (
         <div className="ContentManagement">

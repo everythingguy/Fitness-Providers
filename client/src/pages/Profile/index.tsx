@@ -18,7 +18,7 @@ import { liveSessionDateToString } from "./../../utils/Date";
 
 interface Props {}
 
-// TODO: ability to edit
+// TODO: ability to at least edit bio, image, and tags
 // for some reason tag filtering by provider is not working
 
 export const Profile: React.FC<Props> = () => {
