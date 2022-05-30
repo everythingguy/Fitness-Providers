@@ -73,6 +73,7 @@ export const Result: React.FC<Props> = ({
                         />
                     </Link>
                 ) : (
+                    /* TODO: external link warning */
                     <a
                         href={href}
                         target={newTab ? "_blank" : "_self"}

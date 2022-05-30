@@ -93,7 +93,30 @@ export class User {
     }
 
     static async getUserData(): Promise<UserResponse | ErrorResponse> {
-        const request = new DataRequest("GET", "users");
+        const request = new DataRequest("GET", "users/me");
+
+        return new Promise((res) => {
+            APIManager.sendRequest<UserResponse>(
+                request,
+                (body) => {
+                    res({ success: true, data: body.data } as UserResponse);
+                },
+                (body) => {
+                    res({ success: false, error: body.error } as ErrorResponse);
+                }
+            );
+        });
+    }
+
+    static async updateUser(
+        id: string,
+        body: {
+            [key: string]: any;
+        }
+    ): Promise<UserResponse | ErrorResponse> {
+        const request = new DataRequest("PATCH", `users/${id}`);
+
+        request.setBody(body);
 
         return new Promise((res) => {
             APIManager.sendRequest<UserResponse>(

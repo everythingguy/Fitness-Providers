@@ -188,8 +188,14 @@ export async function update<T extends updateType>(
     model: Model<T>,
     ignoreFields: (keyof T)[] = [],
     populate?: string[] | Populate[] | Populate,
-    succResponse = true
+    succResponse = true,
+    select?: string
 ) {
+    ignoreFields.push("createdAt");
+    ignoreFields.push("updatedAt");
+    ignoreFields.push("__v");
+    ignoreFields.push("_id");
+
     if (!req.user.isAdmin) {
         delete req.body._id;
         for (const field of ignoreFields) delete req.body[field];
@@ -206,7 +212,9 @@ export async function update<T extends updateType>(
             runValidators: true
         });
 
-        let obj = await model.findById(req.params.id);
+        let obj = select
+            ? await model.findById(req.params.id).select(select)
+            : await model.findById(req.params.id);
         if (populate) obj = await obj.populate(populate);
 
         if (!obj) {

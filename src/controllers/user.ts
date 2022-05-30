@@ -15,6 +15,9 @@ import { userResponse as userResponseType } from "../@types/response";
 import { sign, verify } from "jsonwebtoken";
 import { apiPath } from "../server";
 import Mail from "../utils/Mail";
+import * as CRUD from "../utils/crud";
+
+const select = "firstName lastName name email username";
 
 const userResponse = (req: Request, userData: UserType): ResUser => {
     const userRes: ResUser = {
@@ -328,12 +331,11 @@ export async function resendConfirmation(
 }
 
 /**
- * @desc Get User
- * @route GET /api/v1/users
+ * @desc Get the logged in user
+ * @route GET /api/v1/users/me
  * @access Restricted
  */
-export async function getUser(req: Request, res: express.Response) {
-    // TODO: handle admin
+export async function getMyUser(req: Request, res: express.Response) {
     if (!req.user)
         return res.status(404).json({
             success: false,
@@ -349,11 +351,40 @@ export async function getUser(req: Request, res: express.Response) {
 }
 
 /**
+ * @desc Update User
+ * @route GET /api/v1/users/:id
+ * @access Restricted
+ */
+export async function updateUser(req: Request, res: express.Response) {
+    // TODO: on patch email reconfirm email before switching it over
+    // need temp table for that
+
+    await CRUD.update(
+        req,
+        res,
+        "user",
+        User,
+        [
+            "email",
+            "username",
+            "password",
+            "emailConfirmed",
+            "tokenVersion",
+            "isAdmin",
+            "isSuperAdmin"
+        ],
+        undefined,
+        true,
+        select
+    );
+}
+
+/**
  * @desc Delete User
  * @route DELETE /api/v1/users
  * @access Restricted
  */
-export async function deleteUser(req: Request, res: express.Response) {
+export async function deleteMyUser(req: Request, res: express.Response) {
     // TODO: handle admin
     try {
         let user: UserType;

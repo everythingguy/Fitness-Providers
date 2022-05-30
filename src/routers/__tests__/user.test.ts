@@ -1,4 +1,5 @@
 // TODO: update tests to work with confirmation email and forgot password
+// TODO: write tests for /api/v1/users/:id and /api/v1/users (GET ALL)
 
 import request from "supertest";
 import faker from "faker";
@@ -89,10 +90,10 @@ describe(`POST ${apiPath}/users/login`, () => {
     });
 });
 
-describe(`GET ${apiPath}/users`, () => {
+describe(`GET ${apiPath}/users/me`, () => {
     it("should fail to return the user's info", async () => {
         const res = await request(app)
-            .get(`${apiPath}/users`)
+            .get(`${apiPath}/users/me`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
             .expect("Content-Type", /json/);
@@ -119,10 +120,10 @@ describe(`POST ${apiPath}/users/logout`, () => {
     });
 });
 
-describe(`DELETE ${apiPath}/users`, () => {
+describe(`DELETE ${apiPath}/users/me`, () => {
     it("should fail to delete the user", async () => {
         const res = await request(app)
-            .del(`${apiPath}/users`)
+            .del(`${apiPath}/users/me`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
             .expect("Content-Type", /json/);
@@ -276,10 +277,10 @@ describe(`POST ${apiPath}/users/login`, () => {
     });
 });
 
-describe(`GET ${apiPath}/users`, () => {
+describe(`GET ${apiPath}/users/me`, () => {
     it("should return the user's info", async () => {
         const res = await request(app)
-            .get(`${apiPath}/users`)
+            .get(`${apiPath}/users/me`)
             .set("Authorization", "bearer " + accessToken)
             .expect(200)
             .expect("Content-Type", /json/);
@@ -317,10 +318,10 @@ describe(`POST ${apiPath}/users/logout`, () => {
     });
 });
 
-describe(`GET ${apiPath}/users`, () => {
+describe(`GET ${apiPath}/users/me`, () => {
     it("should fail to return the user's info", async () => {
         const res = await request(app)
-            .get(`${apiPath}/users`)
+            .get(`${apiPath}/users/me`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
             .expect("Content-Type", /json/);
@@ -368,10 +369,10 @@ describe(`POST ${apiPath}/users/login`, () => {
     });
 });
 
-describe(`DELETE ${apiPath}/users`, () => {
+describe(`DELETE ${apiPath}/users/me`, () => {
     it("should delete the user", async () => {
         const res = await request(app)
-            .del(`${apiPath}/users`)
+            .del(`${apiPath}/users/me`)
             .set("Authorization", "bearer " + accessToken)
             .set("Cookie", authCookie)
             .expect(200)
@@ -390,10 +391,10 @@ describe(`DELETE ${apiPath}/users`, () => {
     });
 });
 
-describe(`GET ${apiPath}/users`, () => {
+describe(`GET ${apiPath}/users/me`, () => {
     it("should fail to return the user's info", async () => {
         const res = await request(app)
-            .get(`${apiPath}/users`)
+            .get(`${apiPath}/users/me`)
             .set("Authorization", "bearer " + accessToken)
             .expect(401)
             .expect("Content-Type", /json/);

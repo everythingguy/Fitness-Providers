@@ -123,6 +123,17 @@ export const Profile: React.FC<Props> = () => {
                         {formatPhoneNumber(providerData.phone)}
                     </p>
                     <p className="mb-0">{providerData.user.email}</p>
+                    {/* TODO: external link warning */}
+                    {providerData.website && (
+                        <a
+                            className="mb-0 text-decoration-none text-reset"
+                            href={providerData.website}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                        >
+                            {providerData.website}
+                        </a>
+                    )}
                     {providerData.address && (
                         <p className="mb-0">{`${providerData.address.city}, ${providerData.address.state} ${providerData.address.zip}`}</p>
                     )}
@@ -143,6 +154,7 @@ export const Profile: React.FC<Props> = () => {
                 <div className="col-lg-6 col-md-12 p-0">
                     <ResultList
                         title="Courses"
+                        maxHeight="550px"
                         items={courseData.map((c) => ({
                             _id: c._id,
                             image:

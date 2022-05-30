@@ -22,9 +22,30 @@ userRouter.route("/password/forgot").post(Controller.forgotPassword);
 
 userRouter.route("/password/reset/:code").post(Controller.resetPassword);
 
+/* TODO:
 userRouter
     .route("/")
-    .get(Permission.isLoggedIn, Controller.getUser)
-    .delete(Permission.isLoggedIn, Controller.deleteUser);
+    .get(Permission.isAdmin, Controller.getUsers);
+    */
 
+userRouter
+    .route("/:id")
+    .patch(
+        Permission.isLoggedIn,
+        Permission.isOwnerOrAdmin(Permission.OwnerOfUser),
+        Controller.updateUser
+    );
+/* TODO:
+    .get(
+        Permission.isLoggedIn,
+        Permission.isOwnerOrAdmin(Permission.OwnerOfUser),
+        Controller.getUser
+    );
+    .delete(Permission.isAdmin, Controller.deleteUser);
+    */
+
+userRouter
+    .route("/me")
+    .get(Permission.isLoggedIn, Controller.getMyUser)
+    .delete(Permission.isLoggedIn, Controller.deleteMyUser);
 export default userRouter;

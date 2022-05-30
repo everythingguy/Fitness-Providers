@@ -4,15 +4,15 @@ import Select from "react-select";
 
 import { UserContext } from "../../../context/UserState";
 import { Address as AddressType } from "../../../@types/Models";
-import Address from "../../../API/Address";
 import SettingsHeader from "../../../components/SettingsHeader";
+import { User, Provider, Address } from "../../../API";
 
 interface Props {}
 
 // TODO: API requests
 
 export const Settings: React.FC<Props> = () => {
-    const { user, loggedIn } = useContext(UserContext);
+    const { user, loggedIn, setLogin } = useContext(UserContext);
 
     const [errors, setError] = useState({
         firstName: null,
@@ -59,9 +59,86 @@ export const Settings: React.FC<Props> = () => {
         }
     };
 
-    const onSubmit = async () => {
-        // eslint-disable-next-line no-console
-        console.log(formData);
+    const onSubmit = () => {
+        const promises: Promise<any>[] = [];
+        setError({
+            firstName: null,
+            lastName: null,
+            email: null,
+            phone: null,
+            website: null,
+            address: null
+        });
+
+        const { firstName, lastName, email, phone, website } = formData;
+        const userBody = {
+            firstName,
+            lastName,
+            email
+        };
+
+        if (user?.firstName === firstName) delete userBody.firstName;
+        if (user?.lastName === lastName) delete userBody.lastName;
+        if (user?.email === email) delete userBody.email;
+
+        if (Object.keys(userBody).length > 0 && user) {
+            const userPromise = User.updateUser(user._id, userBody);
+
+            userPromise.then((userResp) => {
+                if (!userResp.success) {
+                    if (
+                        typeof userResp.error === "object" &&
+                        !Array.isArray(userResp.error)
+                    )
+                        setError({ ...errors, ...userResp.error });
+                }
+            });
+
+            promises.push(userPromise);
+        }
+
+        if (user && user.provider) {
+            const providerBody: {
+                phone: string | undefined;
+                website: string | undefined | null;
+                address: string | undefined;
+            } = {
+                phone,
+                website: website && website.length > 0 ? website : null,
+                address: selectedAddress._id
+            };
+
+            if (user.provider.phone === phone) delete providerBody.phone;
+            if (user.provider.website === providerBody.website)
+                delete providerBody.website;
+            if (user.provider.address._id === providerBody.address)
+                delete providerBody.address;
+
+            if (Object.keys(providerBody).length > 0) {
+                const providerPromise = Provider.updateProvider(
+                    user.provider._id,
+                    providerBody
+                );
+
+                providerPromise.then((providerResp) => {
+                    if (!providerResp.success) {
+                        if (
+                            typeof providerResp.error === "object" &&
+                            !Array.isArray(providerResp.error)
+                        )
+                            setError({ ...errors, ...providerResp.error });
+                    }
+                });
+
+                promises.push(providerPromise);
+            }
+        }
+
+        if (promises.length > 0) {
+            Promise.all(promises).then(() => {
+                if (setLogin) setLogin(true);
+            });
+        }
     };
 
     useEffect(() => {
@@ -76,7 +153,7 @@ export const Settings: React.FC<Props> = () => {
                         }
                     ]);
             });
-    }, [user]);
+    }, []);
 
     if (!loggedIn) return <Navigate to="/" />;
 
@@ -92,8 +169,8 @@ export const Settings: React.FC<Props> = () => {
                             : "form-control"
                     }
                     type="text"
-                    placeholder="Name"
-                    name="name"
+                    placeholder="First Name"
+                    name="firstName"
                     required
                     value={formData.firstName}
                     onChange={onChange}
@@ -110,8 +187,8 @@ export const Settings: React.FC<Props> = () => {
                             : "form-control"
                     }
                     type="text"
-                    placeholder="Name"
-                    name="name"
+                    placeholder="Last Name"
+                    name="lastName"
                     required
                     value={formData.lastName}
                     onChange={onChange}
@@ -128,9 +205,10 @@ export const Settings: React.FC<Props> = () => {
                             : "form-control"
                     }
                     type="text"
-                    placeholder="Name"
-                    name="name"
+                    placeholder="Email"
+                    name="email"
                     required
+                    readOnly // TODO: remove once working on the backend
                     value={formData.email}
                     onChange={onChange}
                     onKeyUp={enterSubmit}
@@ -146,8 +224,8 @@ export const Settings: React.FC<Props> = () => {
                             : "form-control"
                     }
                     type="text"
-                    placeholder="Name"
-                    name="name"
+                    placeholder="Phone"
+                    name="phone"
                     required
                     value={formData.phone}
                     onChange={onChange}
@@ -164,9 +242,9 @@ export const Settings: React.FC<Props> = () => {
                             : "form-control"
                     }
                     type="text"
-                    placeholder="Name"
-                    name="name"
-                    value={formData.website}
+                    placeholder="Website"
+                    name="website"
+                    value={formData.website || ""}
                     onChange={onChange}
                     onKeyUp={enterSubmit}
                 />

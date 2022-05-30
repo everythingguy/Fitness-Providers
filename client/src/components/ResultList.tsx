@@ -30,6 +30,7 @@ interface Props {
     items: Item[];
     component?: React.FC<ComponentProps>;
     style?: React.CSSProperties;
+    maxHeight?: string;
     onEdit?: (id: string) => void;
     onDelete?: (id: string) => void;
     onScrollBottom?: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
@@ -40,6 +41,7 @@ export const ResultList: React.FC<Props> = ({
     items,
     component = Result,
     style,
+    maxHeight = "300px",
     onEdit,
     onDelete,
     onScrollBottom
@@ -61,7 +63,7 @@ export const ResultList: React.FC<Props> = ({
                 <div
                     onScroll={onScroll}
                     className="list-group rounded-2 import w-100 overflow-auto"
-                    style={{ maxHeight: "300px" }}
+                    style={{ maxHeight }}
                 >
                     {items.map((item) =>
                         React.createElement(component, {

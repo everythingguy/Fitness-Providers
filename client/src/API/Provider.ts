@@ -92,6 +92,29 @@ export class Provider {
             );
         });
     }
+
+    static async updateProvider(
+        providerID: string,
+        body: {
+            [key: string]: any;
+        }
+    ): Promise<ProviderResponse | ErrorResponse> {
+        const request = new DataRequest("PATCH", `providers/${providerID}`);
+
+        request.setBody(body);
+
+        return new Promise((res) => {
+            APIManager.sendRequest<ProviderResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
 }
 
 export default Provider;
