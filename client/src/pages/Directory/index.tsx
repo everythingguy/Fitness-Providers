@@ -351,13 +351,7 @@ export const Directory: React.FC = () => {
                                     ? `${p.address.city}, ${p.address.state} ${p.address.zip}`
                                     : ""
                             }
-                            text={
-                                p.bio && p.bio.length < 50
-                                    ? p.bio
-                                    : p.bio
-                                    ? `${p.bio.substring(0, 49)}...`
-                                    : undefined
-                            }
+                            text={p.bio}
                         ></Card>
                     ))}
                 {display === "courses" &&
@@ -376,11 +370,7 @@ export const Directory: React.FC = () => {
                                     ? `${c.location.city}, ${c.location.state} ${c.location.zip}`
                                     : ""
                             }
-                            text={
-                                c.description && c.description.length < 50
-                                    ? c.description
-                                    : `${c.description.substring(0, 49)}...`
-                            }
+                            text={c.description}
                         ></Card>
                     ))}
                 {display === "sessions" &&
@@ -395,16 +385,7 @@ export const Directory: React.FC = () => {
                             href={s.URL ? s.URL : `/course/${s.course._id}`}
                             title={s.name}
                             subtitle={s.course.name}
-                            text={
-                                s.course.description
-                                    ? s.course.description.length < 50
-                                        ? s.course.description
-                                        : `${s.course.description.substring(
-                                              0,
-                                              49
-                                          )}...`
-                                    : ""
-                            }
+                            text={s.course.description}
                         ></Card>
                     ))}
             </div>

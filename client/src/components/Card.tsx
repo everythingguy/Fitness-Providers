@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import BootstrapCard from "react-bootstrap/Card";
 
@@ -6,8 +6,6 @@ interface innerProps {
     image: string;
     title?: string;
     subtitle?: string;
-    text?: string;
-    date?: string;
 }
 
 interface Props extends innerProps {
@@ -16,15 +14,12 @@ interface Props extends innerProps {
     external?: boolean;
     newTab?: boolean;
     className?: string;
+    text?: string;
+    date?: string;
+    readMore?: boolean;
 }
 
-const InnerCard: React.FC<innerProps> = ({
-    title,
-    subtitle,
-    text,
-    date,
-    image
-}) => {
+const InnerCard: React.FC<innerProps> = ({ title, subtitle, image }) => {
     return (
         <>
             <BootstrapCard.Img
@@ -39,10 +34,6 @@ const InnerCard: React.FC<innerProps> = ({
                     <BootstrapCard.Subtitle>{subtitle}</BootstrapCard.Subtitle>
                 )}
             </BootstrapCard.Header>
-            <BootstrapCard.Body>
-                {text && <BootstrapCard.Text>{text}</BootstrapCard.Text>}
-            </BootstrapCard.Body>
-            {date && <BootstrapCard.Footer>{date}</BootstrapCard.Footer>}
         </>
     );
 };
@@ -57,8 +48,12 @@ export const Card: React.FC<Props> = ({
     image,
     className = "",
     external = false,
-    newTab = true
+    newTab = true,
+    readMore = true
 }) => {
+    const maxLength = 100;
+    const [displayAll, setDisplayAll] = useState(false);
+
     return (
         <div
             className={"p-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 " + className}
@@ -80,8 +75,6 @@ export const Card: React.FC<Props> = ({
                             image={image}
                             title={title}
                             subtitle={subtitle}
-                            text={text}
-                            date={date}
                         />
                     </a>
                 ) : (
@@ -94,11 +87,43 @@ export const Card: React.FC<Props> = ({
                             image={image}
                             title={title}
                             subtitle={subtitle}
-                            text={text}
-                            date={date}
                         />
                     </Link>
                 )}
+                <BootstrapCard.Body>
+                    {text && readMore && text.length > maxLength ? (
+                        <BootstrapCard.Text>
+                            {displayAll ? (
+                                <>
+                                    <p>{text}</p>
+                                    <button
+                                        role="button"
+                                        type="button"
+                                        className="text-primary"
+                                        onClick={() => setDisplayAll(false)}
+                                    >
+                                        read less
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <p>{text.substring(0, maxLength - 1)}...</p>
+                                    <button
+                                        role="button"
+                                        type="button"
+                                        className="text-primary"
+                                        onClick={() => setDisplayAll(true)}
+                                    >
+                                        read more
+                                    </button>
+                                </>
+                            )}
+                        </BootstrapCard.Text>
+                    ) : (
+                        <BootstrapCard.Text>{text}</BootstrapCard.Text>
+                    )}
+                </BootstrapCard.Body>
+                {date && <BootstrapCard.Footer>{date}</BootstrapCard.Footer>}
             </BootstrapCard>
         </div>
     );
