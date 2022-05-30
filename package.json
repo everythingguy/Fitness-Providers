@@ -41,7 +41,7 @@
     "@types/node-fetch": "^2.6.1",
     "@types/nodemailer": "^6.4.4",
     "@types/supertest": "^2.0.12",
-    "@types/validator": "^13.6.3",
+    "@types/validator": "^13.7.2",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "babel-jest": "^26.6.3",
@@ -87,6 +87,6 @@
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.5",
     "path": "^0.12.7",
-    "validator": "^10.11.0"
+    "validator": "^13.7.0"
   }
 }
