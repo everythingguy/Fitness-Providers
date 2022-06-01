@@ -1,5 +1,4 @@
 import express from "express";
-
 import Provider from "../models/provider";
 import Course from "../models/course";
 import Session from "../models/session";
@@ -168,9 +167,38 @@ export async function getLiveSessions(req: Request, res: express.Response) {
             });
     }
 
-    if (session) query["session._id"] = session;
-    if (course) query["session.course._id"] = course;
-    if (provider) query["session.course.provider._id"] = provider;
+    try {
+        if (session)
+            query["session._id"] = new Types.ObjectId(session as string);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: { session: "unable to parse id" }
+        });
+    }
+
+    try {
+        if (course)
+            query["session.course._id"] = new Types.ObjectId(course as string);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: { course: "unable to parse id" }
+        });
+    }
+
+    try {
+        if (provider)
+            query["session.course.provider._id"] = new Types.ObjectId(
+                provider as string
+            );
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: { provider: "unable to parse id" }
+        });
+    }
+
     if (tagFilter.length > 0)
         query["session.course.tags"] = { $all: tagFilter };
     if (zip) query["session.course.location.zip"] = zip;
