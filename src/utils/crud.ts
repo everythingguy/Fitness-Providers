@@ -118,11 +118,14 @@ export async function readAll<T extends Base>(
     query: FilterQuery<T> = {},
     plural?: string,
     populate?: string[] | Populate[] | Populate,
-    aggregate = false
+    aggregate = false,
+    sort = true
 ) {
     const pageLimit = 50;
     let page = 1;
-    const sort = req.query.sort ? req.query.sort : "-createdAt";
+    const sortOption = req.query.sort
+        ? (req.query.sort as string)
+        : "-createdAt";
 
     try {
         page = Math.max(1, parseInt(req.query.page as string, 10));
@@ -135,7 +138,7 @@ export async function readAll<T extends Base>(
         const options = {
             page,
             limit: pageLimit,
-            sort,
+            sort: sortOption,
             populate
         };
 
@@ -153,6 +156,8 @@ export async function readAll<T extends Base>(
         >;
 
         if (aggregate) {
+            if (!sort) delete options.sort;
+
             objs = await (model as any).aggregatePaginate(
                 model.aggregate(query as any),
                 options

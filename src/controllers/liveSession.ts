@@ -1,16 +1,12 @@
 import express from "express";
 
-import Address from "../models/address";
 import Provider from "../models/provider";
 import Course from "../models/course";
 import Session from "../models/session";
 import LiveSession from "../models/liveSession";
 import { Request, RequestBody } from "../@types/request";
 import {
-    Address as AddressType,
     Provider as ProviderType,
-    Course as CourseType,
-    Session as SessionType,
     LiveSession as LiveSessionType
 } from "../@types/models";
 import * as CRUD from "../utils/crud";
@@ -156,64 +152,34 @@ export async function getLiveSessions(req: Request, res: express.Response) {
 
     let query: FilterQuery<LiveSessionType> = {};
 
-    const addressQuery: FilterQuery<AddressType> = {};
-    const providerQuery: FilterQuery<ProviderType> = {};
-    let courseQuery: FilterQuery<CourseType> = {};
-    let sessionQuery: FilterQuery<SessionType> = {};
-
     // hide sessions that belong to unenrolled providers
     // unless the logged in user is admin or the owner of the session
-    if (!(req.user && req.user.isAdmin)) providerQuery.isEnrolled = true;
+    if (!(req.user && req.user.isAdmin))
+        query = appendQuery(query, {
+            "session.course.provider.isEnrolled": true
+        });
 
-    if (session) query.session = session;
-    if (course) sessionQuery.course = course;
-    if (provider) courseQuery.provider = provider;
-    if (tagFilter.length > 0) courseQuery.tags = tagFilter;
-    if (zip) addressQuery.zip = zip;
-
-    // TODO: convert this whole thing to a aggregate since this many queries can easily hit a memory limit
-
-    if (Object.keys(addressQuery).length > 0) {
-        const addresses = await Address.find(addressQuery).select("_id");
-        courseQuery = appendQuery(courseQuery, { location: addresses });
-    }
-
-    if (Object.keys(providerQuery).length > 0) {
-        const providers = await Provider.find(providerQuery).select("_id");
-        courseQuery = appendQuery(courseQuery, { provider: providers });
-    }
-
-    if (Object.keys(courseQuery).length > 0) {
-        const courses = await Course.find(courseQuery).select("_id");
-        sessionQuery = appendQuery(sessionQuery, { course: courses });
-    }
-
-    if (Object.keys(sessionQuery).length > 0) {
-        const sessions = await Session.find(sessionQuery).select("_id");
-        query = appendQuery(query, { session: { $in: sessions } });
-    }
+    if (session) query["session._id"] = session;
+    if (course) query["session.course._id"] = course;
+    if (provider) query["session.course.provider._id"] = provider;
+    if (tagFilter.length > 0)
+        query["session.course.tags"] = { $all: tagFilter };
+    if (zip) query["session.course.location.zip"] = zip;
 
     if (search && search.length > 0) {
-        const courses = await Course.find({
-            name: { $regex: search, $options: "i" }
-        }).select("_id");
-        const sessions = await Session.find({
-            $or: [
-                { name: { $regex: search, $options: "i" } },
-                { course: courses }
-            ]
-        }).select("_id");
-
         query = appendQuery(query, {
-            session: { $in: sessions }
+            $or: [
+                {
+                    "session.course.name": { $regex: search, $options: "i" }
+                },
+                {
+                    "session.name": { $regex: search, $options: "i" }
+                }
+            ]
         });
     }
 
-    let isAggregate = false;
-
     if (day) {
-        isAggregate = true;
-
         let nextDay = new Date(date);
         nextDay = new Date(nextDay.setDate(date.getDate() + 1));
 
@@ -239,79 +205,115 @@ export async function getLiveSessions(req: Request, res: express.Response) {
                 }
             ]
         });
+    }
 
-        query = [
-            {
-                $lookup: {
-                    from: "sessions",
-                    localField: "session",
-                    foreignField: "_id",
-                    as: "session"
-                }
-            },
-            { $unwind: "$session" },
-            {
-                $lookup: {
-                    from: "courses",
-                    localField: "session.course",
-                    foreignField: "_id",
-                    as: "course"
-                }
-            },
-            { $unwind: "$course" },
-            {
-                $addFields: {
-                    "session.course": "$course",
-                    date
-                }
-            },
-            {
-                $lookup: {
-                    from: "addresses",
-                    localField: "session.course.location",
-                    foreignField: "_id",
-                    as: "location"
-                }
-            },
-            { $unwind: "$location" },
-            {
-                $addFields: {
-                    "session.course.location": "$location",
-                    onFrequency: {
-                        $function: {
-                            body: function (
-                                beginDateTime: Date,
-                                recurring: {
-                                    weekDays: WeekDays[];
-                                    frequency: number;
-                                } | null,
-                                date: Date
-                            ) {
-                                // determine if date is within frequency
-                                if (recurring) {
-                                    return (
-                                        Math.round(
-                                            (beginDateTime.getTime() -
-                                                date.getTime()) /
-                                                (7 * 24 * 60 * 60 * 1000)
-                                        ) %
-                                            recurring.frequency ===
-                                        0
-                                    );
-                                } else return false;
-                            },
-                            args: ["$beginDateTime", "$recurring", "$date"],
-                            lang: "js"
-                        }
+    query = [
+        {
+            $lookup: {
+                from: "sessions",
+                localField: "session",
+                foreignField: "_id",
+                as: "session"
+            }
+        },
+        { $unwind: "$session" },
+        {
+            $lookup: {
+                from: "courses",
+                localField: "session.course",
+                foreignField: "_id",
+                as: "course"
+            }
+        },
+        { $unwind: "$course" },
+        {
+            $addFields: {
+                "session.course": "$course",
+                date: date ? date : undefined
+            }
+        },
+        {
+            $lookup: {
+                from: "addresses",
+                localField: "session.course.location",
+                foreignField: "_id",
+                as: "location"
+            }
+        },
+        { $unwind: "$location" },
+        {
+            $lookup: {
+                from: "providers",
+                localField: "session.course.provider",
+                foreignField: "_id",
+                as: "provider"
+            }
+        },
+        { $unwind: "$provider" },
+        {
+            $addFields: {
+                "session.course.location": "$location",
+                "session.course.provider": "$provider",
+                onFrequency: {
+                    $function: {
+                        body: function (
+                            beginDateTime: Date,
+                            recurring: {
+                                weekDays: WeekDays[];
+                                frequency: number;
+                            } | null,
+                            date: Date
+                        ) {
+                            // determine if date is within frequency
+                            if (date && recurring) {
+                                return (
+                                    Math.round(
+                                        (beginDateTime.getTime() -
+                                            date.getTime()) /
+                                            (7 * 24 * 60 * 60 * 1000)
+                                    ) %
+                                        recurring.frequency ===
+                                    0
+                                );
+                            } else return false;
+                        },
+                        args: ["$beginDateTime", "$recurring", "$date"],
+                        lang: "js"
                     }
                 }
-            },
-            { $match: query },
-            {
-                $project: { course: 0, location: 0, onFrequency: 0, date: 0 }
             }
-        ];
-    }
+        },
+        { $match: query },
+        {
+            $project: {
+                course: 0,
+                location: 0,
+                provider: 0,
+                onFrequency: 0,
+                date: 0
+            }
+        }
+    ];
+
+    if (day) {
+        query.push({
+            $addFields: {
+                hour: { $hour: "$beginDateTime" },
+                minute: { $minute: "$beginDateTime" }
+            }
+        });
+
+        query.push({
+            $sort: { hour: 1, minute: 1, _id: 1 }
+        });
+
+        query.push({
+            $project: {
+                hour: 0,
+                minute: 0
+            }
+        });
+    } else query.push({ $sort: { beginDateTime: 1, _id: 1 } });
 
     await CRUD.readAll<LiveSessionType>(
         req,
@@ -321,7 +323,8 @@ export async function getLiveSessions(req: Request, res: express.Response) {
         query,
         undefined,
         populate,
-        isAggregate
+        true,
+        false
     );
 }
 
