@@ -51,8 +51,8 @@ export interface Recurring {
 
 export interface LiveSession extends Base {
     session: Session;
-    beginDateTime: Date;
-    endDateTime: Date;
+    beginDateTime: string;
+    endDateTime: string;
     recurring: Recurring;
 }
 

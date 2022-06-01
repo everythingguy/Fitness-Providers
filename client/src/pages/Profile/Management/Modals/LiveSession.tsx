@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
 import { DatePicker, TimePicker } from "antd";
 import moment from "moment";
 
 import Session from "../../../../API/Session";
-import { Course as CourseType } from "../../../../@types/Models";
+import {
+    Course as CourseType,
+    Session as SessionType,
+    LiveSession as LiveSessionType
+} from "../../../../@types/Models";
 import CircleToggle from "./../../../../components/CircleToggle";
 import LiveSession from "../../../../API/LiveSession";
 import { WeekDays } from "../../../../@types/enums";
@@ -77,6 +81,11 @@ export const LiveSessionModal: React.FC<Props> = ({
             endDate: null
         }
     });
+
+    const currentInfo = useRef<{
+        liveSession: LiveSessionType;
+        session: SessionType;
+    } | null>(null);
 
     const onChange = (e) => {
         if (e.target.type === "checkbox")
@@ -175,34 +184,49 @@ export const LiveSessionModal: React.FC<Props> = ({
                           ).toDate(),
                     formData.isRecurring ? formData.recurring : undefined
                 );
-            else
+            else {
+                const beginDateTime = moment(
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    `${formData.date!.format(
+                        "YYYY-MM-DD"
+                    )} ${formData.time[0].format("hh:mm:ss a")}`,
+                    "YYYY-MM-DD hh:mm:ss a"
+                ).toDate();
+
+                const endDateTime = formData.isRecurring
+                    ? moment(
+                          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                          `${formData.recurring.endDate!.format(
+                              "YYYY-MM-DD"
+                          )} ${formData.time[1].format("hh:mm:ss a")}`,
+                          "YYYY-MM-DD hh:mm:ss a"
+                      ).toDate()
+                    : moment(
+                          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                          `${formData.date!.format(
+                              "YYYY-MM-DD"
+                          )} ${formData.time[1].format("hh:mm:ss a")}`,
+                          "YYYY-MM-DD hh:mm:ss a"
+                      ).toDate();
+
                 liveResp = await LiveSession.updateLiveSession(
                     info.id,
                     sessionResp.data.session._id,
-                    moment(
+                    new Date(
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        `${formData.date!.format(
-                            "YYYY-MM-DD"
-                        )} ${formData.time[0].format("hh:mm:ss a")}`,
-                        "YYYY-MM-DD hh:mm:ss a"
-                    ).toDate(),
-                    formData.isRecurring
-                        ? moment(
-                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                              `${formData.recurring.endDate!.format(
-                                  "YYYY-MM-DD"
-                              )} ${formData.time[1].format("hh:mm:ss a")}`,
-                              "YYYY-MM-DD hh:mm:ss a"
-                          ).toDate()
-                        : moment(
-                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                              `${formData.date!.format(
-                                  "YYYY-MM-DD"
-                              )} ${formData.time[1].format("hh:mm:ss a")}`,
-                              "YYYY-MM-DD hh:mm:ss a"
-                          ).toDate(),
+                        currentInfo.current!.liveSession.beginDateTime
+                    ).getTime() === beginDateTime.getTime()
+                        ? undefined
+                        : beginDateTime,
+                    new Date(
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        currentInfo.current!.liveSession.endDateTime
+                    ).getTime() === endDateTime.getTime()
+                        ? undefined
+                        : endDateTime,
                     formData.isRecurring ? formData.recurring : null
                 );
+            }
 
             if (liveResp.success) {
                 setError({
@@ -234,6 +258,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                         endDate: null
                     }
                 });
+                currentInfo.current = null;
             } else {
                 setError(liveResp.error as any);
                 if (!info)
@@ -252,6 +277,10 @@ export const LiveSessionModal: React.FC<Props> = ({
                         liveResp.data.liveSession.session._id
                     ).then((resp) => {
                         if (resp.success) {
+                            currentInfo.current = {
+                                liveSession: liveResp.data.liveSession,
+                                session: resp.data.session
+                            };
                             const session = resp.data.session;
                             const { course } = session;
 
@@ -365,6 +394,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                     "recurring.weekDays": null,
                     "recurring.frequency": null
                 });
+                currentInfo.current = null;
             }}
         >
             <Modal.Header>
@@ -705,6 +735,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                             "recurring.weekDays": null,
                             "recurring.frequency": null
                         });
+                        currentInfo.current = null;
                     }}
                 >
                     Cancel
