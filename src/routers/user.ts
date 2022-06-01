@@ -18,6 +18,14 @@ userRouter.route("/register").post(Controller.addUser);
 
 userRouter.route("/resendConfirmation").post(Controller.resendConfirmation);
 
+userRouter
+    .route("/password/change")
+    .post(
+        Permission.isLoggedIn,
+        Permission.isOwnerOrAdmin(Permission.OwnerOfUser),
+        Controller.changePassword
+    );
+
 userRouter.route("/password/forgot").post(Controller.forgotPassword);
 
 userRouter.route("/password/reset/:code").post(Controller.resetPassword);

@@ -88,7 +88,7 @@ function App() {
                                 element={<UserPages.ResetPassword />}
                             />
                             <Route
-                                path="/user/password/change"
+                                path="/user/settings/password"
                                 element={<UserPages.ChangePassword />}
                             />
                             <Route

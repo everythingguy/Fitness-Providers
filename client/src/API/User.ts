@@ -150,6 +150,36 @@ export class User {
         });
     }
 
+    static async changePassword({
+        currentPassword,
+        password,
+        re_password
+    }: {
+        currentPassword: string;
+        password: string;
+        re_password: string;
+    }): Promise<UserResponse | ErrorResponse> {
+        const request = new DataRequest("POST", "users/password/change");
+
+        request.setBody({
+            currentPassword,
+            password,
+            re_password
+        });
+
+        return new Promise((res) => {
+            APIManager.sendRequest<UserResponse>(
+                request,
+                (body) => {
+                    res({ success: true, data: body.data } as UserResponse);
+                },
+                (body) => {
+                    res({ success: false, error: body.error } as ErrorResponse);
+                }
+            );
+        });
+    }
+
     static async isLoggedIn(): Promise<boolean> {
         return (await this.getUserData()).success;
     }

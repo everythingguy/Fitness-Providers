@@ -418,6 +418,54 @@ export async function deleteMyUser(req: Request, res: express.Response) {
 }
 
 /**
+ * @desc Change Password
+ * @route POST /api/v1/users/password/change
+ * @access Restricted
+ */
+export async function changePassword(req: Request, res: express.Response) {
+    const { currentPassword, password, re_password } = req.body;
+
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (!user)
+            return res
+                .status(404)
+                .json({ success: false, error: "User not found" });
+
+        if (!user.isValidPassword(currentPassword))
+            return res.status(400).json({
+                success: false,
+                error: { currentPassword: "Current password was incorrect" }
+            });
+
+        if (password !== re_password)
+            return res.status(400).json({
+                success: false,
+                error: {
+                    password: "Passwords do not match",
+                    re_password: "Passwords do not match"
+                }
+            });
+
+        user.password = password;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            data: {
+                user: {
+                    ...req.user,
+                    provider: req.provider ? req.provider : null
+                }
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: "Server Error" });
+    }
+}
+
+/**
  * @desc Request Password Reset
  * @route POST /api/v1/users/password/forgot
  * @access Public

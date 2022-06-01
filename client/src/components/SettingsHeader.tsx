@@ -32,7 +32,7 @@ export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
             )}
             <Link
                 className={activePage === "info" ? activeBtnStyle : btnStyle}
-                to="/user/password/change"
+                to="/user/settings/password"
             >
                 Change Password
             </Link>

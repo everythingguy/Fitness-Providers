@@ -55,7 +55,7 @@ export const Settings: React.FC<Props> = () => {
     ) => {
         if (e.keyCode === 13) {
             e.preventDefault();
-            await onSubmit();
+            onSubmit();
         }
     };
 

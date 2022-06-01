@@ -91,8 +91,8 @@ UserSchema.method("getProvider", async function (this: UserType) {
 
 UserSchema.pre("save", async function (next) {
     if (this.isSuperAdmin) this.isAdmin = true;
-    if (!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password, 10);
+    if (this.isModified("password"))
+        this.password = await bcrypt.hash(this.password, 10);
     next();
 });
 
