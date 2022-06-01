@@ -154,10 +154,19 @@ export async function getLiveSessions(req: Request, res: express.Response) {
 
     // hide sessions that belong to unenrolled providers
     // unless the logged in user is admin or the owner of the session
-    if (!(req.user && req.user.isAdmin))
-        query = appendQuery(query, {
-            "session.course.provider.isEnrolled": true
-        });
+    if (!(req.user && req.user.isAdmin)) {
+        if (req.provider)
+            query = appendQuery(query, {
+                $or: [
+                    { "session.course.provider.isEnrolled": true },
+                    { "session.course.provider._id": req.provider._id }
+                ]
+            });
+        else
+            query = appendQuery(query, {
+                "session.course.provider.isEnrolled": true
+            });
+    }
 
     if (session) query["session._id"] = session;
     if (course) query["session.course._id"] = course;
