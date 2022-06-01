@@ -433,7 +433,7 @@ export async function changePassword(req: Request, res: express.Response) {
                 .status(404)
                 .json({ success: false, error: "User not found" });
 
-        if (!user.isValidPassword(currentPassword))
+        if (!(await user.isValidPassword(currentPassword)))
             return res.status(400).json({
                 success: false,
                 error: { currentPassword: "Current password was incorrect" }
@@ -461,7 +461,7 @@ export async function changePassword(req: Request, res: express.Response) {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: "Server Error" });
+        postPatchErrorHandler(res, error);
     }
 }
 
