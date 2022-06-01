@@ -7,12 +7,7 @@ import { Home } from "./pages/Home";
 import Directory from "./pages/Directory";
 import Calendar from "./pages/Calendar";
 import Course from "./pages/Course";
-import {
-    Profile,
-    Management,
-    MyProfile,
-    LiveManagement
-} from "./pages/Profile";
+import * as ProfilePages from "./pages/Profile";
 import * as UserPages from "./pages/User";
 import Terms from "./pages/Terms";
 
@@ -56,19 +51,19 @@ function App() {
                             <Route path="/course/:id" element={<Course />} />
                             <Route
                                 path="/provider/profile/me"
-                                element={<MyProfile />}
+                                element={<ProfilePages.MyProfile />}
                             />
                             <Route
                                 path="/provider/profile/:id"
-                                element={<Profile />}
+                                element={<ProfilePages.Profile />}
                             />
                             <Route
                                 path="/provider/management"
-                                element={<Management />}
+                                element={<ProfilePages.Management />}
                             />
                             <Route
                                 path="/provider/management/live"
-                                element={<LiveManagement />}
+                                element={<ProfilePages.LiveManagement />}
                             />
 
                             <Route
