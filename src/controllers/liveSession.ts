@@ -1,11 +1,13 @@
 import express from "express";
 
+import Address from "../models/address";
 import Provider from "../models/provider";
 import Course from "../models/course";
 import Session from "../models/session";
 import LiveSession from "../models/liveSession";
 import { Request, RequestBody } from "../@types/request";
 import {
+    Address as AddressType,
     Provider as ProviderType,
     Course as CourseType,
     Session as SessionType,
@@ -133,7 +135,7 @@ export async function getLiveSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getLiveSessions(req: Request, res: express.Response) {
-    const { provider, course, session, day, search } = req.query;
+    const { provider, course, session, day, search, zip } = req.query;
 
     if (req.query.sort === undefined) req.query.sort = "beginDateTime";
 
@@ -152,94 +154,55 @@ export async function getLiveSessions(req: Request, res: express.Response) {
         }
     }
 
+    let query: FilterQuery<LiveSessionType> = {};
+
+    const addressQuery: FilterQuery<AddressType> = {};
+    const providerQuery: FilterQuery<ProviderType> = {};
+    let courseQuery: FilterQuery<CourseType> = {};
+    let sessionQuery: FilterQuery<SessionType> = {};
+
     // hide sessions that belong to unenrolled providers
     // unless the logged in user is admin or the owner of the session
-    let query: FilterQuery<LiveSessionType>;
+    if (!(req.user && req.user.isAdmin)) providerQuery.isEnrolled = true;
 
-    if (req.user && req.user.isAdmin) {
-        query = {};
-        if (session || course || provider) {
-            query = { $and: [] };
-            if (session) query.$and.push({ session });
-            if (course) {
-                const courseSessions = await Session.find({ course });
-                query.$and.push({ session: { $in: courseSessions } });
-            }
-            if (provider) {
-                const courseQuery: FilterQuery<CourseType> = { provider };
-                if (tagFilter.length > 0) courseQuery.tags = tagFilter;
+    if (session) query.session = session;
+    if (course) sessionQuery.course = course;
+    if (provider) courseQuery.provider = provider;
+    if (tagFilter.length > 0) courseQuery.tags = tagFilter;
+    if (zip) addressQuery.zip = zip;
 
-                const providerCourses = await Course.find(courseQuery);
+    // TODO: convert this whole thing to a aggregate since this many queries can easily hit a memory limit
 
-                const courseSessions = await Session.find({
-                    course: providerCourses
-                });
+    if (Object.keys(addressQuery).length > 0) {
+        const addresses = await Address.find(addressQuery).select("_id");
+        courseQuery = appendQuery(courseQuery, { location: addresses });
+    }
 
-                query.$and.push({ session: { $in: courseSessions } });
-            }
-        }
-        if (tagFilter.length > 0 && !provider) {
-            const tagCourses = await Course.find({ tags: tagFilter });
-            const tagSessions = await Session.find({ course: tagCourses });
+    if (Object.keys(providerQuery).length > 0) {
+        const providers = await Provider.find(providerQuery).select("_id");
+        courseQuery = appendQuery(courseQuery, { provider: providers });
+    }
 
-            query = appendQuery(query, { session: { $in: tagSessions } });
-        }
-    } else {
-        const providerFilter: FilterQuery<ProviderType>[] = [
-            { isEnrolled: true }
-        ];
-        if (req.provider) providerFilter.push({ _id: req.provider._id });
+    if (Object.keys(courseQuery).length > 0) {
+        const courses = await Course.find(courseQuery).select("_id");
+        sessionQuery = appendQuery(sessionQuery, { course: courses });
+    }
 
-        let provFilter: FilterQuery<ProviderType> = {
-            $or: providerFilter
-        };
-
-        if (provider)
-            provFilter = {
-                $and: [{ $or: providerFilter }, { provider }]
-            };
-
-        const approvedProviders = await Provider.find(provFilter).select("_id");
-
-        let approvedCourses: CourseType[];
-        if (tagFilter.length > 0)
-            approvedCourses = await Course.find({
-                provider: approvedProviders,
-                tags: tagFilter
-            });
-        else
-            approvedCourses = await Course.find({
-                provider: approvedProviders
-            }).select("_id");
-
-        let sessionFilter: FilterQuery<SessionType> = {
-            course: approvedCourses
-        };
-
-        if (course)
-            sessionFilter = { $and: [{ course: approvedCourses }, { course }] };
-
-        const approvedSessions = await Session.find(sessionFilter).select(
-            "_id"
-        );
-
-        if (session)
-            query = {
-                $and: [{ session: { $in: approvedSessions } }, { session }]
-            };
-        else query = { session: { $in: approvedSessions } };
+    if (Object.keys(sessionQuery).length > 0) {
+        const sessions = await Session.find(sessionQuery).select("_id");
+        query = appendQuery(query, { session: { $in: sessions } });
     }
 
     if (search && search.length > 0) {
         const courses = await Course.find({
             name: { $regex: search, $options: "i" }
-        });
+        }).select("_id");
         const sessions = await Session.find({
             $or: [
                 { name: { $regex: search, $options: "i" } },
                 { course: courses }
             ]
-        });
+        }).select("_id");
 
         query = appendQuery(query, {
             session: { $in: sessions }

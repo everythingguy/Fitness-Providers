@@ -48,6 +48,7 @@ export const Directory: React.FC = () => {
     const pageRef = useRef(page);
 
     const [search, setSearch] = useState<string>("");
+    const [zip, setZip] = useState<number | null>(null);
     const [tags, setTags] = useState<{
         provider: { [key: string]: boolean };
         course: { [key: string]: boolean };
@@ -108,7 +109,8 @@ export const Directory: React.FC = () => {
         Provider.getProviders({
             search,
             tags: tagsArr,
-            page: page.provider
+            page: page.provider,
+            zip: zip ? zip : undefined
         }).then((resp) => {
             if (resp.success) {
                 if (page.provider === null || page.provider > 1)
@@ -134,7 +136,8 @@ export const Directory: React.FC = () => {
         Course.getCourses({
             search,
             tags: tagsArr,
-            page: page.course
+            page: page.course,
+            zip: zip ? zip : undefined
         }).then((resp) => {
             if (resp.success) {
                 if (page.course === null || page.course > 1)
@@ -245,6 +248,26 @@ export const Directory: React.FC = () => {
             }, 250);
         }
     }, [search]);
+
+    useEffect(() => {
+        if (timeout.current) window.clearTimeout(timeout.current);
+
+        if (!firstRender.current) {
+            timeout.current = window.setTimeout(() => {
+                if (page.provider !== 1) {
+                    pageRef.current = { ...page, provider: 1 };
+                    setPage(pageRef.current);
+                } else searchProviders();
+
+                if (page.course !== 1) {
+                    pageRef.current = { ...page, course: 1 };
+                    setPage(pageRef.current);
+                } else searchCourses();
+
+                timeout.current = null;
+            }, 250);
+        }
+    }, [zip]);
 
     useEffect(() => {
         if (!firstRender.current) {
@@ -394,6 +417,34 @@ export const Directory: React.FC = () => {
                 show={showFilterModal}
                 onHide={() => setFilterModal(!showFilterModal)}
             >
+                {display === "providers" || display === "courses" ? (
+                    <div className="col-12">
+                        <div className="card-body mb-md-4">
+                            <label className="fw-bold">Zip Code</label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                placeholder="Zip Code"
+                                name="zip"
+                                value={zip || ""}
+                                onChange={(e) => {
+                                    try {
+                                        const val = e.target.value;
+                                        if (
+                                            val.length > 0 &&
+                                            !isNaN(parseInt(val, 10))
+                                        )
+                                            setZip(parseInt(val, 10));
+                                        else setZip(null);
+                                    } catch (error) {
+                                        setZip(null);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                ) : undefined}
+
                 {display === "providers" &&
                     providerCategories.map((category) => (
                         <CategoryComp

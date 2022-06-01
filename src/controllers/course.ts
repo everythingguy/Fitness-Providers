@@ -11,6 +11,7 @@ import * as CRUD from "../utils/crud";
 import { FilterQuery, Types } from "mongoose";
 import { filterTags } from "./../utils/filter";
 import { appendQuery } from "./../utils/query";
+import Address from "../models/address";
 
 const populate = [
     { path: "location" },
@@ -95,7 +96,7 @@ export async function getCourse(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getCourses(req: Request, res: express.Response) {
-    const { provider, search } = req.query;
+    const { provider, search, zip } = req.query;
 
     // filter based on tags
     const tagFilter: Types.ObjectId[] = filterTags(req);
@@ -138,6 +139,13 @@ export async function getCourses(req: Request, res: express.Response) {
                           tags: tagFilter
                       }
                     : { provider: approvedProviders };
+    }
+
+    if (zip) {
+        const addrQuery = await Address.find({ zip });
+        query = appendQuery(query, {
+            location: addrQuery
+        });
     }
 
     if (search)

@@ -6,6 +6,7 @@ import { Provider as ProviderType } from "../@types/models";
 import * as CRUD from "../utils/crud";
 import { FilterQuery, Types } from "mongoose";
 import { filterTags } from "../utils/filter";
+import { appendQuery } from "../utils/query";
 
 const populate = [
     { path: "address" },
@@ -91,7 +92,7 @@ export async function getProvider(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getProviders(req: Request, res: express.Response) {
-    const { search } = req.query;
+    const { search, zip } = req.query;
     // filter based on tags
     const tagFilter: Types.ObjectId[] = filterTags(req);
 
@@ -149,6 +150,13 @@ export async function getProviders(req: Request, res: express.Response) {
         query = {
             $or: query as FilterQuery<ProviderType>[]
         };
+
+    if (zip) {
+        const addrQuery = await Address.find({ zip });
+        query = appendQuery(query, {
+            address: addrQuery
+        });
+    }
 
     await CRUD.readAll<ProviderType>(
         req,

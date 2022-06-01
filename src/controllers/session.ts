@@ -1,5 +1,6 @@
 import express from "express";
 
+import Address from "../models/address";
 import Provider from "../models/provider";
 import Course from "../models/course";
 import Session from "../models/session";
@@ -105,7 +106,7 @@ export async function getSession(req: Request, res: express.Response) {
  * @access Public
  */
 export async function getSessions(req: Request, res: express.Response) {
-    const { provider, course, search, live } = req.query;
+    const { provider, course, search, live, zip } = req.query;
 
     const blnLive =
         live !== undefined && live !== null
@@ -121,29 +122,22 @@ export async function getSessions(req: Request, res: express.Response) {
 
     if (req.user && req.user.isAdmin) {
         query = {};
-        if (provider) {
-            const courseQuery: FilterQuery<CourseType> = { provider };
-            if (tagFilter.length > 0) courseQuery.tags = tagFilter;
-            const providerCourses = await Course.find(courseQuery);
-            if (course)
-                query.course = {
-                    $and: [{ course: providerCourses }, { course }]
-                };
-            else query.course = providerCourses;
-        } else if (course && !provider) {
-            query.course = course;
-            if (tagFilter.length > 0) {
-                const tagCourses = await Course.find({
-                    _id: course,
-                    tags: tagFilter
-                });
-                query = { course: tagCourses };
-            }
-        } else if (tagFilter.length > 0) {
-            const tagCourses = await Course.find({
-                tags: tagFilter
-            });
-            query = { course: tagCourses };
+        const courseQuery: FilterQuery<CourseType> = {};
+
+        if (provider) courseQuery.provider = provider;
+        if (course) courseQuery._id = course;
+        if (tagFilter.length > 0) courseQuery.tags = tagFilter;
+
+        if (zip) {
+            const addrQuery = await Address.find({ zip });
+            courseQuery.location = addrQuery;
+        }
+
+        if (Object.keys(courseQuery).length === 1 && course) {
+            query = { course };
+        } else if (Object.keys(courseQuery).length > 0) {
+            const courses = await Course.find(courseQuery);
+            query = { course: courses };
         }
     } else {
         const providerFilter: FilterQuery<ProviderType>[] = [
@@ -167,6 +161,13 @@ export async function getSessions(req: Request, res: express.Response) {
         if (tagFilter.length > 0 && provider)
             courseFilter.$and[0].tags = tagFilter;
         else if (tagFilter.length > 0) courseFilter.tags = tagFilter;
+
+        if (zip) {
+            const addrQuery = await Address.find({ zip });
+            courseFilter = appendQuery(courseFilter, {
+                location: addrQuery
+            });
+        }
 
         const approvedCourses = await Course.find(courseFilter).select("_id");
 

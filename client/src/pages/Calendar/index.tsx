@@ -16,8 +16,6 @@ import "react-calendar/dist/Calendar.css";
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
 
-// TODO: for some reason the calendar does not work on dev.duraken.com
-
 interface Props {}
 
 export const Calendar: React.FC<Props> = () => {
@@ -28,6 +26,7 @@ export const Calendar: React.FC<Props> = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const [tags, setTags] = useState<{ [key: string]: boolean }>({});
     const [search, setSearch] = useState("");
+    const [zip, setZip] = useState<number | null>(null);
     const [page, setPage] = useState<number | null>(1);
     const [showFilterModal, setFilterModal] = useState(false);
 
@@ -41,7 +40,8 @@ export const Calendar: React.FC<Props> = () => {
             day: selectedDate ? selectedDate.toISOString() : undefined,
             page,
             tags: tagsArr,
-            search
+            search,
+            zip: zip ? zip : undefined
         }).then((resp) => {
             if (resp.success) {
                 if (page === 1) setLiveSessions(resp.data.liveSessions);
@@ -65,7 +65,7 @@ export const Calendar: React.FC<Props> = () => {
 
             searchTimeout.current = null;
         }, 250);
-    }, [selectedDate, search, tags]);
+    }, [selectedDate, search, tags, zip]);
 
     useEffect(() => {
         if (page) searchLiveSessions();
@@ -161,6 +161,31 @@ export const Calendar: React.FC<Props> = () => {
                 show={showFilterModal}
                 onHide={() => setFilterModal(false)}
             >
+                <div className="col-12">
+                    <div className="card-body mb-md-4">
+                        <label className="fw-bold">Zip Code</label>
+                        <input
+                            className="form-control"
+                            type="text"
+                            placeholder="Zip Code"
+                            name="zip"
+                            value={zip || ""}
+                            onChange={(e) => {
+                                try {
+                                    const val = e.target.value;
+                                    if (
+                                        val.length > 0 &&
+                                        !isNaN(parseInt(val, 10))
+                                    )
+                                        setZip(parseInt(val, 10));
+                                    else setZip(null);
+                                } catch (error) {
+                                    setZip(null);
+                                }
+                            }}
+                        />
+                    </div>
+                </div>
                 {categories.map((category) => (
                     <CategoryComp
                         category={category.name}
