@@ -21,9 +21,6 @@ import { reloadImage } from "../../utils/reload";
 
 interface Props {}
 
-// TODO: edit photo button on hover
-// TODO: edit bio button
-
 export const Profile: React.FC<Props> = () => {
     const match = useMatch("/provider/profile/:id");
     const providerID = match ? match.params.id : null;
