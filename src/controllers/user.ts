@@ -169,6 +169,7 @@ async function revokeRefreshTokensForUser(req: Request, user?: UserType) {
  */
 export async function loginUser(req: Request, res: express.Response) {
     try {
+        // TODO: timeouts per user on 5 failed login attempts
         const user = await User.findOne({ username: req.body.username });
 
         if (!user) {
@@ -475,6 +476,7 @@ export async function forgotPassword(
     res: express.Response
 ) {
     try {
+        // TODO: add timeout per user
         const user = await User.findOne({ email: req.body.email });
 
         if (user) {
