@@ -1,7 +1,8 @@
 import {
     ProviderResponse,
     ProvidersResponse,
-    ErrorResponse
+    ErrorResponse,
+    ImageResponse
 } from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
@@ -102,6 +103,42 @@ export class Provider {
         const request = new DataRequest("PATCH", `providers/${providerID}`);
 
         request.setBody(body);
+
+        return new Promise((res) => {
+            APIManager.sendRequest<ProviderResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
+
+    static async uploadImage(
+        id: string,
+        file: File
+    ): Promise<ImageResponse | ErrorResponse> {
+        return new Promise((res) => {
+            APIManager.uploadImage(
+                `providers/${id}/image`,
+                file,
+                (resp) => res(resp),
+                (resp) => res(resp)
+            );
+        });
+    }
+
+    static async removeImage(
+        id: string
+    ): Promise<ProviderResponse | ErrorResponse> {
+        const request = new DataRequest("PATCH", `providers/${id}`);
+
+        request.setBody({
+            image: null
+        });
 
         return new Promise((res) => {
             APIManager.sendRequest<ProviderResponse>(

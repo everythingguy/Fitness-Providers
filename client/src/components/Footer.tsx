@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
                                 to="/user/register"
                                 className="text-decoration-none d-block text-light"
                             >
-                                Create an Account
+                                Register
                             </Link>
                         )}
                         {loggedIn && !user?.provider && (

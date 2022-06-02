@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import Select from "react-select";
 import { Link, useMatch } from "react-router-dom";
 import Error404 from "../ErrorPages/404";
-import Provider from "../../API/Provider";
-import Course from "../../API/Course";
-import LiveSession from "../../API/LiveSession";
+import { Provider, Course, LiveSession, Tag } from "../../API";
 import {
     Provider as ProviderType,
     Course as CourseType,
-    LiveSession as LiveSessionType
+    LiveSession as LiveSessionType,
+    Tag as TagType
 } from "../../@types/Models";
 import Loading from "../../components/Loading";
 import { formatPhoneNumber } from "./../../utils/format";
@@ -15,15 +15,23 @@ import { ResultList } from "../../components";
 import ReactCalendar from "react-calendar";
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
+import { UserContext } from "../../context/UserState";
+import { Modal } from "react-bootstrap";
+import { reloadImage } from "../../utils/reload";
 
 interface Props {}
 
-// TODO: ability to at least edit bio, image, and tags
-// for some reason tag filtering by provider is not working
+// TODO: edit photo button on hover
+// TODO: edit bio button
 
 export const Profile: React.FC<Props> = () => {
     const match = useMatch("/provider/profile/:id");
     const providerID = match ? match.params.id : null;
+
+    const { user } = useContext(UserContext);
+
+    const isMyProfile =
+        providerID && user && user.provider && user.provider._id === providerID;
 
     const [providerData, setProviderData] = useState<
         ProviderType | null | false
@@ -38,6 +46,32 @@ export const Profile: React.FC<Props> = () => {
         course: number | null;
         liveSession: number | null;
     }>({ course: 1, liveSession: 1 });
+
+    const [showEditModal, setEditModal] = useState(false);
+    const [selectedTags, setSelectedTags] = useState<
+        { value: string; label: string }[]
+    >([]);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const currentImage = useRef<string | null>(null);
+    const [providerTags, setProviderTags] = useState<TagType[]>([]);
+
+    const [formData, setFormData] = useState<{
+        image: File | null;
+        bio: string | null;
+    }>({
+        image: null,
+        bio: null
+    });
+
+    const [errors, setError] = useState<{
+        tags: string | null;
+        image: string | null;
+        bio: string | null;
+    }>({
+        tags: null,
+        image: null,
+        bio: null
+    });
 
     const searchCourses = () => {
         if (providerID && page.course)
@@ -79,11 +113,128 @@ export const Profile: React.FC<Props> = () => {
             });
     };
 
+    const onChange = (e) => {
+        if (e.target.type === "checkbox")
+            setFormData({ ...formData, [e.target.name]: e.target.checked });
+        else setFormData({ ...formData, [e.target.name]: e.target.value });
+        setError({ ...errors, [e.target.name]: null });
+    };
+
+    // allows the enter key to submit the form
+    const enterSubmit = async (
+        e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            await onSubmit();
+        }
+    };
+
+    const onSubmit = () => {
+        if (providerID && providerData)
+            Provider.updateProvider(providerID, {
+                tags: selectedTags.map((tag) => tag.value),
+                bio:
+                    formData.bio && formData.bio.length > 0
+                        ? formData.bio
+                        : null
+            }).then((resp) => {
+                if (resp.success) {
+                    setProviderData(resp.data.provider);
+
+                    if (
+                        currentImage.current !== null &&
+                        selectedImage === null
+                    ) {
+                        // remove image
+                        Provider.removeImage(providerID).then((resp) => {
+                            if (resp.success) {
+                                setProviderData({
+                                    ...providerData,
+                                    image: undefined
+                                });
+                                setEditModal(false);
+                            } else
+                                setError({
+                                    ...errors,
+                                    ...(resp.error as any)
+                                });
+                        });
+                    } else if (
+                        currentImage.current !== selectedImage &&
+                        formData.image
+                    ) {
+                        // upload image
+                        Provider.uploadImage(providerID, formData.image).then(
+                            (resp) => {
+                                if (resp.success && resp.data.image) {
+                                    setProviderData({
+                                        ...providerData,
+                                        image: resp.data.image
+                                    });
+                                    // reload image on the site
+                                    reloadImage(resp.data.image);
+                                    setEditModal(false);
+                                } else
+                                    setError({
+                                        ...errors,
+                                        ...(resp.error as any)
+                                    });
+                            }
+                        );
+                    } else setEditModal(false);
+                } else
+                    setError({
+                        ...errors,
+                        ...(resp.error as any)
+                    });
+            });
+    };
+
+    const resetForm = () => {
+        if (providerData)
+            setSelectedTags(
+                providerData.tags.map((tag) => {
+                    return {
+                        value: tag._id,
+                        label: tag.value
+                    };
+                })
+            );
+
+        if (providerData) currentImage.current = providerData.image || null;
+        else currentImage.current = null;
+
+        if (providerData) setSelectedImage(providerData.image || null);
+        else setSelectedImage(null);
+    };
+
     useEffect(() => {
+        Tag.getProviderTags().then((resp) => {
+            if (resp.success) {
+                setProviderTags(resp.data.tags);
+            }
+        });
+
         if (providerID) {
             Provider.getProvider(providerID).then((resp) => {
-                if (resp.success) setProviderData(resp.data.provider);
-                else setProviderData(false);
+                if (resp.success) {
+                    const { provider } = resp.data;
+                    setProviderData(provider);
+                    setSelectedTags(
+                        provider.tags.map((tag) => {
+                            return { value: tag._id, label: tag.value };
+                        })
+                    );
+                    setFormData({
+                        ...formData,
+                        bio: provider.bio ? provider.bio : null
+                    });
+                    if (provider.image) {
+                        currentImage.current = provider.image;
+                        setSelectedImage(provider.image);
+                    }
+                } else setProviderData(false);
             });
 
             searchCourses();
@@ -108,21 +259,67 @@ export const Profile: React.FC<Props> = () => {
 
     return (
         <>
-            <div className="row">
+            <div className="row mb-3">
                 <div className="col-lg-6 col-md-12 text-center">
-                    <img
-                        className="mx-auto"
-                        src={
-                            providerData.image ||
-                            "https://picsum.photos/500/500?" + providerData._id
-                        }
-                    />
+                    <div className="mx-auto position-relative">
+                        <img
+                            style={{ width: "100%", height: "100%" }}
+                            src={
+                                providerData.image ||
+                                "https://picsum.photos/500/500?" +
+                                    providerData._id
+                            }
+                        />
+                        {isMyProfile && (
+                            <div className="zindex-popover top-0 position-absolute w-100 h-100">
+                                <button
+                                    className="mx-auto bg-black opacity-transition w-100 h-100 d-flex text-center justify-content-center align-items-center"
+                                    onClick={() => setEditModal(true)}
+                                >
+                                    <i
+                                        className="bi bi-pencil-square text-white"
+                                        style={{ fontSize: "10rem" }}
+                                    ></i>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <h1>{providerData.user.name}</h1>
-                    {providerData.bio && <p>{providerData.bio}</p>}
+                    {providerData.bio && (
+                        <p>
+                            {isMyProfile && (
+                                <>
+                                    <button
+                                        role="button"
+                                        onClick={() => setEditModal(true)}
+                                    >
+                                        <i className="bi bi-pencil-square fs-4"></i>
+                                    </button>{" "}
+                                </>
+                            )}
+                            {providerData.bio}
+                        </p>
+                    )}
                     <p className="mb-0">
-                        {formatPhoneNumber(providerData.phone)}
+                        <a
+                            className="mb-0 text-decoration-none text-reset"
+                            href={
+                                "tel:" + formatPhoneNumber(providerData.phone)
+                            }
+                        >
+                            <i className="bi bi-telephone"></i>{" "}
+                            {formatPhoneNumber(providerData.phone)}
+                        </a>
                     </p>
-                    <p className="mb-0">{providerData.user.email}</p>
+                    <p className="mb-0">
+                        <a
+                            className="mb-0 text-decoration-none text-reset"
+                            href={"mailto:" + providerData.user.email}
+                        >
+                            <i className="bi bi-envelope"></i>{" "}
+                            {providerData.user.email}
+                        </a>
+                    </p>
                     {/* TODO: external link warning */}
                     {providerData.website && (
                         <a
@@ -131,11 +328,15 @@ export const Profile: React.FC<Props> = () => {
                             target="_blank"
                             rel="noreferrer noopener"
                         >
+                            <i className="bi bi-globe"></i>{" "}
                             {providerData.website}
                         </a>
                     )}
                     {providerData.address && (
-                        <p className="mb-0">{`${providerData.address.city}, ${providerData.address.state} ${providerData.address.zip}`}</p>
+                        <p className="mb-0">
+                            <i className="bi bi-geo-alt"></i>{" "}
+                            {`${providerData.address.city}, ${providerData.address.state} ${providerData.address.zip}`}
+                        </p>
                     )}
                     <div className="mt-3">
                         {providerData.tags.map((t) => (
@@ -149,6 +350,15 @@ export const Profile: React.FC<Props> = () => {
                                 </span>
                             </Link>
                         ))}
+                        {isMyProfile && (
+                            <button
+                                role="button"
+                                className="me-2 p-1 bg-dark text-light rounded"
+                                onClick={() => setEditModal(true)}
+                            >
+                                +
+                            </button>
+                        )}
                     </div>
                 </div>
                 <div className="col-lg-6 col-md-12 p-0">
@@ -231,6 +441,129 @@ export const Profile: React.FC<Props> = () => {
                     />
                 </div>
             </div>
+            <Modal
+                size="lg"
+                show={showEditModal}
+                onHide={() => {
+                    setEditModal(false);
+                    resetForm();
+                }}
+            >
+                <Modal.Header>Edit Profile</Modal.Header>
+                <Modal.Body>
+                    <div className="form-group mb-4">
+                        <label className="form-label">Bio:</label>
+                        <textarea
+                            className={
+                                errors.bio
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                            }
+                            rows={5}
+                            placeholder="bio"
+                            name="bio"
+                            required
+                            value={formData.bio || ""}
+                            onChange={onChange}
+                            onKeyUp={enterSubmit}
+                        />
+                        <div className="invalid-feedback">{errors.bio}</div>
+                    </div>
+                    <div className="form-group mb-4">
+                        <label className="form-label">Tags:</label>
+                        <Select
+                            options={providerTags.map((tag) => {
+                                return { value: tag._id, label: tag.value };
+                            })}
+                            onChange={(arr) => {
+                                setSelectedTags([...arr]);
+                            }}
+                            value={selectedTags}
+                            isMulti
+                            closeMenuOnSelect={false}
+                            styles={{
+                                control: (provided) =>
+                                    errors.tags
+                                        ? {
+                                              ...provided,
+                                              borderColor: "#dc3545",
+                                              "&:hover": {
+                                                  borderColor: "#a21c29"
+                                              }
+                                          }
+                                        : provided
+                            }}
+                        />
+                        {errors.tags && (
+                            <div className="text-danger">{errors.tags}</div>
+                        )}
+                    </div>
+                    <div className="form-group mb-4">
+                        <label className="form-label">Profile Picture:</label>
+                        <input
+                            className={
+                                errors.image
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                            }
+                            type="file"
+                            name="image"
+                            accept=".jpg,.jpeg,.png"
+                            onChange={(e) => {
+                                if (
+                                    e.target.files &&
+                                    e.target.files.length > 0
+                                ) {
+                                    setSelectedImage(
+                                        URL.createObjectURL(e.target.files[0])
+                                    );
+                                    setFormData({
+                                        ...formData,
+                                        image: e.target.files[0]
+                                    });
+                                }
+                            }}
+                        />
+                        {selectedImage && (
+                            <>
+                                <img
+                                    className="img-thumbnail col-md-3"
+                                    src={selectedImage}
+                                />
+                                <br />
+                                <button
+                                    className="btn btn-danger mb-4"
+                                    type="button"
+                                    onClick={() => setSelectedImage(null)}
+                                >
+                                    Remove
+                                </button>
+                            </>
+                        )}
+                        <div className="invalid-feedback">{errors.image}</div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button
+                        className="btn btn-danger mb-4"
+                        type="button"
+                        onClick={() => {
+                            setEditModal(false);
+                            resetForm();
+                        }}
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        className="btn btn-primary mb-4"
+                        type="button"
+                        onClick={onSubmit}
+                    >
+                        Submit
+                    </button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };

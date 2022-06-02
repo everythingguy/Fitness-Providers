@@ -9,8 +9,6 @@ import { User, Provider, Address } from "../../../API";
 
 interface Props {}
 
-// TODO: API requests
-
 export const Settings: React.FC<Props> = () => {
     const { user, loggedIn, setLogin } = useContext(UserContext);
 
@@ -215,76 +213,80 @@ export const Settings: React.FC<Props> = () => {
                 />
                 <div className="invalid-feedback">{errors.email}</div>
             </div>
-            <div className="form-group mb-4">
-                <label className="form-label">Phone:</label>
-                <input
-                    className={
-                        errors.phone
-                            ? "form-control is-invalid"
-                            : "form-control"
-                    }
-                    type="text"
-                    placeholder="Phone"
-                    name="phone"
-                    required
-                    value={formData.phone}
-                    onChange={onChange}
-                    onKeyUp={enterSubmit}
-                />
-                <div className="invalid-feedback">{errors.phone}</div>
-            </div>
-            <div className="form-group mb-4">
-                <label className="form-label">Website:</label>
-                <input
-                    className={
-                        errors.website
-                            ? "form-control is-invalid"
-                            : "form-control"
-                    }
-                    type="text"
-                    placeholder="Website"
-                    name="website"
-                    value={formData.website || ""}
-                    onChange={onChange}
-                    onKeyUp={enterSubmit}
-                />
-                <div className="invalid-feedback">{errors.website}</div>
-            </div>
-            <div className="form-group mb-4">
-                <label className="form-label">Address:</label>
-                <Select
-                    options={providerAddresses.map((val) => {
-                        return { value: val._id, label: val.street1 };
-                    })}
-                    value={
-                        selectedAddress
-                            ? {
-                                  value: selectedAddress._id,
-                                  label: selectedAddress.street1
-                              }
-                            : undefined
-                    }
-                    onChange={({ value }: any) => {
-                        const address = providerAddresses.filter(
-                            (addr) => addr._id === value
-                        )[0];
-                        setSelectedAddress(address);
-                    }}
-                    styles={{
-                        control: (provided) =>
-                            errors.address
-                                ? {
-                                      ...provided,
-                                      borderColor: "#dc3545",
-                                      "&:hover": {
-                                          borderColor: "#a21c29"
+            {user && user.provider && (
+                <>
+                    <div className="form-group mb-4">
+                        <label className="form-label">Phone:</label>
+                        <input
+                            className={
+                                errors.phone
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                            }
+                            type="text"
+                            placeholder="Phone"
+                            name="phone"
+                            required
+                            value={formData.phone}
+                            onChange={onChange}
+                            onKeyUp={enterSubmit}
+                        />
+                        <div className="invalid-feedback">{errors.phone}</div>
+                    </div>
+                    <div className="form-group mb-4">
+                        <label className="form-label">Website:</label>
+                        <input
+                            className={
+                                errors.website
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                            }
+                            type="text"
+                            placeholder="Website"
+                            name="website"
+                            value={formData.website || ""}
+                            onChange={onChange}
+                            onKeyUp={enterSubmit}
+                        />
+                        <div className="invalid-feedback">{errors.website}</div>
+                    </div>
+                    <div className="form-group mb-4">
+                        <label className="form-label">Address:</label>
+                        <Select
+                            options={providerAddresses.map((val) => {
+                                return { value: val._id, label: val.street1 };
+                            })}
+                            value={
+                                selectedAddress
+                                    ? {
+                                          value: selectedAddress._id,
+                                          label: selectedAddress.street1
                                       }
-                                  }
-                                : provided
-                    }}
-                />
-                <div className="invalid-feedback">{errors.address}</div>
-            </div>
+                                    : undefined
+                            }
+                            onChange={({ value }: any) => {
+                                const address = providerAddresses.filter(
+                                    (addr) => addr._id === value
+                                )[0];
+                                setSelectedAddress(address);
+                            }}
+                            styles={{
+                                control: (provided) =>
+                                    errors.address
+                                        ? {
+                                              ...provided,
+                                              borderColor: "#dc3545",
+                                              "&:hover": {
+                                                  borderColor: "#a21c29"
+                                              }
+                                          }
+                                        : provided
+                            }}
+                        />
+                        <div className="invalid-feedback">{errors.address}</div>
+                    </div>
+                </>
+            )}
             <button
                 className="btn btn-primary mb-4 float-end"
                 type="button"

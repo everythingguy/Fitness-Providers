@@ -248,16 +248,18 @@ const AddressModal: React.FC<AddressProps> = ({
 
 interface Props {
     buttonStyle?: string;
+    showAtStart?: boolean;
 }
 
 export const ProviderApplication: React.FC<Props> = ({
-    buttonStyle = "btn text-light btn-dark mb-2"
+    buttonStyle = "btn text-light btn-dark mb-2",
+    showAtStart = false
 }) => {
     const navigate = useNavigate();
 
     const { loggedIn, setLogin, user } = useContext(UserContext);
 
-    const [showModal, setModal] = useState(false);
+    const [showModal, setModal] = useState(showAtStart);
     const [showAddressModal, setAddressModal] = useState(false);
     const [showSuccessModal, setSuccessModal] = useState(false);
 
@@ -318,17 +320,13 @@ export const ProviderApplication: React.FC<Props> = ({
     return (
         <>
             {loggedIn && !user?.provider && (
-                <div>
-                    <div>
-                        <span
-                            onClick={() => setModal(true)}
-                            className={buttonStyle}
-                            role="button"
-                        >
-                            Provider Registration
-                        </span>
-                    </div>
-                </div>
+                <button
+                    onClick={() => setModal(true)}
+                    className={buttonStyle}
+                    role="button"
+                >
+                    Provider Registration
+                </button>
             )}
             <Modal
                 size="lg"

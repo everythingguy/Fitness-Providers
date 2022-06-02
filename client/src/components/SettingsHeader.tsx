@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { UserContext } from "../context/UserState";
+import ProviderApplication from "./ProviderApplication";
 
 interface Props {
     activePage: "info" | "address" | "password";
@@ -9,6 +10,10 @@ interface Props {
 export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
     const btnStyle = "btn btn-dark fw-bold text-light mb-4 me-2";
     const activeBtnStyle = btnStyle + " active";
+
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const createInstructor = params.get("createInstructor") || false;
 
     const { user } = useContext(UserContext);
 
@@ -36,6 +41,12 @@ export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
             >
                 Change Password
             </Link>
+            {user && !user.provider && (
+                <ProviderApplication
+                    buttonStyle={btnStyle}
+                    showAtStart={createInstructor ? true : false}
+                />
+            )}
         </>
     );
 };
