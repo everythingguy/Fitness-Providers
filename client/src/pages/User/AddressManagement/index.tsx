@@ -10,8 +10,6 @@ import { AddressModal, DeleteModal } from "../../Profile/Management/Modals";
 
 interface Props {}
 
-// TODO: add address button
-
 export const AddressManagement: React.FC<Props> = () => {
     const { loggedIn, user } = useContext(UserContext);
 
@@ -55,11 +53,21 @@ export const AddressManagement: React.FC<Props> = () => {
                     setDeleteModal(true);
                 }}
             />
+            <div className="d-flex justify-content-center">
+                <button
+                    className="btn btn-dark fw-bold text-light mt-4"
+                    onClick={() => setAddressModal(true)}
+                >
+                    Add Address
+                </button>
+            </div>
             <AddressModal
                 showModal={showAddressModal}
                 setModal={setAddressModal}
                 info={editDeleteInfo}
                 setInfo={setEditDeleteInfo}
+                onCancel={() => setEditDeleteInfo(false)}
+                onSuccess={() => setEditDeleteInfo(false)}
             />
             <DeleteModal
                 showModal={showDeleteModal}

@@ -122,7 +122,14 @@ export const AddressModal: React.FC<Props> = ({
     }, [info]);
 
     return (
-        <Modal size="lg" show={showModal} onHide={() => setModal(!showModal)}>
+        <Modal
+            size="lg"
+            show={showModal}
+            onHide={() => {
+                setModal(!showModal);
+                if (onCancel) onCancel();
+            }}
+        >
             <Modal.Header>
                 <h5>Business Address:</h5>
             </Modal.Header>

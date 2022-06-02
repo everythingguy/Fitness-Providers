@@ -117,16 +117,14 @@ const getGooglePlaceID = async ({
     const resp = await fetch(url);
     const data: any = await resp.json();
 
-    if (data.status === "OK") {
-        if (data.results.length > 0) {
-            return {
-                googlePlaceID: data.results[0].place_id,
-                coordinates: {
-                    latitude: data.results[0].geometry.location.lat,
-                    longitude: data.results[0].geometry.location.lng
-                }
-            };
-        }
+    if (data.status === "OK" && data.results.length > 0) {
+        return {
+            googlePlaceID: data.results[0].place_id,
+            coordinates: {
+                latitude: data.results[0].geometry.location.lat,
+                longitude: data.results[0].geometry.location.lng
+            }
+        };
     } else return null;
 };
 
