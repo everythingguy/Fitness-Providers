@@ -9,6 +9,8 @@ import { User, Provider, Address } from "../../../API";
 
 interface Props {}
 
+// TODO: delete my account
+
 export const Settings: React.FC<Props> = () => {
     const { user, loggedIn, setLogin } = useContext(UserContext);
 

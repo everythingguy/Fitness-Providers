@@ -13,13 +13,13 @@ const CoordinateSchema = new mongoose.Schema({
         required: true,
         type: Number,
         max: 90,
-        min: 90
+        min: -90
     },
     longitude: {
         required: true,
         type: Number,
         max: 180,
-        min: 180
+        min: -180
     }
 });
 
@@ -97,27 +97,72 @@ const AddressSchema = new mongoose.Schema<AddressType>(
 
 AddressSchema.plugin(Pagination);
 
-const getGooglePlaceID = async function (this: AddressType) {
+const getGooglePlaceID = async ({
+    provider,
+    street1,
+    street2,
+    city,
+    state,
+    zip
+}: AddressType): Promise<{
+    googlePlaceID: string;
+    coordinates: { latitude: number; longitude: number };
+} | null> => {
     const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURI(
-        this.street2
-            ? `${this.street1} ${this.street2}, ${this.city}, ${this.state} ${this.zip}`
-            : `${this.street1} ${this.city}, ${this.state} ${this.zip}`
-    )}&key=${process.env.GOOGLE_PLACE_API}&quotaUser=${this.provider}`;
+        street2
+            ? `${street1} ${street2}, ${city}, ${state} ${zip}`
+            : `${street1} ${city}, ${state} ${zip}`
+    )}&key=${process.env.GOOGLE_PLACE_API}&quotaUser=${provider}`;
 
     const resp = await fetch(url);
     const data: any = await resp.json();
 
     if (data.status === "OK") {
         if (data.results.length > 0) {
-            this.googlePlaceID = data.results[0].place_id;
-            this.coordinates.latitude = data.results[0].geometry.location.lat;
-            this.coordinates.longitude = data.results[0].geometry.location.lng;
+            return {
+                googlePlaceID: data.results[0].place_id,
+                coordinates: {
+                    latitude: data.results[0].geometry.location.lat,
+                    longitude: data.results[0].geometry.location.lng
+                }
+            };
         }
-    }
+    } else return null;
 };
 
-AddressSchema.pre("save", getGooglePlaceID);
-AddressSchema.pre("updateOne", getGooglePlaceID);
+AddressSchema.pre("save", async function (this: AddressType) {
+    const res = await getGooglePlaceID(this);
+    if (res) {
+        this.googlePlaceID = res.googlePlaceID;
+        this.coordinates = res.coordinates;
+    }
+});
+
+AddressSchema.pre(
+    "updateOne",
+    function (
+        this: mongoose.Query<unknown, AddressType>,
+        next: mongoose.CallbackWithoutResultAndOptionalError
+    ) {
+        const id = (this as any)._conditions._id;
+        const update = this.getUpdate();
+        const set = (this as any)._update;
+
+        mongoose
+            .model("Address")
+            .findById(id)
+            .then(async (prevDoc) => {
+                const mergedDoc = { ...prevDoc._doc, ...update };
+
+                const res = await getGooglePlaceID(mergedDoc);
+                if (res) {
+                    set.googlePlaceID = res.googlePlaceID;
+                    set.coordinates = res.coordinates;
+                    next();
+                } else next();
+            });
+    }
+);
 
 // delete ref of address on provider and courses
 AddressSchema.post("remove", async function (res, next) {

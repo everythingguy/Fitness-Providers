@@ -385,7 +385,7 @@ export async function updateUser(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteMyUser(req: Request, res: express.Response) {
-    // TODO: handle admin
+    // TODO: ask for password
     try {
         let user: UserType;
         if (req.user) user = await User.findById(req.user._id);

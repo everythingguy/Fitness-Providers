@@ -100,6 +100,7 @@ LiveSessionSchema.post("validate", function (this: LiveSessionType, doc, next) {
 LiveSessionSchema.post("save", UniqueErrorRaiser);
 LiveSessionSchema.post("updateOne", UniqueErrorRaiser);
 
+// TODO: on update remove old ref and create new ref if modified
 LiveSessionSchema.post(
     "save",
     async function (this: LiveSessionType, doc: LiveSessionType, next) {

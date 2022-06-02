@@ -58,9 +58,6 @@ export const AddressManagement: React.FC<Props> = () => {
             <AddressModal
                 showModal={showAddressModal}
                 setModal={setAddressModal}
-                onSuccess={(address) => {
-                    setAddresses([...addresses, address]);
-                }}
                 info={editDeleteInfo}
                 setInfo={setEditDeleteInfo}
             />
