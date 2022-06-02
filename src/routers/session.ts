@@ -47,7 +47,7 @@ sessionRouter
         Permission.isLoggedInAsProvider,
         Permission.isOwnerOrAdmin(Permission.OwnerOfSession),
         upload.single("image"),
-        uploadImageHandler(Model, "session")
+        uploadImageHandler(Model, "Session")
     );
 
 export default sessionRouter;

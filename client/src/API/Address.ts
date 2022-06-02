@@ -29,10 +29,28 @@ export class Address {
             APIManager.sendRequest<AddressResponse>(
                 request,
                 (resp) => {
-                    res({ success: true, data: resp.data } as AddressResponse);
+                    res(resp);
                 },
                 (resp) => {
-                    res({ success: false, error: resp.error } as ErrorResponse);
+                    res(resp);
+                }
+            );
+        });
+    }
+
+    static async getAddress(
+        id: string
+    ): Promise<AddressResponse | ErrorResponse> {
+        const request = new DataRequest("GET", `addresses/${id}`);
+
+        return new Promise((res) => {
+            APIManager.sendRequest<AddressResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
                 }
             );
         });
@@ -51,13 +69,61 @@ export class Address {
             APIManager.sendRequest<AddressesResponse>(
                 request,
                 (resp) => {
-                    res({
-                        success: true,
-                        data: resp.data
-                    } as AddressesResponse);
+                    res(resp);
                 },
                 (resp) => {
-                    res({ success: false, error: resp.error } as ErrorResponse);
+                    res(resp);
+                }
+            );
+        });
+    }
+
+    static async updateAddress(
+        id: string,
+        street1: string,
+        street2: string,
+        city: string,
+        state: string,
+        zip: string,
+        country: string
+    ): Promise<AddressResponse | ErrorResponse> {
+        const request = new DataRequest("PATCH", `addresses/${id}`);
+
+        request.setBody({
+            street1,
+            street2: street2 && street2.length > 0 ? street2 : null,
+            city,
+            state,
+            zip,
+            country
+        });
+
+        return new Promise((res) => {
+            APIManager.sendRequest<AddressResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
+
+    static async deleteAddress(
+        id: string
+    ): Promise<AddressResponse | ErrorResponse> {
+        const request = new DataRequest("DELETE", `addresses/${id}`);
+
+        return new Promise((res) => {
+            APIManager.sendRequest<AddressResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
                 }
             );
         });

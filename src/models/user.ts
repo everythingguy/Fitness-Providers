@@ -103,7 +103,6 @@ UserSchema.post("remove", function (res, next) {
 
 UserSchema.post("save", UniqueErrorRaiser);
 UserSchema.post("updateOne", UniqueErrorRaiser);
-UserSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
 UserSchema.methods.isValidPassword = async function (password: string) {
     return await bcrypt.compare(password, this.password);

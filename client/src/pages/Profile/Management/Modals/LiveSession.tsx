@@ -20,8 +20,7 @@ import {
 } from "../../../../@types/Response";
 
 import "antd/dist/antd.css";
-
-type Info = { type: "course" | "session" | "live session"; id: string } | false;
+import { Info } from "../../../../@types/misc";
 
 interface Props {
     setModal: React.Dispatch<React.SetStateAction<boolean>>;

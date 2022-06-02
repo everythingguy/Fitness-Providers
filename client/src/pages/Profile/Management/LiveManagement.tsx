@@ -14,6 +14,7 @@ import LiveSessionModal from "./Modals/LiveSession";
 import DeleteModal from "./Modals/Delete";
 import { Course, LiveSession } from "../../../API";
 import { liveSessionDateToString } from "../../../utils/Date";
+import { Info } from "../../../@types/misc";
 
 interface Props {}
 
@@ -26,13 +27,7 @@ export const LiveManagement: React.FC<Props> = () => {
     const [courses, setCourses] = useState<CourseType[]>([]);
     const [liveSessions, setliveSessions] = useState<SessionType[]>([]);
 
-    const [editDeleteInfo, setEditDeleteInfo] = useState<
-        | {
-              type: "course" | "session" | "live session";
-              id: string;
-          }
-        | false
-    >(false);
+    const [editDeleteInfo, setEditDeleteInfo] = useState<Info>(false);
 
     useEffect(() => {
         if (user && user.provider && !showLiveSessionModal) {
@@ -77,7 +72,9 @@ export const LiveManagement: React.FC<Props> = () => {
                                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                 _id: session.liveSession!._id,
                                 title: session.name,
-                                href: session.URL || `/course/${session._id}`,
+                                href:
+                                    session.URL ||
+                                    `/course/${session.course._id}`,
                                 external: session.URL ? true : false,
                                 image:
                                     session.image ||

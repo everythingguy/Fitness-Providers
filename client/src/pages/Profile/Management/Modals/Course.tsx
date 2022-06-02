@@ -16,8 +16,7 @@ import {
     ImageResponse
 } from "../../../../@types/Response";
 import { reloadImage } from "../../../../utils/reload";
-
-type Info = { type: "course" | "session" | "live session"; id: string } | false;
+import { Info } from "../../../../@types/misc";
 
 interface Props {
     info: Info;
@@ -266,7 +265,7 @@ export const CourseModal: React.FC<Props> = ({
     return (
         <>
             <AddressModal
-                show={showAddressModal}
+                showModal={showAddressModal}
                 setModal={setShowAddressModal}
                 onSuccess={(address) => {
                     setModal(true);

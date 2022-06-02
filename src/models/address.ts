@@ -117,7 +117,7 @@ const getGooglePlaceID = async function (this: AddressType) {
 };
 
 AddressSchema.pre("save", getGooglePlaceID);
-AddressSchema.post("updateOne", getGooglePlaceID);
+AddressSchema.pre("updateOne", getGooglePlaceID);
 
 // delete ref of address on provider and courses
 AddressSchema.post("remove", async function (res, next) {

@@ -117,11 +117,9 @@ ProviderSchema.post("remove", function (res, next) {
 
 ProviderSchema.post("save", UniqueErrorRaiser);
 ProviderSchema.post("updateOne", UniqueErrorRaiser);
-ProviderSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
-ProviderSchema.pre("updateOne", fileRemover("provider"));
-ProviderSchema.pre("findOneAndUpdate", fileRemover("provider"));
-ProviderSchema.post("remove", fileRemover("provider", true));
+ProviderSchema.pre("save", fileRemover<ProviderType>("Provider"));
+ProviderSchema.post("remove", fileRemover<ProviderType>("Provider", true));
 
 ProviderSchema.method("getCourses", async function (this: ProviderType) {
     return await Course.find({ provider: this._id });

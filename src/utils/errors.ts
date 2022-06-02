@@ -1,4 +1,6 @@
 import express from "express";
+import mongoose from "mongoose";
+import { MongoError } from "mongodb";
 import { errorResponse } from "../@types/response";
 
 export class UniqueError extends Error {
@@ -36,11 +38,15 @@ export function parseValidationErrors(error: any) {
     return errors;
 }
 
-export function UniqueErrorRaiser(error: any, doc: any, next: any) {
+export function UniqueErrorRaiser<T>(
+    error: MongoError,
+    doc: mongoose.HydratedDocument<T>,
+    next: mongoose.CallbackWithoutResultAndOptionalError
+) {
     let message: string;
 
     if (error.code === 11000) {
-        message = Object.keys(error.keyValue)[0] + " already exists";
+        message = Object.keys((error as any).keyValue)[0] + " already exists";
     }
 
     if (message) next(new UniqueError(message));

@@ -9,8 +9,7 @@ import {
     SessionResponse
 } from "../../../../@types/Response";
 import { reloadImage } from "../../../../utils/reload";
-
-type Info = { type: "course" | "session" | "live session"; id: string } | false;
+import { Info } from "../../../../@types/misc";
 
 interface Props {
     setModal: React.Dispatch<React.SetStateAction<boolean>>;

@@ -99,7 +99,6 @@ LiveSessionSchema.post("validate", function (this: LiveSessionType, doc, next) {
 
 LiveSessionSchema.post("save", UniqueErrorRaiser);
 LiveSessionSchema.post("updateOne", UniqueErrorRaiser);
-LiveSessionSchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
 LiveSessionSchema.post(
     "save",

@@ -112,12 +112,15 @@ function removeFile(modelName: string, filename: string) {
     });
 }
 
-export function fileRemover(modelName: string, postHook = false) {
-    return function (
-        this: any,
-        next: mongoose.CallbackWithoutResultAndOptionalError
-    ) {
-        if (postHook) {
+export function fileRemover<T extends ImageModel>(
+    modelName: string,
+    isRemove = false
+) {
+    if (isRemove)
+        return function (
+            this: T,
+            next: mongoose.CallbackWithoutResultAndOptionalError
+        ) {
             if (this.image) {
                 const split = this.image.split("/");
                 const filename = split[split.length - 1];
@@ -125,19 +128,25 @@ export function fileRemover(modelName: string, postHook = false) {
                 removeFile(modelName, filename);
             }
             next();
-        } else {
-            if ("image" in this._update) {
-                this.model
-                    .findById(this._conditions._id)
-                    .then((prevDoc: any) => {
+        };
+    else
+        return function (
+            this: T,
+            next: mongoose.CallbackWithoutResultAndOptionalError
+        ) {
+            if (this.isModified("image")) {
+                mongoose
+                    .model(modelName)
+                    .findById(this._id)
+                    .then((prevDoc: T) => {
                         if (prevDoc.image) {
                             const split = prevDoc.image.split("/");
                             const filename = split[split.length - 1];
 
-                            removeFile(modelName, filename).then(() => next());
+                            removeFile(modelName, filename);
+                            next();
                         } else next();
                     });
             } else next();
-        }
-    };
+        };
 }

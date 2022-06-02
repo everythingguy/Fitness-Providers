@@ -4,7 +4,7 @@ import Result from "./Result";
 interface ComponentProps {
     _id: string;
     href?: string;
-    image: string;
+    image?: string;
     title: string;
     subtitle?: string;
     date?: string;
@@ -17,7 +17,7 @@ interface ComponentProps {
 interface Item {
     _id: string;
     href?: string;
-    image: string;
+    image?: string;
     title: string;
     subtitle?: string;
     date?: string;

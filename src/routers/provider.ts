@@ -59,7 +59,7 @@ providerRouter
         Permission.isLoggedInAsProvider,
         Permission.isOwnerOrAdmin(Permission.OwnerOfProvider),
         upload.single("image"),
-        uploadImageHandler(Model, "provider")
+        uploadImageHandler(Model, "Provider")
     );
 
 export default providerRouter;

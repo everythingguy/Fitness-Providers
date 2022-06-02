@@ -1,20 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Address from "../../../../API/Address";
 import { Address as AddressType } from "../../../../@types/Models";
+import { Info } from "../../../../@types/misc";
+import { AddressResponse, ErrorResponse } from "../../../../@types/Response";
 
 interface Props {
-    show: boolean;
+    showModal: boolean;
     setModal: React.Dispatch<React.SetStateAction<boolean>>;
-    onSuccess: (address: AddressType) => void;
-    onCancel: () => void;
+    onSuccess?: (address: AddressType) => void;
+    onCancel?: () => void;
+    info?: Info;
+    setInfo?: React.Dispatch<React.SetStateAction<Info>>;
 }
 
 export const AddressModal: React.FC<Props> = ({
-    show,
+    showModal,
     setModal,
     onSuccess,
-    onCancel
+    onCancel,
+    info,
+    setInfo
 }) => {
     // field state
     const [errors, setError] = useState({
@@ -53,14 +59,26 @@ export const AddressModal: React.FC<Props> = ({
     };
 
     const onSubmit = async () => {
-        const addressResp = await Address.createAddress(
-            formData.street1,
-            formData.street2,
-            formData.city,
-            formData.state,
-            formData.zip,
-            formData.country
-        );
+        let addressResp: AddressResponse | ErrorResponse;
+        if (info)
+            addressResp = await Address.updateAddress(
+                info.id,
+                formData.street1,
+                formData.street2,
+                formData.city,
+                formData.state,
+                formData.zip,
+                formData.country
+            );
+        else
+            addressResp = await Address.createAddress(
+                formData.street1,
+                formData.street2,
+                formData.city,
+                formData.state,
+                formData.zip,
+                formData.country
+            );
 
         if (addressResp.success) {
             setError({
@@ -73,14 +91,38 @@ export const AddressModal: React.FC<Props> = ({
             });
 
             setModal(false);
-            onSuccess(addressResp.data.address);
+            if (info && setInfo) setInfo(false);
+            if (onSuccess) onSuccess(addressResp.data.address);
         } else {
             setError(addressResp.error as any);
         }
     };
 
+    useEffect(() => {
+        if (info && info.type === "address") {
+            Address.getAddress(info.id).then((resp) => {
+                if (resp.success) {
+                    const { address } = resp.data;
+
+                    setFormData({
+                        ...address,
+                        street2: address.street2 ? address.street2 : ""
+                    });
+                }
+            });
+        } else if (info === false)
+            setFormData({
+                street1: "",
+                street2: "",
+                city: "",
+                state: "",
+                zip: "",
+                country: ""
+            });
+    }, [info]);
+
     return (
-        <Modal size="lg" show={show} onHide={() => setModal(!show)}>
+        <Modal size="lg" show={showModal} onHide={() => setModal(!showModal)}>
             <Modal.Header>
                 <h5>Business Address:</h5>
             </Modal.Header>
@@ -98,6 +140,7 @@ export const AddressModal: React.FC<Props> = ({
                         name="street1"
                         onChange={onChange}
                         onKeyUp={enterSubmit}
+                        value={formData.street1}
                     />
                     <div className="invalid-feedback">{errors.street1}</div>
                 </div>
@@ -114,6 +157,7 @@ export const AddressModal: React.FC<Props> = ({
                         name="street2"
                         onChange={onChange}
                         onKeyUp={enterSubmit}
+                        value={formData.street2}
                     />
                     <div className="invalid-feedback">{errors.street2}</div>
                 </div>
@@ -132,6 +176,7 @@ export const AddressModal: React.FC<Props> = ({
                                 name="city"
                                 onChange={onChange}
                                 onKeyUp={enterSubmit}
+                                value={formData.city}
                             />
                             <div className="invalid-feedback">
                                 {errors.city}
@@ -150,6 +195,7 @@ export const AddressModal: React.FC<Props> = ({
                                 name="state"
                                 onChange={onChange}
                                 onKeyUp={enterSubmit}
+                                value={formData.state}
                             />
                             <div className="invalid-feedback">
                                 {errors.state}
@@ -172,6 +218,7 @@ export const AddressModal: React.FC<Props> = ({
                                 name="zip"
                                 onChange={onChange}
                                 onKeyUp={enterSubmit}
+                                value={formData.zip}
                             />
                             <div className="invalid-feedback">{errors.zip}</div>
                         </div>
@@ -188,6 +235,7 @@ export const AddressModal: React.FC<Props> = ({
                                 name="country"
                                 onChange={onChange}
                                 onKeyUp={enterSubmit}
+                                value={formData.country}
                             />
                             <div className="invalid-feedback">
                                 {errors.country}
@@ -202,7 +250,7 @@ export const AddressModal: React.FC<Props> = ({
                     type="button"
                     onClick={() => {
                         setModal(false);
-                        onCancel();
+                        if (onCancel) onCancel();
                     }}
                 >
                     Cancel

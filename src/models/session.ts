@@ -72,9 +72,8 @@ SessionSchema.post("remove", function (res, next) {
     next();
 });
 
-SessionSchema.pre("updateOne", fileRemover("session"));
-SessionSchema.pre("findOneAndUpdate", fileRemover("session"));
-SessionSchema.post("remove", fileRemover("session", true));
+SessionSchema.pre("save", fileRemover<SessionType>("Session"));
+SessionSchema.post("remove", fileRemover<SessionType>("Session", true));
 
 export const Session: PaginateModel<SessionType, unknown, unknown> =
     mongoose.model<SessionType, PaginateModel<SessionType>>(

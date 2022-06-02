@@ -213,7 +213,7 @@ export async function update<T extends updateType>(
                 image: new Error(errorMsg)
             });
         }
-        await model.findByIdAndUpdate(req.params.id, req.body as any, {
+        await model.updateOne({ _id: req.params.id }, req.body as any, {
             runValidators: true
         });
 

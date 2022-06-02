@@ -18,6 +18,7 @@ import { CourseModal, SessionModal, DeleteModal } from "./Modals";
 import { UserContext } from "../../../context/UserState";
 import { ResultList } from "../../../components/ResultList";
 import Error403 from "../../ErrorPages/403";
+import { Info } from "../../../@types/misc";
 
 interface Props {}
 
@@ -47,13 +48,7 @@ export const Management: React.FC<Props> = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const [courses, setCourses] = useState<CourseType[]>([]);
     const [sessions, setSessions] = useState<SessionType[]>([]);
-    const [editDeleteInfo, setEditDeleteInfo] = useState<
-        | {
-              type: "course" | "session" | "live session";
-              id: string;
-          }
-        | false
-    >(false);
+    const [editDeleteInfo, setEditDeleteInfo] = useState<Info>(false);
 
     const initialQuery = () => {
         if (user && user.provider) {

@@ -46,7 +46,6 @@ CategorySchema.post("remove", async function (res, next) {
 
 CategorySchema.post("save", UniqueErrorRaiser);
 CategorySchema.post("updateOne", UniqueErrorRaiser);
-CategorySchema.post("findOneAndUpdate", UniqueErrorRaiser);
 
 export const Category: mongoose.Model<CategoryType> =
     mongoose.model<CategoryType>("Category", CategorySchema);

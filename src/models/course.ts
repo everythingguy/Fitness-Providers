@@ -89,9 +89,8 @@ CourseSchema.post("remove", function (res, next) {
     next();
 });
 
-CourseSchema.pre("updateOne", fileRemover("course"));
-CourseSchema.pre("findOneAndUpdate", fileRemover("course"));
-CourseSchema.post("remove", fileRemover("course", true));
+CourseSchema.pre("save", fileRemover<CourseType>("Course"));
+CourseSchema.post("remove", fileRemover<CourseType>("Course", true));
 
 CourseSchema.virtual("getSessions", async function (this: CourseType) {
     return await Session.find({ course: this._id });

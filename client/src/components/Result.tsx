@@ -2,10 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 interface innerProps {
-    image: string;
+    image?: string;
     title: string;
     subtitle?: string;
     date?: string;
+    onClick?: () => void;
 }
 
 interface Props extends innerProps {
@@ -17,19 +18,31 @@ interface Props extends innerProps {
     onDelete?: (_id: string) => void;
 }
 
-const InnerLink: React.FC<innerProps> = ({ image, title, subtitle, date }) => {
+const InnerLink: React.FC<innerProps> = ({
+    image,
+    title,
+    subtitle,
+    date,
+    onClick
+}) => {
     return (
-        <div className="d-flex w-100">
-            <img
-                src={image}
-                className="rounded-3"
-                alt={title}
-                style={{
-                    maxWidth: "100px",
-                    maxHeight: "100px",
-                    objectFit: "cover"
-                }}
-            />
+        <div
+            className="d-flex w-100"
+            onClick={onClick}
+            role={onClick ? "button" : undefined}
+        >
+            {image && (
+                <img
+                    src={image}
+                    className="rounded-3"
+                    alt={title}
+                    style={{
+                        maxWidth: "100px",
+                        maxHeight: "100px",
+                        objectFit: "cover"
+                    }}
+                />
+            )}
 
             <div className="d-flex w-100 ms-3 py-1 flex-column justify-content-between">
                 <h6 className="fw-bold w-100 m-0">{title}</h6>
@@ -90,6 +103,14 @@ export const Result: React.FC<Props> = ({
                         />
                     </a>
                 )
+            ) : onEdit ? (
+                <InnerLink
+                    image={image}
+                    title={title}
+                    subtitle={subtitle}
+                    date={date}
+                    onClick={() => onEdit(_id)}
+                />
             ) : (
                 <InnerLink
                     image={image}
@@ -98,7 +119,7 @@ export const Result: React.FC<Props> = ({
                     date={date}
                 />
             )}
-            <div className="d-inline-block align-self-center ms-auto">
+            <div className="d-flex ms-auto">
                 {onEdit ? (
                     <button onClick={() => onEdit(_id)}>
                         <i className="bi bi-pencil-square"></i>

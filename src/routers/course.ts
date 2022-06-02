@@ -47,7 +47,7 @@ courseRouter
         Permission.isLoggedInAsProvider,
         Permission.isOwnerOrAdmin(Permission.OwnerOfCourse),
         upload.single("image"),
-        uploadImageHandler(Model, "course")
+        uploadImageHandler(Model, "Course")
     );
 
 export default courseRouter;
