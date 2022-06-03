@@ -437,17 +437,23 @@ export async function updateUser(req: Request, res: express.Response) {
  * @access Restricted
  */
 export async function deleteMyUser(req: Request, res: express.Response) {
-    // TODO: ask for password
+    const { password } = req.body;
+
     try {
         let user: UserType;
         if (req.user) user = await User.findById(req.user._id);
 
-        if (!user) {
+        if (!user)
             return res.status(404).json({
                 success: false,
                 error: "No user found"
             } as errorResponse);
-        }
+
+        if (!(await user.isValidPassword(password)))
+            return res.status(400).json({
+                success: false,
+                error: { password: "Invalid Password" }
+            } as errorResponse);
 
         await User.findByIdAndDelete(user._id);
 
