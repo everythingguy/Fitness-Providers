@@ -9,6 +9,7 @@ import Calendar from "./pages/Calendar";
 import Course from "./pages/Course";
 import * as ProfilePages from "./pages/Profile";
 import * as UserPages from "./pages/User";
+import Admin from "./pages/Admin";
 import Terms from "./pages/Terms";
 
 import Footer from "./components/Footer";
@@ -20,7 +21,7 @@ import { useContext } from "react";
 import Loading from "./components/Loading";
 
 function App() {
-    const { loading } = useContext(UserContext);
+    const { loading, user } = useContext(UserContext);
 
     return (
         <>
@@ -95,6 +96,10 @@ function App() {
                                 element={<UserPages.AddressManagement />}
                             />
                             <Route path="/terms" element={<Terms />} />
+
+                            {user && user.isAdmin && (
+                                <Route path="/admin" element={<Admin />} />
+                            )}
 
                             <Route
                                 path="/error/400"

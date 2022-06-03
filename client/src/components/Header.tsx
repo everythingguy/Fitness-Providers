@@ -102,6 +102,17 @@ export const Header: React.FC = () => {
                                         <i className="bi bi-gear-wide me-2"></i>
                                         Settings
                                     </NavDropdown.Item>
+                                    {user && user.isAdmin && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/admin"
+                                            eventKey="link-10"
+                                            active={false}
+                                        >
+                                            <i className="bi bi-wrench me-2"></i>
+                                            Administration
+                                        </NavDropdown.Item>
+                                    )}
                                     <NavDropdown.Divider />
                                     <NavDropdown.Item
                                         onClick={async () => {
