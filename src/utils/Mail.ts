@@ -13,7 +13,9 @@ import EmailConfirmationCode from "../models/emailConfirmationCode";
 export default class Mail {
     static transporter = mailer.createTransport({
         host: process.env.MAIL_HOST,
-        port: parseInt(process.env.MAIL_PORT, 10) || 587,
+        port: isNaN(parseInt(process.env.MAIL_PORT, 10))
+            ? 587
+            : parseInt(process.env.MAIL_PORT, 10),
         secure: process.env.MAIL_PORT === "465" ? true : false,
         auth: {
             user: process.env.MAIL_POSTMASTER,
@@ -66,9 +68,6 @@ export default class Mail {
     }
 
     static async sendConfirmation(user: User): Promise<boolean> {
-        // TODO: create frontend for /user/email/confirmation
-        // TODO: create backend endpoint to confirm the email
-
         const code = new EmailConfirmationCode({
             user: user._id,
             code: uuid()

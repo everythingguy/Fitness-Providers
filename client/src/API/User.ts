@@ -37,9 +37,28 @@ export class User {
         });
     }
 
+    static async emailConfirmation(
+        code: string
+    ): Promise<SuccessfulResponse | ErrorResponse> {
+        const request = new DataRequest("POST", "users/confirmation");
+        request.setBody({ code });
+
+        return new Promise((res) => {
+            APIManager.sendRequest<UserResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
+
     static async resendConfirmation(
         username: string
-    ): Promise<{ success: true } | ErrorResponse> {
+    ): Promise<SuccessfulResponse | ErrorResponse> {
         const request = new DataRequest("POST", "users/resendConfirmation");
         request.setBody({ username });
 
@@ -155,12 +174,38 @@ export class User {
     }
 
     static async forgotPassword(
-        email
+        email: string
     ): Promise<SuccessfulResponse | ErrorResponse> {
         const request = new DataRequest("POST", "users/password/forgot");
 
         request.setBody({
             email
+        });
+
+        return new Promise((res) => {
+            APIManager.sendRequest<SuccessfulResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
+            );
+        });
+    }
+
+    static async resetPassword(
+        code: string,
+        password: string,
+        re_password: string
+    ): Promise<SuccessfulResponse | ErrorResponse> {
+        const request = new DataRequest("POST", "users/password/reset");
+
+        request.setBody({
+            code,
+            password,
+            re_password
         });
 
         return new Promise((res) => {

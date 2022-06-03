@@ -67,9 +67,6 @@ describe("env", () => {
     it("should have express port", () => {
         expect(process.env.PORT).toBeDefined();
     });
-    it("should have ci boolean", () => {
-        expect(process.env.CI).toBeDefined();
-    });
 });
 
 describe(`POST ${apiPath}/users/login`, () => {

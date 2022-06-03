@@ -77,6 +77,10 @@ function App() {
                                 element={<UserPages.Login />}
                             />
                             <Route
+                                path="/user/email/confirmation"
+                                element={<UserPages.Email />}
+                            />
+                            <Route
                                 path="/user/password/forgot"
                                 element={<UserPages.ForgotPassword />}
                             />

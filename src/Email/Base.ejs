@@ -9,51 +9,42 @@
         <div style="height: 100%; width: 100%">
             <header
                 style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
                     background-color: #023047;
                     width: 100%;
                     height: 10%;
                     color: #8ecae6;
                     font-weight: bold;
+                    text-align: center;
                 "
             >
-                <h1><%= PROVIDER_TYPE %> Providers</h1>
+                <h1 style="padding-top: 25px; margin: 0">
+                    <%= PROVIDER_TYPE %> Providers
+                </h1>
             </header>
             <div style="background-color: #8ecae6; width: 100%; height: 80%">
-                <div
-                    style="
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        flex-direction: column;
-                        width: 100%;
-                        height: 100%;
-                    "
-                >
-                    <div style="max-width: 70%"><%- include(page); %></div>
+                <div style="width: 100%; height: 100%">
+                    <div style="padding: 20%"><%- include(page); %></div>
                 </div>
             </div>
             <footer
                 style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
                     background-color: #023047;
                     width: 100%;
                     height: 10%;
                     color: #8ecae6;
                     font-weight: bold;
+                    text-align: center;
                 "
             >
-                Do not reply to this email. Contact us at:
-                <a
-                    style="color: #8ecae6; text-decoration: none"
-                    href="mailto:<%= MAIL_CONTACT_EMAIL %>"
-                >
-                    &nbsp;<%= MAIL_CONTACT_EMAIL %>
-                </a>
+                <p style="padding-top: 25px; margin: 0">
+                    Do not reply to this email. Contact us at:
+                    <a
+                        style="color: #8ecae6; text-decoration: none"
+                        href="mailto:<%= MAIL_CONTACT_EMAIL %>"
+                    >
+                        &nbsp;<%= MAIL_CONTACT_EMAIL %>
+                    </a>
+                </p>
             </footer>
         </div>
     </body>

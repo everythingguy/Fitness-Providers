@@ -16,7 +16,7 @@ export interface BaseResponse {
 
 export interface SuccessfulResponse extends BaseResponse {
     success: true;
-    data: { [key: any]: any };
+    data?: { [key: any]: any };
     error?: undefined;
 }
 

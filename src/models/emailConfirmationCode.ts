@@ -18,12 +18,12 @@ const EmailConfirmationCodeSchema =
                         if (!user) throw new Error(`User (${value}) not found`);
                         return true;
                     }
-                },
-                unique: true
+                }
             },
             code: {
                 type: String,
-                required: true
+                required: true,
+                unique: true
             }
         },
         {

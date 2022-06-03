@@ -79,7 +79,7 @@ export const Login: React.FC = () => {
                                 Please confirm your email -
                                 <button
                                     type="button"
-                                    className="btn btn-link"
+                                    className="btn btn-link text-decoration-none text-dark fw-bold"
                                     onClick={() =>
                                         User.resendConfirmation(username)
                                     }
@@ -115,11 +115,21 @@ export const Login: React.FC = () => {
             </form>
             <p>
                 Don&apos;t have an account?{" "}
-                <Link to="/user/register">Sign Up</Link>
+                <Link
+                    className="text-decoration-none text-dark fw-bold"
+                    to="/user/register"
+                >
+                    Sign Up
+                </Link>
             </p>
             <p>
                 Forgot your password?{" "}
-                <Link to="/user/password/forgot">Reset Password</Link>
+                <Link
+                    className="text-decoration-none text-dark fw-bold"
+                    to="/user/password/forgot"
+                >
+                    Reset Password
+                </Link>
             </p>
         </>
     );

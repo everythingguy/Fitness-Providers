@@ -16,6 +16,7 @@ import { sign, verify } from "jsonwebtoken";
 import { apiPath } from "../server";
 import Mail from "../utils/Mail";
 import * as CRUD from "../utils/crud";
+import EmailConfirmationCode from "../models/emailConfirmationCode";
 
 const select = "firstName lastName name email username";
 
@@ -293,6 +294,48 @@ export async function addUser(
 }
 
 /**
+ * @desc Email Confirmation
+ * @route POST /api/v1/users/confirmation
+ * @access Public
+ */
+export async function emailConfirmation(
+    req: SimpleRequestBody<{ code: string }>,
+    res: express.Response
+) {
+    const { code } = req.body;
+
+    try {
+        const confirmationCode = await EmailConfirmationCode.findOne({ code });
+
+        if (!confirmationCode || !code)
+            return res.status(400).json({
+                success: false,
+                error: { code: "Invalid Confirmation Code" }
+            } as errorResponse);
+
+        const user = await User.findById(confirmationCode.user);
+
+        if (!user)
+            return res.status(404).json({
+                success: false,
+                error: "User not found"
+            } as errorResponse);
+
+        user.emailConfirmed = true;
+        await user.save();
+
+        return res.status(200).json({
+            success: true
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: "Server error"
+        } as errorResponse);
+    }
+}
+
+/**
  * @desc Resend Email Confirmation
  * @route POST /api/v1/users/resendConfirmation
  * @access Public
@@ -330,6 +373,8 @@ export async function resendConfirmation(
             } as errorResponse);
         }
     } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
         return res.status(500).json({
             success: false,
             error: "Server error"
@@ -458,7 +503,7 @@ export async function changePassword(req: Request, res: express.Response) {
         user.password = password;
         await user.validate();
 
-        revokeRefreshTokensForUser(req);
+        revokeRefreshTokensForUser(req, user);
 
         res.status(200).json({
             success: true,
@@ -521,12 +566,15 @@ export async function forgotPassword(
  * @access Public
  */
 export async function resetPassword(
-    req: SimpleRequestBody<{ password: string; re_password: string }>,
+    req: SimpleRequestBody<{
+        code: string;
+        password: string;
+        re_password: string;
+    }>,
     res: express.Response
 ) {
     try {
-        const { code } = req.params;
-        const { password, re_password } = req.body;
+        const { code, password, re_password } = req.body;
 
         if (code === null || code === undefined)
             return res.status(400).json({
@@ -561,12 +609,11 @@ export async function resetPassword(
         user.password = password;
         await user.validate();
 
-        revokeRefreshTokensForUser(req);
+        revokeRefreshTokensForUser(req, user);
 
         res.status(200).json({
-            success: true,
-            data: { ...req.user, provider: req.provider ? req.provider : null }
-        } as userResponseType);
+            success: true
+        });
 
         Mail.passwordChange(user);
     } catch (error) {
