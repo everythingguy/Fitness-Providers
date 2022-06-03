@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
 
@@ -72,6 +73,7 @@ export const Register: React.FC = () => {
 
             if (setLogin) await setLogin();
             setSuccess(true);
+            toast.info("Please confirm your email before signing in!");
         } else {
             setError(auth.error as any);
         }
