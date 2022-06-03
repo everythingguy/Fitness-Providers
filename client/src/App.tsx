@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 import Header from "./components/Header";
 
@@ -122,6 +123,13 @@ function App() {
                     )}
                 </div>
             </div>
+            <ToastContainer
+                position="bottom-right"
+                pauseOnHover
+                draggable
+                closeOnClick
+                autoClose={5000}
+            />
             <Footer />
         </>
     );

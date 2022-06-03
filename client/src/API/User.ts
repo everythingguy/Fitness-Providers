@@ -1,4 +1,8 @@
-import { UserResponse, ErrorResponse } from "../@types/Response";
+import {
+    UserResponse,
+    ErrorResponse,
+    SuccessfulResponse
+} from "../@types/Response";
 import { APIManager, DataRequest } from "./APIManager";
 
 export class User {
@@ -146,6 +150,28 @@ export class User {
                 },
                 () => res(false),
                 false
+            );
+        });
+    }
+
+    static async forgotPassword(
+        email
+    ): Promise<SuccessfulResponse | ErrorResponse> {
+        const request = new DataRequest("POST", "users/password/forgot");
+
+        request.setBody({
+            email
+        });
+
+        return new Promise((res) => {
+            APIManager.sendRequest<SuccessfulResponse>(
+                request,
+                (resp) => {
+                    res(resp);
+                },
+                (resp) => {
+                    res(resp);
+                }
             );
         });
     }

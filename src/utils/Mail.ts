@@ -4,6 +4,11 @@ import ejs from "ejs";
 import { User } from "../@types/models";
 import { capitalize } from "./string";
 import path from "path";
+import { v4 as uuid } from "uuid";
+import PasswordResetCode from "../models/passwordResetCode";
+import EmailConfirmationCode from "../models/emailConfirmationCode";
+
+// TODO: send email function that only works if the email is confirmed
 
 export default class Mail {
     static transporter = mailer.createTransport({
@@ -24,13 +29,10 @@ export default class Mail {
         from: string = process.env.MAIL_FROM_EMAIL
     ): Promise<boolean> {
         // if jest test simulate the email being sent.
-        // TODO:
-        // eslint-disable-next-line no-constant-condition
-        if (process.env.CI || process.env.NODE_ENV === "test" || true)
-            return true;
+        if (process.env.CI || process.env.NODE_ENV === "test") return true;
         try {
             const html = await ejs.renderFile(
-                path.resolve(`../Email/${filename}.ejs`),
+                path.resolve(`src/Email/${filename}.ejs`),
                 vars
             );
             await this.transporter.sendMail({
@@ -48,39 +50,71 @@ export default class Mail {
     }
 
     static async passwordChange(user: User): Promise<boolean> {
-        // TODO: your password has been changed email
         return await this.sendMail(
             user.email,
             `${capitalize(
                 process.env.PROVIDER_TYPE
             )} Providers: Your password has been changed`,
-            "User/PasswordChange",
-            {}
+            "Base",
+            {
+                page: "User/PasswordChange",
+                PROVIDER_TYPE: capitalize(process.env.PROVIDER_TYPE),
+                MAIL_CONTACT_EMAIL: process.env.MAIL_CONTACT_EMAIL,
+                passwordResetURL: `${process.env.BASE_URL}/user/password/forgot`
+            }
         );
     }
 
     static async sendConfirmation(user: User): Promise<boolean> {
-        // TODO: confirm your email
+        // TODO: create frontend for /user/email/confirmation
+        // TODO: create backend endpoint to confirm the email
+
+        if (process.env.CI || process.env.NODE_ENV === "test") return true;
+
+        const code = new EmailConfirmationCode({
+            user: user._id,
+            code: uuid()
+        });
+
+        await code.save();
+
         return await this.sendMail(
             user.email,
             `${capitalize(
                 process.env.PROVIDER_TYPE
             )} Providers: Confirm your email`,
-            "User/EmailConfirmation",
-            {}
+            "Base",
+            {
+                page: "User/EmailConfirmation",
+                PROVIDER_TYPE: capitalize(process.env.PROVIDER_TYPE),
+                MAIL_CONTACT_EMAIL: process.env.MAIL_CONTACT_EMAIL,
+                confirmEmailURL: `${process.env.BASE_URL}/user/email/confirmation?code=${code.code}`
+            }
         );
     }
 
     static async forgotPassword(user: User): Promise<boolean> {
-        // TODO: reset password link
-        // use the temporaryCode model to create the temp code for the url
+        if (process.env.CI || process.env.NODE_ENV === "test") return true;
+
+        const code = new PasswordResetCode({
+            user: user._id,
+            code: uuid()
+        });
+
+        await code.save();
+
         return await this.sendMail(
             user.email,
             `${capitalize(
                 process.env.PROVIDER_TYPE
             )} Providers: Reset your password`,
-            "User/ForgotPassword",
-            {}
+            "Base",
+            {
+                page: "User/ForgotPassword",
+                PROVIDER_TYPE: capitalize(process.env.PROVIDER_TYPE),
+                MAIL_CONTACT_EMAIL: process.env.MAIL_CONTACT_EMAIL,
+                passwordResetURL: `${process.env.BASE_URL}/user/password/reset?code=${code.code}`
+            }
         );
     }
 }

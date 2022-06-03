@@ -302,10 +302,16 @@ export async function resendConfirmation(
     res: express.Response
 ) {
     try {
-        // TODO: add timeout per user
+        // TODO: add timeout per user by checking timestamp of latest email code
         const user = await User.findOne({ username: req.body.username });
 
         if (user) {
+            if (user.emailConfirmed)
+                return res.status(400).json({
+                    success: false,
+                    error: "Your email is already confirmed"
+                });
+
             const confirmation = await Mail.sendConfirmation(user);
 
             if (!confirmation)
@@ -480,7 +486,7 @@ export async function forgotPassword(
     res: express.Response
 ) {
     try {
-        // TODO: add timeout per user
+        // TODO: add timeout per user and ip
         const user = await User.findOne({ email: req.body.email });
 
         if (user) {

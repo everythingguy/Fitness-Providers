@@ -11,6 +11,11 @@ export interface Image extends Base {
     image: string | null;
 }
 
+export interface EmailConfirmationCode extends Base {
+    code: string;
+    user: Types.ObjectId;
+}
+
 export interface PasswordResetCode extends Base {
     code: string;
     user: Types.ObjectId;

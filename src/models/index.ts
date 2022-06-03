@@ -1,3 +1,4 @@
+export * from "./emailConfirmationCode";
 export * from "./passwordResetCode";
 export * from "./user";
 export * from "./provider";
