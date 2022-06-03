@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
 
@@ -81,7 +82,18 @@ export const Login: React.FC = () => {
                                     type="button"
                                     className="btn btn-link text-decoration-none text-dark fw-bold"
                                     onClick={() =>
-                                        User.resendConfirmation(username)
+                                        User.resendConfirmation(username).then(
+                                            (resp) => {
+                                                if (resp.success)
+                                                    toast.info(
+                                                        "Email Confirmation Sent!"
+                                                    );
+                                                else
+                                                    toast.error(
+                                                        "Error sending email confirmation, please contact an admin or try again later."
+                                                    );
+                                            }
+                                        )
                                     }
                                 >
                                     Resend?
