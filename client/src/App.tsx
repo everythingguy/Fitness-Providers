@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import Header from "./components/Header";
 
-import { Home } from "./pages/Home";
+import Home from "./pages/Home";
 import Directory from "./pages/Directory";
 import Calendar from "./pages/Calendar";
 import Course from "./pages/Course";
@@ -18,7 +18,6 @@ import Footer from "./components/Footer";
 import * as ErrorPages from "./pages/ErrorPages";
 
 import { UserContext } from "./context/UserState";
-import { useContext } from "react";
 import Loading from "./components/Loading";
 
 function App() {
