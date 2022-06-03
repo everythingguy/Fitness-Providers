@@ -321,6 +321,7 @@ deploy_main:
         DOCKER_HOST: 10.0.0.194:2375
         DB_NAME: fitness-providers-prod
         SUBDOMAIN: prod
+        BASE_URL: https://prod.duraken.com
     environment:
         name: production
         url: https://prod.duraken.com
@@ -383,6 +384,7 @@ deploy_staging:
         IMAGE_TAG: staging
         DOCKER_HOST: 10.0.0.194:2375
         SUBDOMAIN: stage
+        BASE_URL: https://stage.duraken.com
     environment:
         name: staging
         url: https://stage.duraken.com
@@ -443,6 +445,7 @@ deploy_dev:
         IMAGE_TAG: dev
         DOCKER_HOST: 10.0.0.194:2375
         SUBDOMAIN: dev
+        BASE_URL: https://dev.duraken.com
     environment:
         name: dev
         url: https://dev.duraken.com
@@ -527,7 +530,7 @@ deploy_branch:
         #Get the subdomain substring from the environment url
         - SUBDOMAIN=$(echo $ENVIRONMENT_URL | cut -d "/" -f 3 | cut -d "." -f 1)
         #Create the docker container
-        - docker run -d --name fitness-$CI_COMMIT_BRANCH --net="bridge" -p $PORT:$CONTAINER_PORT -e DOMAIN="$SUBDOMAIN.duraken.com" -e MAIL_HOST=$MAIL_HOST -e MAIL_PORT=$MAIL_PORT -e MAIL_POSTMASTER=$MAIL_POSTMASTER -e MAIL_POSTMASTER_PASSWORD=$MAIL_POSTMASTER_PASSWORD -e MAIL_FROM_EMAIL=$MAIL_FROM_EMAIL -e MAIL_CONTACT_EMAIL=$MAIL_CONTACT_EMAIL -e GOOGLE_MAP_API=$GOOGLE_MAP_API -e GOOGLE_PLACE_API=$GOOGLE_PLACE_API -e PROVIDER_TYPE=$PROVIDER_TYPE -e HTTPS=true -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET -e REFRESH_TOKEN_SECRET=$REFRESH_TOKEN_SECRET -e ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET -e S3_ACCESS_KEY=$S3_ACCESS_KEY -e S3_SECRET_KEY=$S3_SECRET_KEY -e S3_ENDPOINT=$S3_ENDPOINT -e S3_BUCKET=$S3_BUCKET -e BASE_URL=$BASE_URL -e API_URL=$API_URL -e TZ=$TZ $CI_REGISTRY_IMAGE:$IMAGE_TAG
+        - docker run -d --name fitness-$CI_COMMIT_BRANCH --net="bridge" -p $PORT:$CONTAINER_PORT -e DOMAIN="$SUBDOMAIN.duraken.com" -e MAIL_HOST=$MAIL_HOST -e MAIL_PORT=$MAIL_PORT -e MAIL_POSTMASTER=$MAIL_POSTMASTER -e MAIL_POSTMASTER_PASSWORD=$MAIL_POSTMASTER_PASSWORD -e MAIL_FROM_EMAIL=$MAIL_FROM_EMAIL -e MAIL_CONTACT_EMAIL=$MAIL_CONTACT_EMAIL -e GOOGLE_MAP_API=$GOOGLE_MAP_API -e GOOGLE_PLACE_API=$GOOGLE_PLACE_API -e PROVIDER_TYPE=$PROVIDER_TYPE -e HTTPS=true -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_AUTHSOURCE=$DB_AUTHSOURCE -e DB_IP=$DB_IP -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e SECRET=$SECRET -e REFRESH_TOKEN_SECRET=$REFRESH_TOKEN_SECRET -e ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET -e S3_ACCESS_KEY=$S3_ACCESS_KEY -e S3_SECRET_KEY=$S3_SECRET_KEY -e S3_ENDPOINT=$S3_ENDPOINT -e S3_BUCKET=$S3_BUCKET -e BASE_URL=$ENVIRONMENT_URL -e API_URL=$API_URL -e TZ=$TZ $CI_REGISTRY_IMAGE:$IMAGE_TAG
     after_script:
         - docker logout $CI_REGISTRY
     artifacts:
