@@ -119,6 +119,10 @@ ProviderSchema.post("save", UniqueErrorRaiser);
 ProviderSchema.post("updateOne", UniqueErrorRaiser);
 
 ProviderSchema.pre("save", fileRemover<ProviderType>("Provider"));
+ProviderSchema.pre(
+    "updateOne",
+    fileRemover<ProviderType>("Provider", false, true)
+);
 ProviderSchema.post("remove", fileRemover<ProviderType>("Provider", true));
 
 ProviderSchema.method("getCourses", async function (this: ProviderType) {

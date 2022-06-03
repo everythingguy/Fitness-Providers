@@ -90,6 +90,7 @@ CourseSchema.post("remove", function (res, next) {
 });
 
 CourseSchema.pre("save", fileRemover<CourseType>("Course"));
+CourseSchema.pre("updateOne", fileRemover<CourseType>("Course", false, true));
 CourseSchema.post("remove", fileRemover<CourseType>("Course", true));
 
 CourseSchema.virtual("getSessions", async function (this: CourseType) {

@@ -114,8 +114,9 @@ function removeFile(modelName: string, filename: string) {
 
 export function fileRemover<T extends ImageModel>(
     modelName: string,
-    isRemove = false
-) {
+    isRemove = false,
+    isQueryMiddleware = false
+): any {
     if (isRemove)
         return function (
             this: T,
@@ -128,6 +129,28 @@ export function fileRemover<T extends ImageModel>(
                 removeFile(modelName, filename);
             }
             next();
+        };
+    else if (isQueryMiddleware)
+        return function (
+            this: mongoose.Query<unknown, T>,
+            next: mongoose.CallbackWithoutResultAndOptionalError
+        ) {
+            const id = (this as any)._conditions._id;
+            const update = this.getUpdate();
+
+            mongoose
+                .model(modelName)
+                .findById(id)
+                .then(async (prevDoc) => {
+                    const mergedDoc = { ...prevDoc._doc, ...update };
+
+                    if (prevDoc.image !== mergedDoc.image) {
+                        const split = prevDoc.image.split("/");
+                        const filename = split[split.length - 1];
+
+                        removeFile(modelName, filename).then(() => next());
+                    } else next();
+                });
         };
     else
         return function (
@@ -143,8 +166,7 @@ export function fileRemover<T extends ImageModel>(
                             const split = prevDoc.image.split("/");
                             const filename = split[split.length - 1];
 
-                            removeFile(modelName, filename);
-                            next();
+                            removeFile(modelName, filename).then(() => next());
                         } else next();
                     });
             } else next();

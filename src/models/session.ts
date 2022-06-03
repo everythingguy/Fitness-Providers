@@ -73,6 +73,10 @@ SessionSchema.post("remove", function (res, next) {
 });
 
 SessionSchema.pre("save", fileRemover<SessionType>("Session"));
+SessionSchema.pre(
+    "updateOne",
+    fileRemover<SessionType>("Session", false, true)
+);
 SessionSchema.post("remove", fileRemover<SessionType>("Session", true));
 
 export const Session: PaginateModel<SessionType, unknown, unknown> =
