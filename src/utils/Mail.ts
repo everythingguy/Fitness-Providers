@@ -3,6 +3,7 @@ import ejs from "ejs";
 
 import { User } from "../@types/models";
 import { capitalize } from "./string";
+import path from "path";
 
 export default class Mail {
     static transporter = mailer.createTransport({
@@ -23,13 +24,13 @@ export default class Mail {
         from: string = process.env.MAIL_FROM_EMAIL
     ): Promise<boolean> {
         // if jest test simulate the email being sent.
-        // TODO: remove || true
+        // TODO:
         // eslint-disable-next-line no-constant-condition
         if (process.env.CI || process.env.NODE_ENV === "test" || true)
             return true;
         try {
             const html = await ejs.renderFile(
-                __dirname + "/../Email/" + filename + ".ejs",
+                path.resolve(`../Email/${filename}.ejs`),
                 vars
             );
             await this.transporter.sendMail({
@@ -46,8 +47,20 @@ export default class Mail {
         }
     }
 
+    static async passwordChange(user: User): Promise<boolean> {
+        // TODO: your password has been changed email
+        return await this.sendMail(
+            user.email,
+            `${capitalize(
+                process.env.PROVIDER_TYPE
+            )} Providers: Your password has been changed`,
+            "User/PasswordChange",
+            {}
+        );
+    }
+
     static async sendConfirmation(user: User): Promise<boolean> {
-        // TODO:
+        // TODO: confirm your email
         return await this.sendMail(
             user.email,
             `${capitalize(
@@ -59,7 +72,7 @@ export default class Mail {
     }
 
     static async forgotPassword(user: User): Promise<boolean> {
-        // TODO:
+        // TODO: reset password link
         // use the temporaryCode model to create the temp code for the url
         return await this.sendMail(
             user.email,

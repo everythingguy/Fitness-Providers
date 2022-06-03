@@ -450,7 +450,9 @@ export async function changePassword(req: Request, res: express.Response) {
             });
 
         user.password = password;
-        await user.save();
+        await user.validate();
+
+        revokeRefreshTokensForUser(req);
 
         res.status(200).json({
             success: true,
@@ -461,6 +463,8 @@ export async function changePassword(req: Request, res: express.Response) {
                 }
             }
         });
+
+        Mail.passwordChange(user);
     } catch (error) {
         postPatchErrorHandler(res, error);
     }
@@ -553,10 +557,12 @@ export async function resetPassword(
 
         revokeRefreshTokensForUser(req);
 
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
-            data: userResponse(req, user)
+            data: { ...req.user, provider: req.provider ? req.provider : null }
         } as userResponseType);
+
+        Mail.passwordChange(user);
     } catch (error) {
         postPatchErrorHandler(res, error);
     }
