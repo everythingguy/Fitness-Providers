@@ -367,11 +367,15 @@ describe(`POST ${apiPath}/users/login`, () => {
 });
 
 describe(`DELETE ${apiPath}/users/me`, () => {
+    // TODO: test with wrong password
     it("should delete the user", async () => {
         const res = await request(app)
             .del(`${apiPath}/users/me`)
             .set("Authorization", "bearer " + accessToken)
             .set("Cookie", authCookie)
+            .send({
+                password: user.password
+            })
             .expect(200)
             .expect("Content-Type", /json/);
 
