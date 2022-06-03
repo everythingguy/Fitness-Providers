@@ -69,8 +69,6 @@ export default class Mail {
         // TODO: create frontend for /user/email/confirmation
         // TODO: create backend endpoint to confirm the email
 
-        if (process.env.CI || process.env.NODE_ENV === "test") return true;
-
         const code = new EmailConfirmationCode({
             user: user._id,
             code: uuid()
@@ -94,8 +92,6 @@ export default class Mail {
     }
 
     static async forgotPassword(user: User): Promise<boolean> {
-        if (process.env.CI || process.env.NODE_ENV === "test") return true;
-
         const code = new PasswordResetCode({
             user: user._id,
             code: uuid()

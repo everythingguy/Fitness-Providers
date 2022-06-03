@@ -5,6 +5,7 @@ import { User as UserType } from "../@types/models";
 import Provider from "./provider";
 import { UniqueErrorRaiser } from "../utils/errors";
 import Pagination from "mongoose-paginate-v2";
+import EmailConfirmationCode from "./emailConfirmationCode";
 
 // debug
 // mongoose.set('debug', true);
@@ -93,11 +94,14 @@ UserSchema.pre("save", async function (next) {
     if (this.isSuperAdmin) this.isAdmin = true;
     if (this.isModified("password"))
         this.password = await bcrypt.hash(this.password, 10);
+    if (this.isModified("emailConfirmed") && this.emailConfirmed)
+        EmailConfirmationCode.remove({ user: this._id }).exec();
     next();
 });
 
 UserSchema.post("remove", function (res, next) {
     Provider.remove({ user: this._id }).exec();
+    EmailConfirmationCode.remove({ user: this._id }).exec();
     next();
 });
 

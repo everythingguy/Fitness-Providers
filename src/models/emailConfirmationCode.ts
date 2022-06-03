@@ -6,8 +6,6 @@ import User from "./user";
 // debug
 // mongoose.set('debug', true);
 
-// TODO: on email confirmed delete all codes belonging to that user
-
 const EmailConfirmationCodeSchema =
     new mongoose.Schema<EmailConfirmationCodeType>(
         {
