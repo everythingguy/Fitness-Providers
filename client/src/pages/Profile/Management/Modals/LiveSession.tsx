@@ -15,12 +15,14 @@ import LiveSession from "../../../../API/LiveSession";
 import { WeekDays } from "../../../../@types/enums";
 import {
     ErrorResponse,
+    ImageResponse,
     LiveSessionResponse,
     SessionResponse
 } from "../../../../@types/Response";
 
 import "antd/dist/antd.css";
 import { Info } from "../../../../@types/misc";
+import { reloadImage } from "../../../../utils/reload";
 
 interface Props {
     setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,9 +39,11 @@ export const LiveSessionModal: React.FC<Props> = ({
     info,
     setInfo
 }) => {
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<CourseType | null>(
         null
     );
+    const currentImage = useRef<string | null>(null);
 
     // field state
     const [errors, setError] = useState<{ [key: string]: string | null }>({
@@ -63,6 +67,7 @@ export const LiveSessionModal: React.FC<Props> = ({
         isRecurring: boolean;
         date: moment.Moment | null;
         time: moment.Moment[];
+        image: File | null;
         recurring: {
             weekDays: WeekDays[];
             frequency: number;
@@ -74,6 +79,7 @@ export const LiveSessionModal: React.FC<Props> = ({
         isRecurring: false,
         date: null,
         time: [],
+        image: null,
         recurring: {
             weekDays: [],
             frequency: 1,
@@ -154,7 +160,34 @@ export const LiveSessionModal: React.FC<Props> = ({
             }
         }
 
+        let imageResp: ImageResponse | SessionResponse | ErrorResponse | null =
+            null;
+
         if (sessionResp.success) {
+            if (currentImage.current !== null && selectedImage === null) {
+                imageResp = await Session.removeImage(
+                    sessionResp.data.session._id
+                );
+            } else if (
+                currentImage.current !== selectedImage &&
+                formData.image
+            ) {
+                imageResp = await Session.uploadImage(
+                    sessionResp.data.session._id,
+                    formData.image
+                );
+
+                if (imageResp && imageResp.success && imageResp.data.image) {
+                    // reload image on the site
+                    reloadImage(imageResp.data.image);
+                }
+            }
+        }
+
+        if (
+            sessionResp.success &&
+            ((imageResp && imageResp.success) || imageResp === null)
+        ) {
             let liveResp: LiveSessionResponse | ErrorResponse;
             if (!info)
                 liveResp = await LiveSession.createLiveSession(
@@ -251,6 +284,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                     isRecurring: false,
                     date: null,
                     time: [],
+                    image: null,
                     recurring: {
                         weekDays: [],
                         frequency: 1,
@@ -258,13 +292,24 @@ export const LiveSessionModal: React.FC<Props> = ({
                     }
                 });
                 currentInfo.current = null;
+                currentImage.current = null;
+                setSelectedImage(null);
             } else {
                 setError(liveResp.error as any);
                 if (!info)
                     await Session.deleteSession(sessionResp.data.session._id);
             }
         } else {
-            setError(sessionResp.error as any);
+            if (imageResp) {
+                if (!sessionResp.success && !imageResp.success)
+                    setError({
+                        ...(sessionResp.error as any),
+                        ...(imageResp.error as any)
+                    });
+                else if (!sessionResp.success)
+                    setError(sessionResp.error as any);
+                else if (!imageResp.success) setError(imageResp.error as any);
+            } else setError(sessionResp.error as any);
         }
     };
 
@@ -288,6 +333,11 @@ export const LiveSessionModal: React.FC<Props> = ({
                                     (c) => c._id === course._id
                                 )[0]
                             );
+
+                            if (session.image) {
+                                currentImage.current = session.image;
+                                setSelectedImage(session.image);
+                            }
 
                             setFormData({
                                 ...formData,
@@ -373,6 +423,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                     isRecurring: false,
                     date: null,
                     time: [],
+                    image: null,
                     recurring: {
                         weekDays: [],
                         frequency: 1,
@@ -394,6 +445,8 @@ export const LiveSessionModal: React.FC<Props> = ({
                     "recurring.frequency": null
                 });
                 currentInfo.current = null;
+                currentImage.current = null;
+                setSelectedImage(null);
             }}
         >
             <Modal.Header>
@@ -700,6 +753,47 @@ export const LiveSessionModal: React.FC<Props> = ({
                         </div>
                     </>
                 )}
+                <div className="form-group mb-4">
+                    <label className="form-label">Image:</label>
+                    <input
+                        className={
+                            errors.image
+                                ? "form-control is-invalid"
+                                : "form-control"
+                        }
+                        type="file"
+                        name="image"
+                        accept=".jpg,.jpeg,.png"
+                        onChange={(e) => {
+                            if (e.target.files && e.target.files.length > 0) {
+                                setSelectedImage(
+                                    URL.createObjectURL(e.target.files[0])
+                                );
+                                setFormData({
+                                    ...formData,
+                                    image: e.target.files[0]
+                                });
+                            }
+                        }}
+                    />
+                    {selectedImage && (
+                        <>
+                            <img
+                                className="img-thumbnail col-md-3"
+                                src={selectedImage}
+                            />
+                            <br />
+                            <button
+                                className="btn btn-danger mb-4"
+                                type="button"
+                                onClick={() => setSelectedImage(null)}
+                            >
+                                Remove
+                            </button>
+                        </>
+                    )}
+                    <div className="invalid-feedback">{errors.image}</div>
+                </div>
             </Modal.Body>
             <Modal.Footer>
                 <button
@@ -714,6 +808,7 @@ export const LiveSessionModal: React.FC<Props> = ({
                             isRecurring: false,
                             date: null,
                             time: [],
+                            image: null,
                             recurring: {
                                 weekDays: [],
                                 frequency: 1,
@@ -735,6 +830,8 @@ export const LiveSessionModal: React.FC<Props> = ({
                             "recurring.frequency": null
                         });
                         currentInfo.current = null;
+                        currentImage.current = null;
+                        setSelectedImage(null);
                     }}
                 >
                     Cancel
