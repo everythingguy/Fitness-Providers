@@ -13,7 +13,7 @@ export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
 
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const createInstructor = params.get("createInstructor") || false;
+    const createProvider = params.get("createProvider") || false;
 
     const { user } = useContext(UserContext);
 
@@ -44,7 +44,7 @@ export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
             {user && !user.provider && (
                 <ProviderApplication
                     buttonStyle={btnStyle}
-                    showAtStart={createInstructor ? true : false}
+                    showAtStart={createProvider ? true : false}
                 />
             )}
         </>

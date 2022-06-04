@@ -4,8 +4,6 @@ import { toast } from "react-toastify";
 import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
 
-// TODO: become a provider does not work with confirm email
-
 export const Register: React.FC = () => {
     // logged in context
     const { loggedIn, setLogin } = useContext(UserContext);
@@ -27,7 +25,7 @@ export const Register: React.FC = () => {
         username: "",
         password: "",
         re_password: "",
-        instructor: false
+        provider: false
     });
     const {
         email,
@@ -36,7 +34,7 @@ export const Register: React.FC = () => {
         username,
         password,
         re_password,
-        instructor
+        provider
     } = formData;
 
     const onChange = (e) => {
@@ -62,7 +60,8 @@ export const Register: React.FC = () => {
             email,
             username,
             password,
-            re_password
+            re_password,
+            provider
         );
         if (auth.success) {
             setError({
@@ -82,8 +81,8 @@ export const Register: React.FC = () => {
     };
 
     if (!wasSuccessful && loggedIn) return <Navigate to="/" />;
-    if (wasSuccessful && instructor)
-        return <Navigate to="/user/login?createInstructor=true" />;
+    if (wasSuccessful && provider)
+        return <Navigate to="/user/login?createProvider=true" />;
     if (wasSuccessful) return <Navigate to="/user/login" />;
 
     return (
@@ -205,7 +204,7 @@ export const Register: React.FC = () => {
                     <input
                         className="form-control form-check-input d-inline-block ms-4 p-2"
                         type="checkbox"
-                        name="instructor"
+                        name="provider"
                         onChange={onChange}
                     />
                 </div>

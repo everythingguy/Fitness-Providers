@@ -258,7 +258,7 @@ export function logoutUser(req: Request, res: express.Response) {
  * @access Public
  */
 export async function addUser(
-    req: RequestBody<UserType & { re_password: string }>,
+    req: RequestBody<UserType & { re_password: string; provider?: boolean }>,
     res: express.Response
 ) {
     try {
@@ -282,7 +282,7 @@ export async function addUser(
 
         const user = await User.create(req.body);
 
-        Mail.sendConfirmation(user);
+        Mail.sendConfirmation(user, req.body.provider ? true : false);
 
         return res.status(201).json({
             success: true,

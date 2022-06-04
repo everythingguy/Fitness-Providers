@@ -11,6 +11,7 @@ export const Email: React.FC<Props> = () => {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const code = params.get("code") || false;
+    const createProvider = params.get("createProvider") || false;
 
     const [success, setSuccess] = useState<boolean | null>(
         code === false ? false : null
@@ -29,7 +30,11 @@ export const Email: React.FC<Props> = () => {
 
     if (success === null) return <Loading />;
     if (!success) return <Error400 />;
-    else return <Navigate to="/user/login" />;
+
+    if (createProvider)
+        return <Navigate to="/user/login?createProvider=true" />;
+
+    return <Navigate to="/user/login" />;
 };
 
 export default Email;

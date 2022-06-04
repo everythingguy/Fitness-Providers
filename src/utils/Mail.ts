@@ -67,7 +67,10 @@ export default class Mail {
         );
     }
 
-    static async sendConfirmation(user: User): Promise<boolean> {
+    static async sendConfirmation(
+        user: User,
+        provider = false
+    ): Promise<boolean> {
         const code = new EmailConfirmationCode({
             user: user._id,
             code: uuid()
@@ -85,7 +88,9 @@ export default class Mail {
                 page: "User/EmailConfirmation",
                 PROVIDER_TYPE: capitalize(process.env.PROVIDER_TYPE),
                 MAIL_CONTACT_EMAIL: process.env.MAIL_CONTACT_EMAIL,
-                confirmEmailURL: `${process.env.BASE_URL}/user/email/confirmation?code=${code.code}`
+                confirmEmailURL: provider
+                    ? `${process.env.BASE_URL}/user/email/confirmation?code=${code.code}&createProvider=true`
+                    : `${process.env.BASE_URL}/user/email/confirmation?code=${code.code}`
             }
         );
     }

@@ -12,7 +12,8 @@ export class User {
         email: string,
         username: string,
         password: string,
-        confirmPassword: string
+        confirmPassword: string,
+        provider = false
     ): Promise<UserResponse | ErrorResponse> {
         const request = new DataRequest("POST", "users/register");
         request.setBody({
@@ -21,7 +22,8 @@ export class User {
             email,
             username,
             password,
-            re_password: confirmPassword
+            re_password: confirmPassword,
+            provider
         });
 
         return new Promise((res) => {

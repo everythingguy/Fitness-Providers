@@ -10,7 +10,7 @@ export const Login: React.FC = () => {
 
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const createInstructor = params.get("createInstructor") || false;
+    const createProvider = params.get("createProvider") || false;
 
     // field state
     const [isAuth, setAuth] = useState(false);
@@ -48,8 +48,8 @@ export const Login: React.FC = () => {
         }
     };
 
-    if ((isAuth || loggedIn) && createInstructor)
-        return <Navigate to="/user/settings?createInstructor=true" />;
+    if ((isAuth || loggedIn) && createProvider)
+        return <Navigate to="/user/settings?createProvider=true" />;
     if (isAuth || loggedIn) return <Navigate to="/" />;
 
     return (
