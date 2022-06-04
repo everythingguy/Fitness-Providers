@@ -9,7 +9,7 @@ import Pagination from "mongoose-paginate-v2";
 import AggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 // debug
-// mongoose.set('debug', true);
+// mongoose.set("debug", true);
 
 const RecurringSchema = new mongoose.Schema<Recurring>({
     weekDays: {

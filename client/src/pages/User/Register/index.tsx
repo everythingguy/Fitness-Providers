@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
 
+// TODO: become a provider does not work with confirm email
+
 export const Register: React.FC = () => {
     // logged in context
     const { loggedIn, setLogin } = useContext(UserContext);

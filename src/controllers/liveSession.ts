@@ -253,7 +253,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
                 as: "session"
             }
         },
-        { $unwind: "$session" },
+        { $unwind: { path: "$session", preserveNullAndEmptyArrays: true } },
         {
             $lookup: {
                 from: "courses",
@@ -262,7 +262,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
                 as: "course"
             }
         },
-        { $unwind: "$course" },
+        { $unwind: { path: "$course", preserveNullAndEmptyArrays: true } },
         {
             $addFields: {
                 "session.course": "$course",
@@ -277,7 +277,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
                 as: "location"
             }
         },
-        { $unwind: "$location" },
+        { $unwind: { path: "$location", preserveNullAndEmptyArrays: true } },
         {
             $lookup: {
                 from: "providers",
@@ -286,7 +286,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
                 as: "provider"
             }
         },
-        { $unwind: "$provider" },
+        { $unwind: { path: "$provider", preserveNullAndEmptyArrays: true } },
         {
             $addFields: {
                 "session.course.location": "$location",
