@@ -57,7 +57,15 @@ module.exports = () => {
         },
         {
           test: /\.css$/,
-          use: ["style-loader", "css-loader"],
+          use: ["style-loader",
+            {
+              loader: "css-loader",
+              options: {
+                url: false
+              }
+            }
+          ],
+
         },
         {
           test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,

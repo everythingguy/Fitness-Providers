@@ -10,9 +10,7 @@ import { User, Provider, Address } from "../../../API";
 interface Props {}
 
 // TODO: delete my account
-// TODO: change color of hamburger button in header
 // TODO: image for live sessions
-// TODO: calendar does not work in docker
 // TODO: Categories
 // Age group category (Seniors, Kids, Young Adults, Adults)
 // Settings (Indoor, outdoor)
