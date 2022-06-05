@@ -7,6 +7,7 @@ interface innerProps {
     subtitle?: string;
     date?: string;
     onClick?: () => void;
+    hidden?: boolean;
 }
 
 interface Props extends innerProps {
@@ -23,7 +24,8 @@ const InnerLink: React.FC<innerProps> = ({
     title,
     subtitle,
     date,
-    onClick
+    onClick,
+    hidden = false
 }) => {
     return (
         <div
@@ -48,7 +50,13 @@ const InnerLink: React.FC<innerProps> = ({
                 <h6 className="fw-bold w-100 m-0">{title}</h6>
                 <div className="d-lg-flex w-100">
                     {subtitle && <p className="m-0">{subtitle}</p>}
-
+                    {hidden && (
+                        <p className="text-danger">
+                            Only you can see this result until you select a
+                            subscription. Select a subscription in the user
+                            settings.
+                        </p>
+                    )}
                     {date && <p className="m-0 ms-auto">{date}</p>}
                 </div>
             </div>
@@ -65,6 +73,7 @@ export const Result: React.FC<Props> = ({
     image,
     external = false,
     newTab = true,
+    hidden = false,
     onEdit,
     onDelete
 }) => {
@@ -83,6 +92,7 @@ export const Result: React.FC<Props> = ({
                             title={title}
                             subtitle={subtitle}
                             date={date}
+                            hidden={hidden}
                         />
                     </Link>
                 ) : (
@@ -100,6 +110,7 @@ export const Result: React.FC<Props> = ({
                             title={title}
                             subtitle={subtitle}
                             date={date}
+                            hidden={hidden}
                         />
                     </a>
                 )
@@ -110,6 +121,7 @@ export const Result: React.FC<Props> = ({
                     subtitle={subtitle}
                     date={date}
                     onClick={() => onEdit(_id)}
+                    hidden={hidden}
                 />
             ) : (
                 <InnerLink
@@ -117,6 +129,7 @@ export const Result: React.FC<Props> = ({
                     title={title}
                     subtitle={subtitle}
                     date={date}
+                    hidden={hidden}
                 />
             )}
             <div className="d-flex ms-auto">

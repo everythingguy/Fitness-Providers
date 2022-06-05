@@ -23,6 +23,14 @@ export const Footer: React.FC = () => {
                         {loggedIn && !user?.provider && (
                             <ProviderApplication buttonStyle="text-decoration-none d-block text-light" />
                         )}
+                        {user && user.provider && (
+                            <Link
+                                to="/user/settings/subscription"
+                                className="text-decoration-none d-block text-light"
+                            >
+                                Manage Subscription
+                            </Link>
+                        )}
                     </div>
                     <div className="col text-center">
                         <a

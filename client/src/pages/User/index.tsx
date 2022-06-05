@@ -1,4 +1,5 @@
 export * from "./AddressManagement";
+export * from "./SubscriptionManagement";
 export * from "./ChangePassword";
 export * from "./ForgotPassword";
 export * from "./Email";

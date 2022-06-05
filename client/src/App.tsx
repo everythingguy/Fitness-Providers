@@ -99,6 +99,10 @@ function App() {
                                 path="/user/settings/address"
                                 element={<UserPages.AddressManagement />}
                             />
+                            <Route
+                                path="/user/settings/subscription"
+                                element={<UserPages.SubscriptionManagement />}
+                            />
                             <Route path="/terms" element={<Terms />} />
 
                             {user && user.isAdmin && (

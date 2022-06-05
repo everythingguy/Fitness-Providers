@@ -155,7 +155,7 @@ export const Settings: React.FC<Props> = () => {
             });
     }, []);
 
-    if (!loggedIn) return <Navigate to="/" />;
+    if (!loggedIn) return <Navigate to="/user/login" />;
 
     return (
         <>

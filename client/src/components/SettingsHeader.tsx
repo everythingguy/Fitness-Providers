@@ -4,7 +4,7 @@ import { UserContext } from "../context/UserState";
 import ProviderApplication from "./ProviderApplication";
 
 interface Props {
-    activePage: "info" | "address" | "password";
+    activePage: "info" | "address" | "password" | "subscription";
 }
 
 export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
@@ -25,15 +25,28 @@ export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
             >
                 User Info
             </Link>
-            {user?.provider && (
-                <Link
-                    className={
-                        activePage === "info" ? activeBtnStyle : btnStyle
-                    }
-                    to="/user/settings/address"
-                >
-                    Address Management
-                </Link>
+            {user && user.provider && (
+                <>
+                    <Link
+                        className={
+                            activePage === "info" ? activeBtnStyle : btnStyle
+                        }
+                        to="/user/settings/address"
+                    >
+                        Address Management
+                    </Link>
+
+                    <Link
+                        className={
+                            activePage === "subscription"
+                                ? activeBtnStyle
+                                : btnStyle
+                        }
+                        to="/user/settings/subscription"
+                    >
+                        Subscription Management
+                    </Link>
+                </>
             )}
             <Link
                 className={activePage === "info" ? activeBtnStyle : btnStyle}

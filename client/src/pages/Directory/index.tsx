@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect, useRef } from "react";
 import { Searchbar, Category as CategoryComp, Card } from "../../components";
 import { Category, Provider, Course, Session } from "../../API";
@@ -11,10 +11,12 @@ import {
 } from "../../@types/Models";
 import { Link, useMatch, useSearchParams } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
+import { UserContext } from "../../context/UserState";
 
 // TODO: Get all categories
 
 export const Directory: React.FC = () => {
+    const { user } = useContext(UserContext);
     const match = useMatch("/directory/:type");
     const displayParam: "providers" | "courses" | "sessions" =
         match &&
@@ -377,6 +379,14 @@ export const Directory: React.FC = () => {
                                     : ""
                             }
                             text={p.bio}
+                            hidden={
+                                user &&
+                                user.provider &&
+                                !user.provider.isEnrolled &&
+                                p._id === user.provider._id
+                                    ? true
+                                    : false
+                            }
                         ></Card>
                     ))}
                 {display === "courses" &&
@@ -396,6 +406,14 @@ export const Directory: React.FC = () => {
                                     : ""
                             }
                             text={c.description}
+                            hidden={
+                                user &&
+                                user.provider &&
+                                !user.provider.isEnrolled &&
+                                c.provider._id === user.provider._id
+                                    ? true
+                                    : false
+                            }
                         ></Card>
                     ))}
                 {display === "sessions" &&
@@ -411,6 +429,14 @@ export const Directory: React.FC = () => {
                             title={s.name}
                             subtitle={s.course.name}
                             text={s.course.description}
+                            hidden={
+                                user &&
+                                user.provider &&
+                                !user.provider.isEnrolled &&
+                                s.course.provider._id === user.provider._id
+                                    ? true
+                                    : false
+                            }
                         ></Card>
                     ))}
             </div>

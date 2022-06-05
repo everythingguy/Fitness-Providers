@@ -6,7 +6,6 @@ import Address from "../../../API/Address";
 import { ResultList } from "../../../components";
 import SettingsHeader from "../../../components/SettingsHeader";
 import { UserContext } from "../../../context/UserState";
-import { Error403 } from "../../ErrorPages/403";
 import { AddressModal, DeleteModal } from "../../Profile/Management/Modals";
 
 interface Props {}
@@ -27,7 +26,8 @@ export const AddressManagement: React.FC<Props> = () => {
     }, [showAddressModal, showDeleteModal]);
 
     if (!loggedIn) return <Navigate to="/user/login" />;
-    if (!(user && user.provider)) return <Error403 />;
+    if (!(user && user.provider))
+        return <Navigate to="/user/settings?createProvider=true" />;
 
     return (
         <>

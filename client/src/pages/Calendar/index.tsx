@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ReactCalendar from "react-calendar";
 import Modal from "react-bootstrap/Modal";
 import ResultList from "../../components/ResultList";
@@ -15,10 +15,12 @@ import {
 import "react-calendar/dist/Calendar.css";
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
+import { UserContext } from "../../context/UserState";
 
 interface Props {}
 
 export const Calendar: React.FC<Props> = () => {
+    const { user } = useContext(UserContext);
     const [selectedDate, setSelectedDate] = useState<Date | null>(
         new Date(new Date().setHours(0, 0, 0, 0))
     );
@@ -151,7 +153,15 @@ export const Calendar: React.FC<Props> = () => {
                             external: s.session.URL ? true : false,
                             image:
                                 s.session.course.image ||
-                                "https://picsum.photos/500/500?" + s._id
+                                "https://picsum.photos/500/500?" + s._id,
+                            hidden:
+                                user &&
+                                user.provider &&
+                                !user.provider.isEnrolled &&
+                                s.session.course.provider._id ===
+                                    user.provider._id
+                                    ? true
+                                    : false
                         }))}
                     />
                 </div>

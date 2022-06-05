@@ -17,6 +17,7 @@ interface Props extends innerProps {
     text?: string;
     date?: string;
     readMore?: boolean;
+    hidden?: boolean;
 }
 
 const InnerCard: React.FC<innerProps> = ({ title, subtitle, image }) => {
@@ -49,7 +50,8 @@ export const Card: React.FC<Props> = ({
     className = "",
     external = false,
     newTab = true,
-    readMore = true
+    readMore = true,
+    hidden = false
 }) => {
     const maxLength = 100;
     const [displayAll, setDisplayAll] = useState(false);
@@ -120,7 +122,16 @@ export const Card: React.FC<Props> = ({
                             )}
                         </BootstrapCard.Text>
                     ) : (
-                        <BootstrapCard.Text>{text}</BootstrapCard.Text>
+                        <>
+                            <BootstrapCard.Text>{text}</BootstrapCard.Text>
+                            {hidden && (
+                                <p className="text-danger">
+                                    Only you can see this result until you
+                                    select a subscription. Select a subscription
+                                    in the user settings.
+                                </p>
+                            )}
+                        </>
                     )}
                 </BootstrapCard.Body>
                 {date && <BootstrapCard.Footer>{date}</BootstrapCard.Footer>}
