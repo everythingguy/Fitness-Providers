@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
                             </Link>
                         )}
                         {loggedIn && !user?.provider && (
-                            <ProviderApplication buttonStyle="text-decoration-none d-block text-light" />
+                            <ProviderApplication buttonStyle="btn text-decoration-none d-block text-light" />
                         )}
                         {user && user.provider && (
                             <Link

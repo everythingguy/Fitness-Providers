@@ -5,7 +5,7 @@ import { UserProvider } from "./context/UserState";
 
 import App from "./App";
 
-import "./assets/tailwind.css";
+// import "./assets/tailwind.css";
 import "./assets/style.css";
 import "./assets/bootstrap.css";
 import "react-toastify/dist/ReactToastify.css";

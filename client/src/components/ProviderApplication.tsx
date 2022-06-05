@@ -252,7 +252,7 @@ interface Props {
 }
 
 export const ProviderApplication: React.FC<Props> = ({
-    buttonStyle = "btn text-light btn-dark mb-2",
+    buttonStyle = "btn text-light btn-dark mb-2 bg-none",
     showAtStart = false
 }) => {
     const navigate = useNavigate();

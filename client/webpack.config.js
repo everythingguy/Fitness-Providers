@@ -3,6 +3,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const dotenv = require("dotenv");
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const BundleTracker = require("webpack-bundle-tracker");
 const {
   CleanWebpackPlugin
@@ -30,6 +31,7 @@ module.exports = () => {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
     },
     plugins: [
+      // new BundleAnalyzerPlugin(),
       new webpack.DefinePlugin({
         "process.env.API_URL": JSON.stringify(process.env.API_URL),
         "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(process.env.MAIL_CONTACT_EMAIL),
@@ -47,8 +49,11 @@ module.exports = () => {
     module: {
       rules: [{
           test: (path) => {
-            return (path.endsWith(".ts") && !path.endsWith(".test.ts")) ||
-              path.endsWith(".tsx") || path.endsWith(".js") || path.endsWith(".jsx");
+            if (((path.endsWith(".ts") && !path.endsWith(".test.ts")) ||
+                path.endsWith(".tsx") || path.endsWith(".js") || path.endsWith(".jsx"))) {
+              return true;
+            }
+            return false;
           },
           exclude: /node_modules/,
           use: {

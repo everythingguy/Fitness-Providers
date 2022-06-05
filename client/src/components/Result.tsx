@@ -134,12 +134,12 @@ export const Result: React.FC<Props> = ({
             )}
             <div className="d-flex ms-auto">
                 {onEdit ? (
-                    <button onClick={() => onEdit(_id)}>
+                    <button className="btn p-0" onClick={() => onEdit(_id)}>
                         <i className="bi bi-pencil-square"></i>
                     </button>
                 ) : null}
                 {onDelete ? (
-                    <button onClick={() => onDelete(_id)}>
+                    <button className="btn p-0" onClick={() => onDelete(_id)}>
                         <i className="bi bi-trash ms-2"></i>
                     </button>
                 ) : null}

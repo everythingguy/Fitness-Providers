@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint -c .eslintrc.json .",
     "lint-fix": "eslint --fix .",
-    "build": "copyfiles -u 2 'src/views/**/*.ejs' 'dist/views' && tsc",
+    "build": "copyfiles -u 2 'src/views/**/*.ejs' 'dist/views' && copyfiles -u 2 'src/Email/**/*.ejs' 'dist/Email' && tsc",
     "start": "node dist/app.js",
     "client": "npm run dev --prefix client",
     "silent-client": "npm run silent-start --prefix client",
