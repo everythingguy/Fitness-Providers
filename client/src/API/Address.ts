@@ -3,6 +3,7 @@ import {
     AddressResponse,
     ErrorResponse
 } from "../@types/Response";
+import { Address as AddressType } from "../@types/Models";
 import { APIManager, DataRequest } from "./APIManager";
 
 export class Address {
@@ -56,12 +57,26 @@ export class Address {
         });
     }
 
+    static async getAllProvidersAddresses(
+        providerID: string,
+        params: { [key: string]: string[] | string | number[] | number } = {}
+    ) {
+        return APIManager.sendRequestAll<AddressType>(
+            Address.getProvidersAddresses as any,
+            "addresses",
+            [providerID],
+            params
+        );
+    }
+
     static async getProvidersAddresses(
-        providerID: string
+        providerID: string,
+        params: { [key: string]: string[] | string | number[] | number } = {}
     ): Promise<AddressesResponse | ErrorResponse> {
         const request = new DataRequest("GET", "addresses");
 
         request.setParams({
+            ...params,
             provider: providerID
         });
 

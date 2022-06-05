@@ -20,11 +20,10 @@ export const AddressManagement: React.FC<Props> = () => {
     const [editDeleteInfo, setEditDeleteInfo] = useState<Info>(false);
 
     useEffect(() => {
-        // TODO: Get all addresses (pagination)
         if (user && user.provider && !showAddressModal && !showDeleteModal)
-            Address.getProvidersAddresses(user.provider._id).then((resp) => {
-                if (resp.success) setAddresses(resp.data.addresses);
-            });
+            Address.getAllProvidersAddresses(user.provider._id).then((data) =>
+                setAddresses(data)
+            );
     }, [showAddressModal, showDeleteModal]);
 
     if (!loggedIn) return <Navigate to="/user/login" />;
