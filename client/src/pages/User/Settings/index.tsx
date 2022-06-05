@@ -101,17 +101,22 @@ export const Settings: React.FC<Props> = () => {
             const providerBody: {
                 phone: string | undefined;
                 website: string | undefined | null;
-                address: string | undefined;
+                address: string | undefined | null;
             } = {
                 phone,
                 website: website && website.length > 0 ? website : null,
-                address: selectedAddress._id
+                address:
+                    selectedAddress._id === "none" ? null : selectedAddress._id
             };
 
             if (user.provider.phone === phone) delete providerBody.phone;
             if (user.provider.website === providerBody.website)
                 delete providerBody.website;
-            if (user.provider.address._id === providerBody.address)
+            if (
+                (user.provider.address &&
+                    user.provider.address._id === providerBody.address) ||
+                (user.provider.address as any) === providerBody.address
+            )
                 delete providerBody.address;
 
             if (Object.keys(providerBody).length > 0) {
