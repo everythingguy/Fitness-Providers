@@ -346,7 +346,6 @@ export async function resendConfirmation(
     res: express.Response
 ) {
     try {
-        // TODO: add timeout per user by checking timestamp of latest email code
         const user = await User.findOne({ username: req.body.username });
 
         if (user) {
@@ -355,6 +354,23 @@ export async function resendConfirmation(
                     success: false,
                     error: "Your email is already confirmed"
                 });
+
+            try {
+                const codes = await EmailConfirmationCode.find({ user });
+                if (codes.length > 0) {
+                    for (const code of codes) {
+                        if (
+                            new Date().getTime() - code.createdAt.getTime() <
+                            5 * 60 * 1000
+                        )
+                            return res.status(400).json({
+                                success: false,
+                                error: "Please wait five minutes before requesting another confirmation. Don't forget to check your spam folder."
+                            });
+                    }
+                }
+                // eslint-disable-next-line no-empty
+            } catch (error) {}
 
             const confirmation = await Mail.sendConfirmation(user);
 

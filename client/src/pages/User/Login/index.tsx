@@ -88,10 +88,14 @@ export const Login: React.FC = () => {
                                                     toast.info(
                                                         "Email Confirmation Sent!"
                                                     );
-                                                else
+                                                else if (
+                                                    resp.error ===
+                                                    "Server was unable to send the email"
+                                                )
                                                     toast.error(
                                                         "Error sending email confirmation, please contact an admin or try again later."
                                                     );
+                                                else toast.error(resp.error);
                                             }
                                         )
                                     }
