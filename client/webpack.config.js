@@ -17,7 +17,7 @@ module.exports = () => {
   return {
     entry: "./src/index.tsx",
     devtool: "source-map",
-    target: "node",
+    target: "web",
     watchOptions: {
       aggregateTimeout: 200,
       poll: 1000,
