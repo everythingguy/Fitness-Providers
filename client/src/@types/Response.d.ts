@@ -107,6 +107,12 @@ export interface LiveSessionsResponse extends SuccessfulPaginationResponse {
 
 export interface CategoryResponse extends SuccessfulPaginationResponse {
     data: {
+        category: Category;
+    };
+}
+
+export interface CategoriesResponse extends SuccessfulPaginationResponse {
+    data: {
         categories: Category[];
     };
 }

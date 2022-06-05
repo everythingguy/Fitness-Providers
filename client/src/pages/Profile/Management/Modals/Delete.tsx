@@ -2,7 +2,14 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import { Info } from "../../../../@types/misc";
 
-import { Course, Session, LiveSession, Address } from "../../../../API";
+import {
+    Course,
+    Session,
+    LiveSession,
+    Address,
+    Category,
+    Tag
+} from "../../../../API";
 
 interface Props {
     info: Info;
@@ -30,6 +37,8 @@ export const DeleteModal: React.FC<Props> = ({
                         resp.data.liveSession.session._id
                     );
             } else if (type === "address") await Address.deleteAddress(id);
+            else if (type === "category") await Category.deleteCategory(id);
+            else if (type === "tag") await Tag.deleteTag(id);
 
             setModal(false);
             setInfo(false);

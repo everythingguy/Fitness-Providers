@@ -67,27 +67,12 @@ export class Course {
         providerID: string,
         params: { [key: string]: string[] | string | number[] | number } = {}
     ): Promise<CourseType[]> {
-        let page = 1;
-        const courses: CourseType[] = [];
-
-        return new Promise((res) => {
-            const cb = (resp) => {
-                if (resp.success) {
-                    for (const c of resp.data.courses) courses.push(c);
-                    if (resp.hasNextPage) {
-                        page++;
-                        Course.getProvidersCourses(providerID, {
-                            ...params,
-                            page
-                        }).then((response) => cb(response));
-                    } else res(courses);
-                } else res(courses);
-            };
-
-            Course.getProvidersCourses(providerID, { ...params, page }).then(
-                (resp) => cb(resp)
-            );
-        });
+        return APIManager.sendRequestAll<CourseType>(
+            Course.getProvidersCourses as any,
+            "courses",
+            [providerID],
+            params
+        );
     }
 
     static async getCourses(params?: {

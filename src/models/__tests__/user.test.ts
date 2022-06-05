@@ -202,7 +202,8 @@ describe("toJSON", () => {
             isSuperAdmin: false,
             tokenVersion: 0,
             createdAt: dbUser.createdAt,
-            updatedAt: dbUser.updatedAt
+            updatedAt: dbUser.updatedAt,
+            referral: dbUser.referral
         } as UserType);
     });
 });

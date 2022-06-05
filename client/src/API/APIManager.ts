@@ -1,6 +1,12 @@
-import { BaseResponse, ErrorResponse, ImageResponse } from "../@types/Response";
+import {
+    BaseResponse,
+    ErrorResponse,
+    ImageResponse,
+    SuccessfulPaginationResponse
+} from "../@types/Response";
 import User from "./User";
 import ReqBody from "./../@types/ReqBody.d";
+import { Base } from "../@types/Models";
 const API_URL = process.env.API_URL;
 
 export class DataRequest {
@@ -132,6 +138,38 @@ export class APIManager {
             if (onFail) onFail(body);
             return body;
         }
+    }
+
+    static async sendRequestAll<T extends Base>(
+        API: (
+            ...args: [
+                ...any,
+                { [key: string]: string[] | string | number[] | number }
+            ]
+        ) => Promise<SuccessfulPaginationResponse | ErrorResponse>,
+        modelName: string,
+        args: any[] = [],
+        params: { [key: string]: string[] | string | number[] | number } = {}
+    ): Promise<T[]> {
+        let page = 1;
+        const results: T[] = [];
+
+        return new Promise((res) => {
+            const cb = (resp: SuccessfulPaginationResponse | ErrorResponse) => {
+                if (resp.success && resp.data) {
+                    for (const result of resp.data[modelName] as T[])
+                        results.push(result);
+                    if (resp.hasNextPage) {
+                        page++;
+                        API(...args, { ...params, page }).then((response) =>
+                            cb(response)
+                        );
+                    } else res(results);
+                } else res(results);
+            };
+
+            API(...args, { ...params, page }).then((response) => cb(response));
+        });
     }
 
     static async uploadImage(

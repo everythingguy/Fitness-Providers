@@ -19,5 +19,14 @@ export type ArrayOrSingle<T> = Array<T> | T;
 export type Resolved<T> = T extends Promise<infer R> ? R : T;
 
 export type Info =
-    | { type: "course" | "session" | "live session" | "address"; id: string }
+    | {
+          type:
+              | "course"
+              | "session"
+              | "live session"
+              | "address"
+              | "category"
+              | "tag";
+          id: string;
+      }
     | false;

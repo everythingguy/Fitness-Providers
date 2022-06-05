@@ -12,6 +12,8 @@ import {
 import { Link, useMatch, useSearchParams } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
+// TODO: Get all categories
+
 export const Directory: React.FC = () => {
     const match = useMatch("/directory/:type");
     const displayParam: "providers" | "courses" | "sessions" =

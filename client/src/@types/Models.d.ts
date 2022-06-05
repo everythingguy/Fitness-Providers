@@ -2,8 +2,8 @@ import { WeekDays } from "./enums";
 
 interface Base {
     _id: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Address extends Base {

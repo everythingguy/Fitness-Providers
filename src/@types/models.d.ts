@@ -32,6 +32,7 @@ export interface User extends Base {
     tokenVersion: number;
     isAdmin: boolean;
     isSuperAdmin: boolean;
+    referral: string;
     getProvider: () => Promise<Provider>;
     isValidPassword: (password: string) => Promise<boolean>;
 }

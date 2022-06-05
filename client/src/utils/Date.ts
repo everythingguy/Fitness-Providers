@@ -11,15 +11,25 @@ const fullDay = (shortDay: string) => {
     else return "Saturday";
 };
 
+export const formatDate = (date: string | Date): string => {
+    if (typeof date === "string")
+        return new Date(date).toLocaleDateString([], {
+            dateStyle: "full"
+        });
+    else
+        return date.toLocaleDateString([], {
+            dateStyle: "full"
+        });
+};
+
 const nonRecurringLiveSessionDateToString = (
     session: LiveSession,
     tz = false
 ) => {
-    const beginDateTime = new Date(session.beginDateTime);
-    const date = beginDateTime.toLocaleDateString([], {
-        dateStyle: "full"
-    });
-    return `${date}  ${liveSessionTimeToString(session, tz)}`;
+    return `${formatDate(session.beginDateTime)}  ${liveSessionTimeToString(
+        session,
+        tz
+    )}`;
 };
 
 const recurringLiveSessionDateToString = (session: LiveSession, tz = false) => {

@@ -10,16 +10,6 @@ import { User, Provider, Address } from "../../../API";
 interface Props {}
 
 // TODO: delete my account
-// TODO: image for live sessions
-// TODO: Categories
-// Age group category (Seniors, Kids, Young Adults, Adults)
-// Settings (Indoor, outdoor)
-// Class Size (Personal, Small Group, Large Group)
-// Class Online/Inperson
-// Price Range (0-50, 51-75, 76-100, 100+)
-// Rating (1-5 stars)
-// Length (1/2 hour, 3/4 hour, 1 hour, 1 1/2 hours 2+ hours)
-// Certificates
 
 export const Settings: React.FC<Props> = () => {
     const { user, loggedIn, setLogin } = useContext(UserContext);

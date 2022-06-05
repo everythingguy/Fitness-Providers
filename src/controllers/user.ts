@@ -266,6 +266,7 @@ export async function addUser(
             delete req.body.isAdmin;
             delete req.body.isSuperAdmin;
             delete req.body.emailConfirmed;
+            delete req.body.referral;
         }
 
         // automatically confirm email when running jest or the pipeline
@@ -423,7 +424,8 @@ export async function updateUser(req: Request, res: express.Response) {
             "emailConfirmed",
             "tokenVersion",
             "isAdmin",
-            "isSuperAdmin"
+            "isSuperAdmin",
+            "referral"
         ],
         undefined,
         true,

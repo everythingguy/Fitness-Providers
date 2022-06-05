@@ -26,8 +26,7 @@ const TagSchema = new mongoose.Schema<TagType>(
             type: String,
             maxLength: [30, "Value has max length of 30"],
             trim: true,
-            required: [true, "Missing value"],
-            unique: true
+            required: [true, "Missing value"]
         },
         appliesToProvider: {
             type: Boolean,

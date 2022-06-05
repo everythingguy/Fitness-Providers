@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { Info } from "../../../@types/misc";
 import { Address as AddressType } from "../../../@types/Models";
 import Address from "../../../API/Address";
 import { ResultList } from "../../../components";
@@ -16,15 +17,10 @@ export const AddressManagement: React.FC<Props> = () => {
     const [addresses, setAddresses] = useState<AddressType[]>([]);
     const [showDeleteModal, setDeleteModal] = useState(false);
     const [showAddressModal, setAddressModal] = useState(false);
-    const [editDeleteInfo, setEditDeleteInfo] = useState<
-        | {
-              type: "course" | "session" | "live session" | "address";
-              id: string;
-          }
-        | false
-    >(false);
+    const [editDeleteInfo, setEditDeleteInfo] = useState<Info>(false);
 
     useEffect(() => {
+        // TODO: Get all addresses (pagination)
         if (user && user.provider && !showAddressModal && !showDeleteModal)
             Address.getProvidersAddresses(user.provider._id).then((resp) => {
                 if (resp.success) setAddresses(resp.data.addresses);

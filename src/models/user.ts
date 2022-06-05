@@ -6,6 +6,7 @@ import Provider from "./provider";
 import { UniqueErrorRaiser } from "../utils/errors";
 import Pagination from "mongoose-paginate-v2";
 import EmailConfirmationCode from "./emailConfirmationCode";
+import { v4 as uuid } from "uuid";
 
 // debug
 // mongoose.set('debug', true);
@@ -61,6 +62,11 @@ const UserSchema = new mongoose.Schema<UserType>(
         isSuperAdmin: {
             type: Boolean,
             default: false
+        },
+        referral: {
+            type: String,
+            default: uuid(),
+            unique: true
         }
     },
     {
