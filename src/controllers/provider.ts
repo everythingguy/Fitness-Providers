@@ -49,7 +49,7 @@ export async function addProvider(
         res,
         "provider",
         Provider,
-        ["isEnrolled", "image", "address"],
+        ["isEnrolled", "image", "address", "subscription"],
         [
             {
                 source: "user",
@@ -82,7 +82,8 @@ export async function getProvider(req: Request, res: express.Response) {
         {
             $or: query
         },
-        populate
+        populate,
+        { subscription: 0 }
     );
 }
 
@@ -165,7 +166,10 @@ export async function getProviders(req: Request, res: express.Response) {
         Provider,
         query,
         undefined,
-        populate
+        populate,
+        false,
+        true,
+        { subscription: 0, isEnrolled: 0 }
     );
 }
 
@@ -187,5 +191,12 @@ export async function modifyProvider(
     req: RequestBody<ProviderType>,
     res: express.Response
 ) {
-    await CRUD.update(req, res, "provider", Provider, ["isEnrolled"], populate);
+    await CRUD.update(
+        req,
+        res,
+        "provider",
+        Provider,
+        ["isEnrolled", "image"],
+        populate
+    );
 }

@@ -22,6 +22,21 @@ export const formatDate = (date: string | Date): string => {
         });
 };
 
+export const formatTime = (date: string | Date) => {
+    if (typeof date === "string")
+        return new Date(date).toLocaleTimeString([], {
+            timeStyle: "short"
+        });
+    else
+        return date.toLocaleTimeString([], {
+            timeStyle: "short"
+        });
+};
+
+export const formatDateTime = (date: string | Date) => {
+    return `${formatTime(date)} ${formatDate(date)}`;
+};
+
 const nonRecurringLiveSessionDateToString = (
     session: LiveSession,
     tz = false
@@ -76,12 +91,9 @@ export const liveSessionDateToString = (session: LiveSession, tz = false) => {
 export const liveSessionTimeToString = (session: LiveSession, tz = false) => {
     const beginDateTime = new Date(session.beginDateTime);
     const endDateTime = new Date(session.endDateTime);
-    const beginTime = beginDateTime.toLocaleTimeString([], {
-        timeStyle: "short"
-    });
-    const endTime = endDateTime.toLocaleTimeString([], {
-        timeStyle: "short"
-    });
+    const beginTime = formatTime(beginDateTime);
+    const endTime = formatTime(endDateTime);
+
     if (tz) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const timeZone = Intl.DateTimeFormat([], { timeZoneName: "long" })

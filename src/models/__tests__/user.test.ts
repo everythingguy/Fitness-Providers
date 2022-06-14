@@ -1,11 +1,11 @@
 import faker from "faker";
-import { Connection } from "mongoose";
+import mongoose from "mongoose";
 
 import User from "../user";
 import { User as UserType } from "./../../@types/models";
 import connectDB, { getMongoURI } from "./../../utils/db";
 
-let conn: Connection;
+let conn: typeof mongoose;
 const users: UserType[] = [];
 
 function createFakeUser() {
@@ -23,8 +23,8 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await conn.dropDatabase();
-    await conn.close();
+    await conn.connection.dropDatabase();
+    await conn.disconnect();
 });
 
 describe("Save some new users", () => {

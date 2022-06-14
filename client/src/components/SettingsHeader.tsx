@@ -18,7 +18,7 @@ export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
     const { user } = useContext(UserContext);
 
     return (
-        <>
+        <div className="d-flex justify-content-center">
             <Link
                 className={activePage === "info" ? activeBtnStyle : btnStyle}
                 to="/user/settings"
@@ -60,7 +60,7 @@ export const SettingsHeader: React.FC<Props> = ({ activePage }) => {
                     showAtStart={createProvider ? true : false}
                 />
             )}
-        </>
+        </div>
     );
 };
 

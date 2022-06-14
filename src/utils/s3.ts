@@ -144,7 +144,7 @@ export function fileRemover<T extends ImageModel>(
                 .then(async (prevDoc) => {
                     const mergedDoc = { ...prevDoc._doc, ...update };
 
-                    if (prevDoc.image !== mergedDoc.image) {
+                    if (prevDoc.image && prevDoc.image !== mergedDoc.image) {
                         const split = prevDoc.image.split("/");
                         const filename = split[split.length - 1];
 

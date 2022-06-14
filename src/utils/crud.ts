@@ -85,10 +85,13 @@ export async function read<T extends Base>(
     modelName: string,
     model: Model<T>,
     query: FilterQuery<T> = { _id: req.params.id },
-    populate?: string[] | Populate[] | Populate
+    populate?: string[] | Populate[] | Populate,
+    select: { [key: string]: 0 | 1 } | null = null
 ) {
     try {
-        let obj = await model.findOne(query);
+        let obj = select
+            ? await model.findOne(query).select(select)
+            : await model.findOne(query);
 
         if (populate) obj = await obj.populate(populate);
 
@@ -119,7 +122,8 @@ export async function readAll<T extends Base>(
     plural?: string,
     populate?: string[] | Populate[] | Populate,
     aggregate = false,
-    sort = true
+    sort = true,
+    select: { [key: string]: 0 | 1 } | null = null
 ) {
     const pageLimit = 50;
     let page = 1;
@@ -139,7 +143,8 @@ export async function readAll<T extends Base>(
             page,
             limit: pageLimit,
             sort: sortOption,
-            populate
+            populate,
+            select: select ? select : undefined
         };
 
         let objs: PaginateResult<

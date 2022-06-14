@@ -9,9 +9,10 @@ import User from "./user";
 import Address from "./address";
 import Pagination from "mongoose-paginate-v2";
 import { fileRemover } from "../utils/s3";
+import PayPalManager from "../utils/paypal";
 
 // debug
-// mongoose.set('debug', true);
+// mongoose.set("debug", true);
 
 const ProviderSchema = new mongoose.Schema<ProviderType>(
     {
@@ -75,6 +76,12 @@ const ProviderSchema = new mongoose.Schema<ProviderType>(
             trim: true,
             default: null
         },
+        subscription: {
+            type: String,
+            trim: true,
+            unique: true,
+            required: false
+        },
         tags: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -114,6 +121,60 @@ ProviderSchema.post("remove", function (res, next) {
     Course.remove({ provider: this._id }).exec();
     next();
 });
+
+ProviderSchema.pre("save", async function (next) {
+    if (this.isModified("subscription")) {
+        if (PayPalManager.access_token.length === 0)
+            await PayPalManager.setAccessToken();
+
+        const subscription = await PayPalManager.getSubscription(
+            this.subscription
+        );
+
+        this.isEnrolled = true;
+
+        if (
+            subscription.status !== "ACTIVE" ||
+            this._id.toString() !== subscription.custom_id
+        )
+            this.isEnrolled = false;
+    }
+    next();
+});
+
+ProviderSchema.pre(
+    "updateOne",
+    function (this: any, next: mongoose.CallbackWithoutResultAndOptionalError) {
+        const id = this._conditions._id;
+        const set = this._update;
+        const update = this.getUpdate();
+        const subscriptionID: string | null =
+            update.$set.subscription || update.subscription;
+
+        if (subscriptionID) {
+            const promises: Promise<any>[] = [];
+
+            if (PayPalManager.access_token.length === 0)
+                promises.push(PayPalManager.setAccessToken());
+
+            Promise.all(promises).then(() => {
+                PayPalManager.getSubscription(subscriptionID).then(
+                    (subscription) => {
+                        set.isEnrolled = true;
+
+                        if (
+                            subscription.status !== "ACTIVE" ||
+                            id !== subscription.custom_id
+                        )
+                            set.isEnrolled = false;
+
+                        next();
+                    }
+                );
+            });
+        } else next();
+    }
+);
 
 ProviderSchema.post("save", UniqueErrorRaiser);
 ProviderSchema.post("updateOne", UniqueErrorRaiser);

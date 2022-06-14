@@ -52,7 +52,7 @@ export default async function connectDB(uri: string) {
 
         // eslint-disable-next-line no-console
         console.log(`DB Connected: ${conn.connection.host}`.green.underline);
-        return conn.connection;
+        return conn;
     } catch (err) {
         // eslint-disable-next-line no-console
         console.log(err.message.red);

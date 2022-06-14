@@ -24,6 +24,7 @@ export interface Provider extends Base {
     image?: string;
     bio?: string;
     website?: string;
+    subscription?: string;
     tags: Tag[];
 }
 

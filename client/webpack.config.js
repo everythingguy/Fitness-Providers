@@ -35,7 +35,9 @@ module.exports = () => {
       new webpack.DefinePlugin({
         "process.env.API_URL": JSON.stringify(process.env.API_URL),
         "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(process.env.MAIL_CONTACT_EMAIL),
-        "process.env.GOOGLE_MAP_API": JSON.stringify(process.env.GOOGLE_MAP_API)
+        "process.env.GOOGLE_MAP_API": JSON.stringify(process.env.GOOGLE_MAP_API),
+        "process.env.PAYPAL_CLIENT_ID": JSON.stringify(process.env.PAYPAL_CLIENT_ID),
+        "process.env.PAYPAL_PLAN_ID": JSON.stringify(process.env.PAYPAL_PLAN_ID)
       }),
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: ["./dist/**", "../public/dist/**"],

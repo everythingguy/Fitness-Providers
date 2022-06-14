@@ -11,6 +11,13 @@ export interface Image extends Base {
     image: string | null;
 }
 
+export interface Config extends Base {
+    type: string;
+    data: {
+        [key: string]: any;
+    };
+}
+
 export interface EmailConfirmationCode extends Base {
     code: string;
     user: Types.ObjectId;
@@ -44,6 +51,7 @@ export interface Provider extends Image {
     phone: string;
     bio?: string;
     website?: string;
+    subscription?: string;
     tags: Tag[] | Types.ObjectId[];
     getCourses: () => Promise<Course[]>;
 }

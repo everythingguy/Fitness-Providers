@@ -3,7 +3,7 @@
 
 import request from "supertest";
 import faker from "faker";
-import { Connection, Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 
 import app, { apiPath } from "../../server";
 import { errorResponse, userResponse } from "../../@types/response";
@@ -11,7 +11,7 @@ import connectDB, { getMongoURI } from "./../../utils/db";
 
 let authCookie = "";
 let accessToken = "";
-let conn: Connection;
+let conn: typeof mongoose;
 
 function createFakeUser() {
     return {
@@ -35,8 +35,8 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await conn.dropDatabase();
-    await conn.close();
+    await conn.connection.dropDatabase();
+    await conn.disconnect();
 });
 
 describe("env", () => {

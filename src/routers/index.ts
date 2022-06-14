@@ -7,6 +7,7 @@ import sessionRouter from "./session";
 import liveSessionRouter from "./liveSession";
 import categoryRouter from "./category";
 import tagRouter from "./tag";
+import paypalRouter from "./paypal";
 
 export const router = express.Router();
 
@@ -18,6 +19,7 @@ router.use("/sessions", sessionRouter);
 router.use("/live-sessions", liveSessionRouter);
 router.use("/categories", categoryRouter);
 router.use("/tags", tagRouter);
+router.use("/paypal", paypalRouter);
 
 router.route("/health").get((req: express.Request, res: express.Response) => {
     res.send({ success: true });

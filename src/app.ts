@@ -29,6 +29,6 @@ async function shutdown() {
         // eslint-disable-next-line no-console
         if (err) console.log(err);
     });
-    await (await conn).close();
+    await (await conn).disconnect();
     process.exit(0);
 }

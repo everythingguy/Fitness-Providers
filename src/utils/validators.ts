@@ -10,6 +10,8 @@ export async function refValidator(
         if (found) return true;
         else return false;
     } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log(e);
         return false;
     }
 }

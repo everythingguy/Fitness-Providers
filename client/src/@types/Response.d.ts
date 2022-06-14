@@ -7,6 +7,7 @@ import User, {
     Category,
     Tag
 } from "./Models";
+import { Subscription } from "./Paypal";
 
 export interface BaseResponse {
     success: boolean;
@@ -42,6 +43,12 @@ export interface UserResponse extends SuccessfulResponse {
     data: {
         user?: User;
         accessToken?: string;
+    };
+}
+
+export interface SubscriptionResponse extends SuccessfulResponse {
+    data: {
+        subscription: Subscription;
     };
 }
 
