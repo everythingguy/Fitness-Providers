@@ -76,7 +76,7 @@
     "fitness-providers": "file:..",
     "react-bootstrap-icons": "^1.8.2",
     "react-calendar": "^3.7.0",
-    "sass": "^1.52.2",
+    "sass": "^1.52.3",
     "ts-loader": "^9.3.0",
     "webpack": "^5.73.0",
     "webpack-bundle-analyzer": "^4.5.0",
