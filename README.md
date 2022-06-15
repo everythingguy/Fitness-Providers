@@ -1,42 +1,42 @@
 # What is this?
 
-This is a full scale website for students to find fitness instructors.
+This is a full scale website for students to find fitness instructors. This website is still a work in progress.
 
 This app uses
 
-- Linter
-  - TSLint
-  - ESLint
-- Frameworks
-  - React
-  - Express
-- Programming Languages
-  - Typescript
-- Infrastructure as Code
-  - Terraform
-- CI/CD
-  - GitLab
-  - Docker
-- Testing
-  - Cypress (e2e)
-  - Jest (model testing/unit testing/API testing)
-  - Postman (manual testing of API)
-- CSS
-  - SCSS
-  - Tailwind
-  - Bootstrap
-- Templating
-  - ejs
-- Database
-  - MongoDB
-  - S3 Object Storage
-- Cloud
-  - Heroku (Web Host)
-  - MongoDB (Database)
-  - MailGun (Mail Server)
-  - Wasabi (Object Storage)
-- Third Party APIs
-  - PayPal Subscriptions
+-   Linter
+    -   ESLint
+-   Frameworks
+    -   React
+    -   Express
+-   Programming Languages
+    -   Typescript
+-   Infrastructure as Code
+    -   Terraform
+    -   Ansible
+-   CI/CD
+    -   GitLab
+    -   Docker
+    -   Kubernetes
+-   Testing
+    -   Cypress (e2e)
+    -   Jest (model testing/unit testing/API testing)
+    -   Postman (manual testing of API)
+-   CSS
+    -   SCSS
+    -   Bootstrap
+-   Templating
+    -   ejs
+-   Database
+    -   MongoDB
+    -   S3 Object Storage
+-   Cloud
+    -   Heroku (Web Host)
+    -   MongoDB (Database)
+    -   MailGun (Mail Server)
+    -   Wasabi (Object Storage)
+-   Third Party APIs
+    -   PayPal Subscriptions
 
 ## Getting Started
 
