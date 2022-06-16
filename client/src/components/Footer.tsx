@@ -9,57 +9,55 @@ export const Footer: React.FC = () => {
 
     return (
         <div id="footer" className="bg-dark">
-            <div className="container">
-                <div className="row">
-                    <div className="col text-start">
-                        {!loggedIn && (
-                            <Link
-                                to="/user/register"
-                                className="text-decoration-none d-block text-light"
-                            >
-                                Register
-                            </Link>
-                        )}
-                        {loggedIn && !user?.provider && (
-                            <ProviderApplication buttonStyle="btn text-decoration-none d-block text-light" />
-                        )}
-                        {user && user.provider && (
-                            <Link
-                                to="/user/settings/subscription"
-                                className="text-decoration-none d-block text-light"
-                            >
-                                Manage Subscription
-                            </Link>
-                        )}
-                    </div>
-                    <div className="col text-center">
-                        <a
-                            className="text-decoration-none d-block text-light"
-                            href={`mailto:${contactEmail}`}
-                        >
-                            {contactEmail}
-                        </a>
-                    </div>
-                    <div className="col text-end">
+            <div className="row w-100">
+                <div className="col-md-4 col-sm-12 text-md-start text-center mb-md-0 mb-3">
+                    {!loggedIn && (
                         <Link
-                            to="/"
+                            to="/user/register"
                             className="text-decoration-none d-block text-light"
                         >
-                            Home
+                            Register
                         </Link>
+                    )}
+                    {loggedIn && !user?.provider && (
+                        <ProviderApplication buttonStyle="btn text-decoration-none d-block text-light" />
+                    )}
+                    {user && user.provider && (
                         <Link
-                            to="/calendar"
+                            to="/user/settings/subscription"
                             className="text-decoration-none d-block text-light"
                         >
-                            Calendar
+                            Manage Subscription
                         </Link>
-                        <Link
-                            to="/directory"
-                            className="text-decoration-none d-block text-light"
-                        >
-                            Directory
-                        </Link>
-                    </div>
+                    )}
+                </div>
+                <div className="col-md-4 col-sm-12 text-md-center text-center mb-md-0 mb-3">
+                    <a
+                        className="text-decoration-none d-block text-light"
+                        href={`mailto:${contactEmail}`}
+                    >
+                        {contactEmail}
+                    </a>
+                </div>
+                <div className="col-md-4 col-sm-12 text-md-end text-center mb-md-0 mb-3">
+                    <Link
+                        to="/"
+                        className="text-decoration-none d-block text-light"
+                    >
+                        Home
+                    </Link>
+                    <Link
+                        to="/calendar"
+                        className="text-decoration-none d-block text-light"
+                    >
+                        Calendar
+                    </Link>
+                    <Link
+                        to="/directory"
+                        className="text-decoration-none d-block text-light"
+                    >
+                        Directory
+                    </Link>
                 </div>
             </div>
         </div>
