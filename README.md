@@ -1,6 +1,6 @@
 # What is this?
 
-This is a full scale website for students to find fitness instructors. This website is still a work in progress.
+This is a full scale website for students to find fitness instructors. **This website is still a work in progress.**
 
 This app uses
 
@@ -37,6 +37,22 @@ This app uses
     -   Wasabi (Object Storage)
 -   Third Party APIs
     -   PayPal Subscriptions
+
+## Demo
+
+There is a demo version of the site available at https://demo.fitnessproviders.net
+The database for this version of the site is reset every night.
+Feel free to make accounts and explore the site. Email verification will be required for any accounts you create.
+Here are some demo accounts for your convenience.
+| Type | Username | Password |
+|------|----------|----------|
+| Admin | admin | adminpass |
+| Provider | rbaker99 | providerpass |
+| Provider | | |
+| Provider | | |
+| User | | |
+| PayPal Business | sb-1jq7s16959653@business.example.com | :^Y1Mv6n |
+| PayPal Personal | sb-zwbry16956455@personal.example.com | 0]U8n@ub |
 
 ## Getting Started
 
