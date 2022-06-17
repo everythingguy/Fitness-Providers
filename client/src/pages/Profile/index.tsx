@@ -463,7 +463,6 @@ export const Profile: React.FC<Props> = () => {
                             required
                             value={formData.bio || ""}
                             onChange={onChange}
-                            onKeyUp={enterSubmit}
                         />
                         <div className="invalid-feedback">{errors.bio}</div>
                     </div>
