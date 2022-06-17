@@ -19,8 +19,6 @@ import { UserContext } from "../../context/UserState";
 import { Modal } from "react-bootstrap";
 import { reloadImage } from "../../utils/reload";
 
-import "react-calendar/dist/Calendar.css";
-
 interface Props {}
 
 export const Profile: React.FC<Props> = () => {

@@ -9,6 +9,7 @@ import App from "./App";
 import "./assets/style.css";
 import "./assets/bootstrap.css";
 import "react-toastify/dist/ReactToastify.css";
+import "react-calendar/dist/Calendar.css";
 
 ReactDOM.render(
     <Router>
