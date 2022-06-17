@@ -281,23 +281,19 @@ export const Profile: React.FC<Props> = () => {
                             </div>
                         )}
                     </div>
-                    <h1>{providerData.user.name}</h1>
-                    {providerData.bio && (
-                        <p>
-                            {isMyProfile && (
-                                <>
-                                    <button
-                                        className="btn"
-                                        role="button"
-                                        onClick={() => setEditModal(true)}
-                                    >
-                                        <i className="bi bi-pencil-square fs-4"></i>
-                                    </button>{" "}
-                                </>
-                            )}
-                            {providerData.bio}
-                        </p>
-                    )}
+                    <h1>
+                        {providerData.user.name}{" "}
+                        {isMyProfile && (
+                            <button
+                                className="btn"
+                                role="button"
+                                onClick={() => setEditModal(true)}
+                            >
+                                <i className="bi bi-pencil-square fs-4"></i>
+                            </button>
+                        )}
+                    </h1>
+                    {providerData.bio && <pre>{providerData.bio}</pre>}
                     <p className="mb-0">
                         <a
                             className="mb-0 text-decoration-none text-reset"
