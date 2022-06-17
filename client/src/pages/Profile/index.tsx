@@ -289,6 +289,7 @@ export const Profile: React.FC<Props> = () => {
                             {isMyProfile && (
                                 <>
                                     <button
+                                        className="btn"
                                         role="button"
                                         onClick={() => setEditModal(true)}
                                     >
