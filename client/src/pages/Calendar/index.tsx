@@ -11,11 +11,11 @@ import {
     Category as CategoryType,
     Tag as TagType
 } from "../../@types/Models";
-
-import "react-calendar/dist/Calendar.css";
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
 import { UserContext } from "../../context/UserState";
+
+import "react-calendar/dist/Calendar.css";
 
 interface Props {}
 
