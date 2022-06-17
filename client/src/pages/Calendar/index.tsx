@@ -15,8 +15,6 @@ import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
 import { UserContext } from "../../context/UserState";
 
-import "react-calendar/dist/Calendar.css";
-
 interface Props {}
 
 export const Calendar: React.FC<Props> = () => {
