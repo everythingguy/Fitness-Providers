@@ -19,9 +19,9 @@ export const Header: React.FC = () => {
                         eventKey="link-1"
                     >
                         <img
-                            src="https://via.placeholder.com/150x40"
+                            src="/images/logo.png"
                             className="text-center"
-                            width="150"
+                            width="100"
                             alt="Rebel Body Collective Logo"
                         />
                     </Nav.Link>
