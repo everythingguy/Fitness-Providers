@@ -16,7 +16,7 @@ import ReactCalendar from "react-calendar";
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
 import { UserContext } from "../../context/UserState";
-import { Modal } from "react-bootstrap";
+import { Alert, Modal } from "react-bootstrap";
 import { reloadImage } from "../../utils/reload";
 
 interface Props {}
@@ -115,16 +115,6 @@ export const Profile: React.FC<Props> = () => {
             setFormData({ ...formData, [e.target.name]: e.target.checked });
         else setFormData({ ...formData, [e.target.name]: e.target.value });
         setError({ ...errors, [e.target.name]: null });
-    };
-
-    // allows the enter key to submit the form
-    const enterSubmit = async (
-        e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            await onSubmit();
-        }
     };
 
     const onSubmit = () => {
@@ -256,6 +246,13 @@ export const Profile: React.FC<Props> = () => {
 
     return (
         <>
+            {isMyProfile && user && user.provider && !user.provider.isEnrolled && (
+                <Alert variant="warning">
+                    Your account is currently private. Select a subscription{" "}
+                    <Link to="/user/settings/subscription">here</Link> to go
+                    public.
+                </Alert>
+            )}
             <div className="row mb-3">
                 <div className="col-lg-6 col-md-12 text-center">
                     <div className="mx-auto position-relative">

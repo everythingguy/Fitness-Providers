@@ -19,6 +19,7 @@ import { UserContext } from "../../../context/UserState";
 import { ResultList } from "../../../components/ResultList";
 import Error403 from "../../ErrorPages/403";
 import { Info } from "../../../@types/misc";
+import { Alert } from "react-bootstrap";
 
 interface Props {}
 
@@ -118,6 +119,13 @@ export const Management: React.FC<Props> = () => {
     return (
         <div className="ContentManagement">
             <div className="container">
+                {user && user.provider && !user.provider.isEnrolled && (
+                    <Alert variant="warning">
+                        Your account is currently private. Select a subscription{" "}
+                        <Link to="/user/settings/subscription">here</Link> to go
+                        public.
+                    </Alert>
+                )}
                 <div className="row">
                     <div className="col-md-12">
                         <Button
