@@ -48,9 +48,9 @@ Here are some demo accounts for your convenience.
 |------|----------|----------|
 | Admin | admin | adminpass |
 | Provider | rbaker99 | providerpass |
-| Provider | | |
-| Provider | | |
-| User | | |
+| Provider | | providerpass |
+| Provider | | providerpass |
+| User | jcorrigan31 | userpass |
 | PayPal Business | sb-1jq7s16959653@business.example.com | :^Y1Mv6n |
 | PayPal Personal | sb-zwbry16956455@personal.example.com | 0]U8n@ub |
 

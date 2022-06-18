@@ -65,7 +65,7 @@ const UserSchema = new mongoose.Schema<UserType>(
         },
         referral: {
             type: String,
-            default: uuid(),
+            default: uuid,
             unique: true
         }
     },
