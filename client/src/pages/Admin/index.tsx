@@ -108,6 +108,7 @@ export const Admin: React.FC<Props> = () => {
             appliesToProvider: true,
             appliesToCourse: true
         });
+        setEditDeleteInfo(false);
     };
 
     const onSubmit = async () => {

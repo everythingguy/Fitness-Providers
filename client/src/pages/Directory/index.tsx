@@ -437,6 +437,7 @@ export const Directory: React.FC = () => {
                                     ? true
                                     : false
                             }
+                            external={s.URL ? true : false}
                         ></Card>
                     ))}
             </div>

@@ -16,7 +16,7 @@ import ReactCalendar from "react-calendar";
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
 import { UserContext } from "../../context/UserState";
-import { Modal } from "react-bootstrap";
+import { Alert, Modal } from "react-bootstrap";
 import { reloadImage } from "../../utils/reload";
 
 interface Props {}
@@ -115,16 +115,6 @@ export const Profile: React.FC<Props> = () => {
             setFormData({ ...formData, [e.target.name]: e.target.checked });
         else setFormData({ ...formData, [e.target.name]: e.target.value });
         setError({ ...errors, [e.target.name]: null });
-    };
-
-    // allows the enter key to submit the form
-    const enterSubmit = async (
-        e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            await onSubmit();
-        }
     };
 
     const onSubmit = () => {
@@ -256,6 +246,13 @@ export const Profile: React.FC<Props> = () => {
 
     return (
         <>
+            {isMyProfile && user && user.provider && !user.provider.isEnrolled && (
+                <Alert variant="warning">
+                    Your account is currently private. Select a subscription{" "}
+                    <Link to="/user/settings/subscription">here</Link> to go
+                    public.
+                </Alert>
+            )}
             <div className="row mb-3">
                 <div className="col-lg-6 col-md-12 text-center">
                     <div className="mx-auto position-relative">
@@ -281,23 +278,19 @@ export const Profile: React.FC<Props> = () => {
                             </div>
                         )}
                     </div>
-                    <h1>{providerData.user.name}</h1>
-                    {providerData.bio && (
-                        <p>
-                            {isMyProfile && (
-                                <>
-                                    <button
-                                        className="btn"
-                                        role="button"
-                                        onClick={() => setEditModal(true)}
-                                    >
-                                        <i className="bi bi-pencil-square fs-4"></i>
-                                    </button>{" "}
-                                </>
-                            )}
-                            {providerData.bio}
-                        </p>
-                    )}
+                    <h1>
+                        {providerData.user.name}{" "}
+                        {isMyProfile && (
+                            <button
+                                className="btn"
+                                role="button"
+                                onClick={() => setEditModal(true)}
+                            >
+                                <i className="bi bi-pencil-square fs-4"></i>
+                            </button>
+                        )}
+                    </h1>
+                    {providerData.bio && <pre>{providerData.bio}</pre>}
                     <p className="mb-0">
                         <a
                             className="mb-0 text-decoration-none text-reset"
@@ -463,7 +456,6 @@ export const Profile: React.FC<Props> = () => {
                             required
                             value={formData.bio || ""}
                             onChange={onChange}
-                            onKeyUp={enterSubmit}
                         />
                         <div className="invalid-feedback">{errors.bio}</div>
                     </div>
