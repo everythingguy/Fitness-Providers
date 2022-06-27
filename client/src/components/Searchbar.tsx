@@ -48,7 +48,7 @@ export const Searchbar: React.FC<Props> = ({
                 />
                 {onFilterClick && (
                     <span
-                        className="input-group-text bg-transparent border-0"
+                        className="input-group-text bg-transparent border-0 cursor-pointer"
                         style={{ zIndex: 4 }}
                         onClick={() => onFilterClick()}
                     >
