@@ -3,6 +3,19 @@ $dark: #023047;
 $light: #8ecae6;
 $info: #ffb703;
 
+@import "../node_modules/bootstrap/scss/bootstrap-utilities";
+
+//Generate utilites for Cursor
+$utilities: map-merge(
+    $utilities,
+    (
+        "cursor": (
+            property: cursor,
+            values: auto default pointer wait text move help not-allowed
+        )
+    )
+);
+
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 .divider-border {
