@@ -39,3 +39,8 @@ resource "helm_release" "traefik" {
     value = "true"
   }
 }
+
+output "test" {
+  value = helm_release.traefik
+  sensitive = true
+}

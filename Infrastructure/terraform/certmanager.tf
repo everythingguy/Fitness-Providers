@@ -37,7 +37,8 @@ resource "time_sleep" "wait_for_certmanager" {
 resource "kubectl_manifest" "cloudflare_prod" {
 
     depends_on = [
-        time_sleep.wait_for_certmanager
+        time_sleep.wait_for_certmanager,
+        kubernetes_secret.cloudflare_api_key_secret
     ]
 
     yaml_body = <<YAML

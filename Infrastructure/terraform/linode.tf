@@ -7,11 +7,24 @@ resource "linode_lke_cluster" "my-cluster" {
     pool {
         type  = "g6-standard-1"
         count = 3
+        /*
+        autoscaler {
+          min = 3
+          max = 5
+        }
+        */
     }
 
     control_plane {
       high_availability = false
     }
+
+    # Prevent the count field from overriding autoscaler-created nodes
+    /*lifecycle {
+        ignore_changes = [
+        pool.0.count
+        ]
+    }*/
 }
 
 resource "local_sensitive_file" "kube_config" {
