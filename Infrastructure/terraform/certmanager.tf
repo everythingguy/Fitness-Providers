@@ -16,7 +16,7 @@ resource "helm_release" "certmanager" {
   name = "certmanager"
   namespace = "certmanager"
 
-  repository = "https://charts.jetstack.io"
+  repository = "https://alauda.github.io/kubeflow-chart"
   chart = "certmanager"
 
   set {

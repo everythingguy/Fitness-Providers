@@ -23,6 +23,9 @@ client/.pnp.js
 **/yarn-debug.log*
 **/yarn-error.log*
 
+**/.terraform/*
+**/*.tfstate*
+**/.terraform.lock.hcl
 **/*.auto.tfvars
 !**/*-sample.auto.tfvars
 
