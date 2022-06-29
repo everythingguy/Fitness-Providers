@@ -16,7 +16,7 @@ resource "helm_release" "mongodb" {
 
   set {
     name = "replicaCount"
-    value = 3
+    value = var.MONGO_REPLICA_COUNT
   }
 
   set {
@@ -27,5 +27,15 @@ resource "helm_release" "mongodb" {
   set {
     name = "auth.passwords[0]"
     value = var.DB_PASSWORD
+  }
+
+  set {
+    name = "persistence.storageClass"
+    value = "linode-block-storage-retain"
+  }
+
+  set {
+    name = "persistence.size"
+    value = var.MONGO_VOLUME_SIZE
   }
 }

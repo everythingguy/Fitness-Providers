@@ -26,6 +26,16 @@ resource "helm_release" "minio" {
 
   set {
     name = "replicas"
-    value = 3
+    value = var.MINIO_REPLICA_COUNT
+  }
+
+  set {
+    name = "persistence.storageClass"
+    value = "linode-block-storage-retain"
+  }
+
+  set {
+    name = "persistence.size"
+    value = var.MINIO_VOLUME_SIZE
   }
 }

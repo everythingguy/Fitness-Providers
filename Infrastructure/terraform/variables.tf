@@ -156,3 +156,23 @@ variable "TZ" {
   type = string
   default = "America/Detroit"
 }
+
+variable "MONGO_VOLUME_SIZE" {
+  type = string
+  default = "8Gi"
+}
+
+variable "MONGO_REPLICA_COUNT" {
+  type = number
+  default = 3
+}
+
+variable "MINIO_VOLUME_SIZE" {
+  type = string
+  default = "8Gi"
+}
+
+variable "MINIO_REPLICA_COUNT" {
+  type = number
+  default = 3
+}
