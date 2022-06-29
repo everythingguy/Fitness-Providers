@@ -1,0 +1,4 @@
+LINODE_TOKEN = ""
+KUBE_CONFIG_PATH = "~/.kube/config"
+EMAIL = ""
+CLOUDFLARE_API_KEY = ""
