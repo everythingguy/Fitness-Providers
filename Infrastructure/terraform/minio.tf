@@ -11,12 +11,12 @@ resource "helm_release" "minio" {
 
   set {
     name = "accessKey"
-    value = var.MINIO_ACCESS_KEY
+    value = var.S3_ACCESS_KEY
   }
 
   set {
     name = "secretKey"
-    value = var.MINIO_SECRET_KEY
+    value = var.S3_SECRET_KEY
   }
 
   set {

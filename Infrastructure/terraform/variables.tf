@@ -5,9 +5,10 @@ variable "LINODE_TOKEN" {
 
 variable "KUBE_CONFIG_PATH" {
   type = string
+  default = "~/.kube/config"
 }
 
-variable "EMAIL" {
+variable "CLOUDFLARE_EMAIL" {
     type = string
 }
 
@@ -26,6 +27,7 @@ variable "DOMAIN" {
 
 variable "REGISTRY_SERVER" {
   type = string
+  default = "gitlab.com"
 }
 
 variable "REGISTRY_USERNAME" {
@@ -37,20 +39,120 @@ variable "REGISTRY_PASSWORD" {
   sensitive = true
 }
 
-variable "MINIO_ACCESS_KEY" {
+variable "S3_ACCESS_KEY" {
   type = string
 }
 
-variable "MINIO_SECRET_KEY" {
+variable "S3_SECRET_KEY" {
   type = string
   sensitive = true
 }
 
-variable "MONGO_USERNAME" {
+variable "DB_USERNAME" {
   type = string
 }
 
-variable "MONGO_PASSWORD" {
+variable "DB_PASSWORD" {
   type = string
   sensitive = true
+}
+
+variable "MAIL_HOST" {
+  type = string
+  default = "smtp.mailgun.org"
+}
+
+variable "MAIL_PORT" {
+  type = string
+  default = "465"
+}
+
+variable "MAIL_POSTMASTER" {
+  type = string
+}
+
+variable "MAIL_POSTMASTER_PASSWORD" {
+  type = string
+  sensitive = true
+}
+
+variable "MAIL_FROM_EMAIL" {
+  type = string
+}
+
+variable "MAIL_CONTACT_EMAIL" {
+  type = string
+}
+
+variable "GOOGLE_MAP_API" {
+  type = string
+  sensitive = true
+}
+
+variable "GOOGLE_PLACE_API" {
+  type = string
+  sensitive = true
+}
+
+variable "PROVIDER_TYPE" {
+  type = string
+  default = "fitness"
+}
+
+variable "DB_AUTHSOURCE" {
+  type = string
+  default = "admin"
+}
+
+variable "DB_IP" {
+  type = string
+}
+
+variable "DB_PORT" {
+  type = string
+  default = "27017"
+}
+
+variable "DB_NAME" {
+  type = string
+  default = "fitness-providers"
+}
+
+variable "SECRET" {
+  type = string
+  sensitive = true
+}
+
+variable "REFRESH_TOKEN_SECRET" {
+  type = string
+  sensitive = true
+}
+
+variable "ACCESS_TOKEN_SECRET" {
+  type = string
+  sensitive = true 
+}
+
+variable "S3_ENDPOINT" {
+  type = string
+  default = "" # TODO:
+}
+
+variable "S3_BUCKET" {
+  type = string
+  default = "fitness"
+}
+
+variable "BASE_URL" {
+  type = string
+}
+
+variable "API_URL" {
+  type = string
+  default = "/api/v1"
+}
+
+variable "TZ" {
+  type = string
+  default = "America/Detroit"
 }

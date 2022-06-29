@@ -21,11 +21,11 @@ resource "helm_release" "mongodb" {
 
   set {
     name = "auth.usernames[0]"
-    value = var.MONGO_USERNAME
+    value = var.DB_USERNAME
   }
 
   set {
     name = "auth.passwords[0]"
-    value = var.MONGO_PASSWORD
+    value = var.DB_PASSWORD
   }
 }

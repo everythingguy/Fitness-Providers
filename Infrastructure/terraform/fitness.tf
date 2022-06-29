@@ -49,9 +49,135 @@ resource "kubernetes_deployment" "fitness" {
                         container_port = 80
                     }
 
-                    /*env {
-                        # TODO:
-                    }*/
+                    env {
+                        name = "DOMAIN"
+                        value = var.DOMAIN
+                    }
+
+                    env {
+                        name = "S3_ACCESS_KEY"
+                        value = var.S3_ACCESS_KEY
+                    }
+
+                    env {
+                        name = "S3_SECRET_KEY"
+                        value = var.S3_SECRET_KEY
+                    }
+
+                    env {
+                        name = "MAIL_HOST"
+                        value = var.MAIL_HOST
+                    }
+
+                    env {
+                        name = "MAIL_PORT"
+                        value = var.MAIL_PORT
+                    }
+
+                    env {
+                        name = "MAIL_POSTMASTER"
+                        value = var.MAIL_POSTMASTER
+                    }
+
+                    env {
+                        name = "MAIL_POSTMASTER_PASSWORD"
+                        value = var.MAIL_POSTMASTER_PASSWORD
+                    }
+
+                    env {
+                        name = "MAIL_FROM_EMAIL"
+                        value = var.MAIL_FROM_EMAIL
+                    }
+
+                    env {
+                        name = "MAIL_CONTACT_EMAIL"
+                        value = var.MAIL_CONTACT_EMAIL
+                    }
+
+                    env {
+                        name = "GOOGLE_MAP_API"
+                        value = var.GOOGLE_MAP_API
+                    }
+
+                    env {
+                        name = "GOOGLE_PLACE_API"
+                        value = var.GOOGLE_PLACE_API
+                    }
+
+                    env {
+                        name = "PROVIDER_TYPE"
+                        value = var.PROVIDER_TYPE
+                    }
+
+                    env {
+                        name = "DB_USERNAME"
+                        value = var.DB_USERNAME
+                    }
+
+                    env {
+                        name = "DB_PASSWORD"
+                        value = var.DB_PASSWORD
+                    }
+
+                    env {
+                        name = "DB_AUTHSOURCE"
+                        value = var.DB_AUTHSOURCE
+                    }
+
+                    env {
+                        name = "DB_IP"
+                        value = var.DB_IP
+                    }
+
+                    env {
+                        name = "DB_PORT"
+                        value = var.DB_PORT
+                    }
+
+                    env {
+                        name = "DB_NAME"
+                        value = var.DB_NAME
+                    }
+
+                    env {
+                        name = "SECRET"
+                        value = var.SECRET
+                    }
+
+                    env {
+                        name = "REFRESH_TOKEN_SECRET"
+                        value = var.REFRESH_TOKEN_SECRET
+                    }
+
+                    env {
+                        name = "ACCESS_TOKEN_SECRET"
+                        value = var.ACCESS_TOKEN_SECRET
+                    }
+
+                    env {
+                        name = "S3_ENDPOINT"
+                        value = var.S3_ENDPOINT
+                    }
+
+                    env {
+                        name = "S3_BUCKET"
+                        value = var.S3_BUCKET
+                    }
+
+                    env {
+                        name = "BASE_URL"
+                        value = var.BASE_URL
+                    }
+
+                    env {
+                        name = "API_URL"
+                        value = var.API_URL
+                    }
+
+                    env {
+                        name = "TZ"
+                        value = var.TZ
+                    }
 
                     liveness_probe {
                       initial_delay_seconds = 30
