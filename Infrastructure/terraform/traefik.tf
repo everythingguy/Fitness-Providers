@@ -43,5 +43,5 @@ resource "helm_release" "traefik" {
 # TODO: find ip
 output "test" {
   value = helm_release.traefik
-  sensitive = false
+  sensitive = true
 }
