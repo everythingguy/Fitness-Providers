@@ -1,8 +1,4 @@
 resource "kubernetes_namespace" "certmanager" {
-    depends_on = [
-      time_sleep.wait_for_kubernetes
-    ]
-
     metadata {
       name = "certmanager"
     }

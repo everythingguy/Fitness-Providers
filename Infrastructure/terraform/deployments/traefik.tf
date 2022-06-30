@@ -1,8 +1,4 @@
 resource "kubernetes_namespace" "traefik" {
-    depends_on = [
-      time_sleep.wait_for_kubernetes
-    ]
-    
     metadata {
       name = "traefik"
     }
@@ -38,10 +34,4 @@ resource "helm_release" "traefik" {
     name = "ports.websecure.tls.enabled"
     value = "true"
   }
-}
-
-# TODO: find ip
-output "test" {
-  value = helm_release.traefik
-  sensitive = true
 }

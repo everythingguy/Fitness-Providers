@@ -36,10 +36,6 @@ resource "local_sensitive_file" "kube_config" {
     content = "${base64decode(linode_lke_cluster.my-cluster.kubeconfig)}"
 }
 
-output "DASHBOARD_URL" {
-    value = linode_lke_cluster.my-cluster.dashboard_url
-}
-
 resource "time_sleep" "wait_for_kubernetes" {
 
     depends_on = [

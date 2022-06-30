@@ -1,8 +1,4 @@
 resource "kubernetes_namespace" "fitness" {
-    depends_on = [
-      time_sleep.wait_for_kubernetes
-    ]
-    
     metadata {
       name = "fitness"
     }
