@@ -27,7 +27,9 @@ client/.pnp.js
 **/*.tfstate*
 **/.terraform.lock.hcl
 **/*.auto.tfvars
-!**/*-sample.auto.tfvars
+!**/*.auto.tfvars.example
+**/*.tfbackend
+!**/*.tfbackend.example
 
 todo.txt
 
