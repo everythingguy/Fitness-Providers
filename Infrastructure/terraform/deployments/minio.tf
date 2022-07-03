@@ -56,7 +56,7 @@ metadata:
   name: minio
   namespace: fitness
 spec:
-  secretName: minio
+  secretName: minio-cert
   issuerRef:
     name: cloudflare-prod
     kind: ClusterIssuer
@@ -66,9 +66,9 @@ spec:
 }
 
 
-resource "kubernetes_ingress_v1" "fitness" {
+resource "kubernetes_ingress_v1" "minio" {
 
-    depends_on = [kubernetes_namespace.fitness]
+    depends_on = [kubernetes_namespace.fitness, kubectl_manifest.minio-certificate]
 
     metadata {
         name = "minio"
@@ -99,7 +99,7 @@ resource "kubernetes_ingress_v1" "fitness" {
         }
 
         tls {
-          secret_name = "minio"
+          secret_name = "minio-cert"
           hosts = [var.S3_ENDPOINT]
         }
     }
@@ -107,12 +107,12 @@ resource "kubernetes_ingress_v1" "fitness" {
 
 resource "cloudflare_record" "minio" {
     depends_on = [
-      data.traefik
+      data.kubernetes_service.traefik
     ]
 
     zone_id = var.CLOUDFLARE_ZONE_ID
     name = var.S3_ENDPOINT
-    value =  data.traefik.spec.external_ips[0]
+    value =  data.kubernetes_service.traefik.status[0].load_balancer[0].ingress[0].ip
     type = "A"
     proxied = false
 }

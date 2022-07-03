@@ -260,7 +260,7 @@ metadata:
   name: fitness
   namespace: fitness
 spec:
-  secretName: fitness
+  secretName: fitness-cert
   issuerRef:
     name: cloudflare-prod
     kind: ClusterIssuer
@@ -272,7 +272,7 @@ spec:
 
 resource "kubernetes_ingress_v1" "fitness" {
 
-    depends_on = [kubernetes_namespace.fitness]
+    depends_on = [kubernetes_namespace.fitness, kubectl_manifest.fitness-certificate]
 
     metadata {
         name = "fitness"
@@ -303,7 +303,7 @@ resource "kubernetes_ingress_v1" "fitness" {
         }
 
         tls {
-          secret_name = "fitness"
+          secret_name = "fitness-cert"
           hosts = [var.DOMAIN]
         }
     }
@@ -311,12 +311,12 @@ resource "kubernetes_ingress_v1" "fitness" {
 
 resource "cloudflare_record" "fitness" {
     depends_on = [
-      data.traefik
+      data.kubernetes_service.traefik
     ]
 
     zone_id = var.CLOUDFLARE_ZONE_ID
     name = var.DOMAIN
-    value =  data.traefik.spec.external_ips[0]
+    value =  data.kubernetes_service.traefik.status[0].load_balancer[0].ingress[0].ip
     type = "A"
     proxied = false
 }

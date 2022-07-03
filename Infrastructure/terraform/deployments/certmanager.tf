@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "certmanager" {
     metadata {
-      name = "certmanager"
+      name = "cert-manager"
     }
 }
 
@@ -9,11 +9,12 @@ resource "helm_release" "certmanager" {
     kubernetes_namespace.certmanager
   ]
 
-  name = "certmanager"
-  namespace = "certmanager"
+  name = "cert-manager"
+  namespace = "cert-manager"
 
-  repository = "https://alauda.github.io/kubeflow-chart"
-  chart = "certmanager"
+  repository = "https://charts.jetstack.io"
+  chart = "cert-manager"
+  version = "1.8.2"
 
   set {
     name = "installCRDS"

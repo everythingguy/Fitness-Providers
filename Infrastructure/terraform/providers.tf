@@ -46,6 +46,6 @@ provider "helm" {
 }
 
 provider "cloudflare" {
-    email = var.EMAIL
+    email = var.CLOUDFLARE_EMAIL
     api_key = var.CLOUDFLARE_API_KEY
 }

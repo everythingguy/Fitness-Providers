@@ -6,14 +6,12 @@ resource "kubernetes_secret" "cloudflare_api_key_secret" {
 
     metadata {
         name = "cloudflare-api-key-secret"
-        namespace = "certmanager"
+        namespace = "cert-manager"
     }
 
     data = {
         api-key = var.CLOUDFLARE_API_KEY
     }
-
-    type = "Opaque"
 }
 
 resource "kubernetes_secret" "gitlab-registry" {
