@@ -1,6 +1,7 @@
 import express from "express";
-import { RequestBody, Request } from "../@types/request";
-import PayPalManager from "./../utils/paypal";
+import { Request } from "../@types/request";
+import PayPalManager from "../utils/paypal";
+import Provider from "../models/provider";
 
 /**
  * @desc Handle PayPal Subscription Webhook
@@ -51,7 +52,16 @@ export async function cancelSubscription(req: Request, res: express.Response) {
     if (PayPalManager.access_token.length === 0)
         await PayPalManager.setAccessToken();
 
-    await PayPalManager.cancelSubscription(req.provider.subscription);
+    const success = await PayPalManager.cancelSubscription(
+        req.provider.subscription
+    );
 
-    res.status(200).json({ success: true });
+    if (success) {
+        const p = await Provider.findById(req.provider._id);
+        delete p.subscription;
+        p.isEnrolled = false;
+        await p.save();
+
+        res.status(200).json({ success: true });
+    } else res.status(500).json({ success: false });
 }

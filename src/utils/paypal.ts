@@ -176,7 +176,10 @@ export default class PayPalManager {
         return data;
     }
 
-    static async cancelSubscription(id: string): Promise<Type.Subscription> {
+    static async cancelSubscription(
+        id: string,
+        reason = "Unspecified"
+    ): Promise<boolean> {
         const resp = await fetch(
             `${PAYPAL_API_URL}/billing/subscriptions/${id}/cancel`,
             {
@@ -184,12 +187,14 @@ export default class PayPalManager {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${this.access_token}`
-                }
+                },
+                body: JSON.stringify({
+                    reason
+                })
             }
         );
 
-        const data = await resp.json();
-        return data;
+        return resp.status == 204;
     }
 }
 

@@ -19,8 +19,8 @@ export const SubscriptionManagement: React.FC<Props> = () => {
     const buttonsDIV = useRef<HTMLDivElement>(null);
 
     // TODO: prevent unlimited free trials
-    // cancel button and confirmation (are you sure? your classes will be hidden from public view)
-    // cancel subscription breaks page
+    // cancel button confirmation (are you sure? your classes will be hidden from public view)
+    // on cancel, keep isEnrolled = true until their last month is over
 
     useEffect(() => {
         if (user && user.provider) {
@@ -64,7 +64,7 @@ export const SubscriptionManagement: React.FC<Props> = () => {
                                                 buttonsDIV.current.firstChild
                                             );
 
-                                    if (setLogin) setLogin(true);
+                                    if (setLogin) await setLogin(true);
                                 }
                             })
                                 .render("#paypal-buttons")
@@ -84,7 +84,14 @@ export const SubscriptionManagement: React.FC<Props> = () => {
                         );
                     });
         }
-    }, []);
+    }, [user]);
+
+    const cancelSub = () => {
+        SubscriptionAPI.cancelSubscription().then(async () => {
+            setSubscription(null);
+            if (setLogin) await setLogin(true);
+        });
+    };
 
     if (!loggedIn) return <Navigate to="/user/login" />;
     if (user && !user.provider)
@@ -130,7 +137,10 @@ export const SubscriptionManagement: React.FC<Props> = () => {
                                 >
                                     View on PayPal
                                 </a>
-                                <button className="p-3 btn btn-dark fw-bold text-light">
+                                <button
+                                    onClick={cancelSub}
+                                    className="p-3 btn btn-dark fw-bold text-light"
+                                >
                                     Cancel Subscription
                                 </button>
                             </div>
