@@ -35,3 +35,13 @@ resource "helm_release" "traefik" {
     value = "true"
   }
 }
+
+data "kubernetes_service" "traefik" {
+  depends_on = [
+    helm_release.traefik
+  ]
+  
+  metadata {
+    name = "traefik"
+  }
+}

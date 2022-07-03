@@ -40,3 +40,25 @@ resource "kubernetes_secret" "gitlab-registry" {
     })
   }
 }
+
+resource "kubernetes_secret" "fitness" {
+  depends_on = [
+    kubernetes_namespace.fitness
+  ]
+
+  metadata {
+    name = "fitness"
+    namespace = "fitness"
+  }
+
+  data = {
+    S3_SECRET_KEY = var.S3_SECRET_KEY
+    MAIL_POSTMASTER_PASSWORD = var.MAIL_POSTMASTER_PASSWORD
+    GOOGLE_MAP_API = var.GOOGLE_MAP_API
+    GOOGLE_PLACE_API = var.GOOGLE_PLACE_API
+    DB_CONNECTION_STRING = var.DB_CONNECTION_STRING
+    SECRET = var.SECRET
+    REFRESH_TOKEN_SECRET = var.REFRESH_TOKEN_SECRET
+    ACCESS_TOKEN_SECRET = var.ACCESS_TOKEN_SECRET
+  }
+}

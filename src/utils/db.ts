@@ -41,6 +41,11 @@ export function getMongoURI(suffix = "-testing") {
             suffix +
             "?authSource=" +
             process.env.DB_AUTHSOURCE;
+    else if (
+        process.env.DB_CONNECTION_STRING &&
+        process.env.DB_CONNECTION_STRING.length > 0
+    )
+        return process.env.DB_CONNECTION_STRING;
 
     return MONGO_URI;
 }

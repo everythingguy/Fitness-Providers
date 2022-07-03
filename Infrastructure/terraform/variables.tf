@@ -1,3 +1,7 @@
+variable "FITNESS_REPLICA_COUNT" {
+  type = number
+}
+
 variable "LINODE_TOKEN" {
   type = string
   sensitive = true
@@ -30,6 +34,11 @@ variable "REGISTRY_SERVER" {
   default = "gitlab.com"
 }
 
+variable "REGISTRY_CONTAINER" {
+  type = string
+  default = "gitlab.com/fitness-providers/fitness-providers:latest"
+}
+
 variable "REGISTRY_USERNAME" {
   type = string
 }
@@ -44,15 +53,6 @@ variable "S3_ACCESS_KEY" {
 }
 
 variable "S3_SECRET_KEY" {
-  type = string
-  sensitive = true
-}
-
-variable "DB_USERNAME" {
-  type = string
-}
-
-variable "DB_PASSWORD" {
   type = string
   sensitive = true
 }
@@ -99,23 +99,18 @@ variable "PROVIDER_TYPE" {
   default = "fitness"
 }
 
-variable "DB_AUTHSOURCE" {
-  type = string
-  default = "admin"
-}
-
-variable "DB_IP" {
+variable "DB_USERNAME" {
   type = string
 }
 
-variable "DB_PORT" {
+variable "DB_PASSWORD" {
   type = string
-  default = "27017"
+  sensitive = true 
 }
 
-variable "DB_NAME" {
+variable "DB_CONNECTION_STRING" {
   type = string
-  default = "fitness-providers"
+  sensitive = true
 }
 
 variable "SECRET" {
@@ -175,4 +170,9 @@ variable "MINIO_VOLUME_SIZE" {
 variable "MINIO_REPLICA_COUNT" {
   type = number
   default = 3
+}
+
+variable "MINIO_RAM_SIZE" {
+  type = string
+  default = "512Mi"
 }

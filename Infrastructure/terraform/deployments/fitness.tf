@@ -9,7 +9,8 @@ resource "kubernetes_deployment" "fitness" {
     depends_on = [
         helm_release.mongodb,
         helm_release.minio,
-        kubernetes_secret.gitlab-registry
+        kubernetes_secret.gitlab-registry,
+        kubernetes_secret.fitness
     ]
 
     metadata {
@@ -21,7 +22,7 @@ resource "kubernetes_deployment" "fitness" {
     }
 
     spec {
-        replicas = 3
+        replicas = var.FITNESS_REPLICA_COUNT
 
         selector {
             match_labels = {
@@ -38,7 +39,7 @@ resource "kubernetes_deployment" "fitness" {
 
             spec {
                 container {
-                    image = "gitlab.duraken.com:5050/fitness-providers/fitness-providers:latest"
+                    image = var.REGISTRY_CONTAINER
                     name  = "fitness"
 
                     port {
@@ -57,7 +58,14 @@ resource "kubernetes_deployment" "fitness" {
 
                     env {
                         name = "S3_SECRET_KEY"
-                        value = var.S3_SECRET_KEY
+
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "S3_SECRET_KEY"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
@@ -77,7 +85,14 @@ resource "kubernetes_deployment" "fitness" {
 
                     env {
                         name = "MAIL_POSTMASTER_PASSWORD"
-                        value = var.MAIL_POSTMASTER_PASSWORD
+
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "MAIL_POSTMASTER_PASSWORD"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
@@ -92,12 +107,26 @@ resource "kubernetes_deployment" "fitness" {
 
                     env {
                         name = "GOOGLE_MAP_API"
-                        value = var.GOOGLE_MAP_API
+
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "GOOGLE_MAP_API"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
                         name = "GOOGLE_PLACE_API"
-                        value = var.GOOGLE_PLACE_API
+
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "GOOGLE_PLACE_API"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
@@ -106,53 +135,56 @@ resource "kubernetes_deployment" "fitness" {
                     }
 
                     env {
-                        name = "DB_USERNAME"
-                        value = var.DB_USERNAME
-                    }
+                        name = "DB_CONNECTION_STRING"
 
-                    env {
-                        name = "DB_PASSWORD"
-                        value = var.DB_PASSWORD
-                    }
-
-                    env {
-                        name = "DB_AUTHSOURCE"
-                        value = var.DB_AUTHSOURCE
-                    }
-
-                    env {
-                        name = "DB_IP"
-                        value = var.DB_IP
-                    }
-
-                    env {
-                        name = "DB_PORT"
-                        value = var.DB_PORT
-                    }
-
-                    env {
-                        name = "DB_NAME"
-                        value = var.DB_NAME
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "DB_CONNECTION_STRING"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
                         name = "SECRET"
-                        value = var.SECRET
+
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "SECRET"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
                         name = "REFRESH_TOKEN_SECRET"
-                        value = var.REFRESH_TOKEN_SECRET
+
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "REFRESH_TOKEN_SECRET"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
                         name = "ACCESS_TOKEN_SECRET"
-                        value = var.ACCESS_TOKEN_SECRET
+
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "ACCESS_TOKEN_SECRET"
+                            optional = false
+                          }
+                        }
                     }
 
                     env {
                         name = "S3_ENDPOINT"
-                        value = var.S3_ENDPOINT
+                        value = "https://${var.S3_ENDPOINT}"
                     }
 
                     env {
@@ -277,10 +309,14 @@ resource "kubernetes_ingress_v1" "fitness" {
     }
 }
 
-/* resource "cloudflare_record" "clcreative-main-cluster" {
+resource "cloudflare_record" "fitness" {
+    depends_on = [
+      data.traefik
+    ]
+
     zone_id = var.CLOUDFLARE_ZONE_ID
     name = var.DOMAIN
-    value =  data.civo_loadbalancer.traefik_lb.public_ip # TODO:
+    value =  data.traefik.spec.external_ips[0]
     type = "A"
     proxied = false
-} */
+}
