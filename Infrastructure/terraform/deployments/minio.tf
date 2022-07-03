@@ -6,16 +6,16 @@ resource "helm_release" "minio" {
   name = "minio"
   namespace = "fitness"
 
-  repository = "https://helm.min.io/"
+  repository = "https://charts.bitnami.com/bitnami"
   chart = "minio"
 
   set {
-    name = "accessKey"
+    name = "auth.rootUser"
     value = var.S3_ACCESS_KEY
   }
 
-  set {
-    name = "secretKey"
+  set_sensitive {
+    name = "auth.rootPassword"
     value = var.S3_SECRET_KEY
   }
 
@@ -25,7 +25,7 @@ resource "helm_release" "minio" {
   }
 
   set {
-    name = "replicas"
+    name = "statefulset.replicaCount"
     value = var.MINIO_REPLICA_COUNT
   }
 
@@ -40,8 +40,11 @@ resource "helm_release" "minio" {
   }
 
   set {
-    name = "resources.requests.memory"
-    value = var.MINIO_RAM_SIZE
+    name = "extraEnvVars"
+    value = <<YAML
+- name: MINIO_SERVER_URL
+  value: "https://${var.S3_ENDPOINT}/"
+    YAML
   }
 }
 
@@ -84,6 +87,20 @@ resource "kubernetes_ingress_v1" "minio" {
 
                 path {
                     path = "/"
+
+                    backend {
+                        service {
+                            name = "minio"
+                            port {
+                                number = 9001
+                            }
+                        }
+                    }
+
+                }
+
+                path {
+                    path = "/${var.S3_BUCKET}"
 
                     backend {
                         service {

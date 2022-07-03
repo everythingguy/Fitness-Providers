@@ -172,7 +172,7 @@ variable "MINIO_REPLICA_COUNT" {
   default = 3
 }
 
-variable "MINIO_RAM_SIZE" {
-  type = string
-  default = "512Mi"
+variable "LETS_ENCRYPT_STAGING" {
+  type = bool
+  default = false
 }

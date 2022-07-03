@@ -14,10 +14,9 @@ resource "helm_release" "certmanager" {
 
   repository = "https://charts.jetstack.io"
   chart = "cert-manager"
-  version = "1.8.2"
 
   set {
-    name = "installCRDS"
+    name = "installCRDs"
     value = "true"
   }
 }
@@ -28,7 +27,7 @@ resource "time_sleep" "wait_for_certmanager" {
         helm_release.certmanager
     ]
 
-    create_duration = "10s"
+    create_duration = "30s"
 }
 
 resource "kubectl_manifest" "cloudflare_prod" {
@@ -46,7 +45,7 @@ metadata:
 spec:
   acme:
     email: ${var.CLOUDFLARE_EMAIL}
-    server: https://acme-v02.api.letsencrypt.org/directory
+    server: ${var.LETS_ENCRYPT_STAGING == true ? "https://acme-staging-v02.api.letsencrypt.org/directory" : "https://acme-v02.api.letsencrypt.org/directory"}
     privateKeySecretRef:
       name: cloudflare-prod-account-key
     solvers:

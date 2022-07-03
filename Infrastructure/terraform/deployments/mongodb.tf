@@ -29,7 +29,7 @@ resource "helm_release" "mongodb" {
     value = var.DB_USERNAME
   }
 
-  set {
+  set_sensitive {
     name = "auth.passwords[0]"
     value = var.DB_PASSWORD
   }

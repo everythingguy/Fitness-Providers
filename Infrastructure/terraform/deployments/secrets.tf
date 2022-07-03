@@ -1,7 +1,7 @@
 resource "kubernetes_secret" "cloudflare_api_key_secret" {
 
     depends_on = [
-        kubernetes_namespace.certmanager
+      time_sleep.wait_for_certmanager
     ]
 
     metadata {
