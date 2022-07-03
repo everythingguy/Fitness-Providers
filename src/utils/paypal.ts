@@ -5,7 +5,7 @@ import Provider from "../models/provider";
 import connectDB, { getMongoURI } from "./db";
 import * as Type from "../@types/paypal";
 
-const PAYPAL_API_URL = "https://api-m.sandbox.paypal.com/v1";
+const PAYPAL_API_URL = process.env.PAYPAL_API_URL;
 
 export default class PayPalManager {
     static access_token = "";
