@@ -37,7 +37,8 @@ module.exports = () => {
         "process.env.MAIL_CONTACT_EMAIL": JSON.stringify(process.env.MAIL_CONTACT_EMAIL),
         "process.env.GOOGLE_MAP_API": JSON.stringify(process.env.GOOGLE_MAP_API),
         "process.env.PAYPAL_CLIENT_ID": JSON.stringify(process.env.PAYPAL_CLIENT_ID),
-        "process.env.PAYPAL_PLAN_ID": JSON.stringify(process.env.PAYPAL_PLAN_ID)
+        "process.env.PAYPAL_PLAN_ID": JSON.stringify(process.env.PAYPAL_PLAN_ID),
+        "process.env.DEMO": JSON.stringify(process.env.DEMO)
       }),
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: ["./dist/**", "../public/dist/**"],

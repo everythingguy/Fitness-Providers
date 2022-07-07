@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
+import { Alert } from "react-bootstrap";
 import { toast } from "react-toastify";
 import User from "../../../API/User";
 import { UserContext } from "../../../context/UserState";
@@ -54,6 +55,19 @@ export const Login: React.FC = () => {
 
     return (
         <>
+            {process.env.DEMO && process.env.DEMO === "true" && (
+                <Alert variant="info">
+                    There are demo accounts available{" "}
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        href="https://gitlab.duraken.com/fitness-providers/fitness-providers/-/blob/staging/README.md#demo"
+                    >
+                        here
+                    </a>
+                    .
+                </Alert>
+            )}
             <div className="h3">Login to your account</div>
             <div className="divider-border"></div>
 
