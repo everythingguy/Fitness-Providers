@@ -209,7 +209,6 @@ build_staging:
         <<: *global_variables
         DOCKER_DRIVER: overlay2
         DOCKER_TLS_CERTDIR: "/certs"
-        DEMO: "true"
     tags:
         - docker
         - amd64
@@ -220,7 +219,7 @@ build_staging:
     before_script:
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
     script:
-        - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging --build-arg MAIL_CONTACT_EMAIL=$MAIL_CONTACT_EMAIL --build-arg GOOGLE_MAP_API=$GOOGLE_MAP_API .
+        - docker build --no-cache --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:staging --build-arg DEMO="true" --build-arg MAIL_CONTACT_EMAIL=$MAIL_CONTACT_EMAIL --build-arg GOOGLE_MAP_API=$GOOGLE_MAP_API .
         - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
         - docker push $CI_REGISTRY_IMAGE:staging
     after_script:
