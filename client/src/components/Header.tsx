@@ -31,14 +31,6 @@ export const Header: React.FC = () => {
                     <Nav className="me-auto mx-lg-4 fw-bold ">
                         <Nav.Link
                             as={Link}
-                            to="/"
-                            className="mx-2 my-1 text-light"
-                            eventKey="link-2"
-                        >
-                            Home
-                        </Nav.Link>
-                        <Nav.Link
-                            as={Link}
                             to="/calendar"
                             className="mx-1 my-1 text-light"
                             eventKey="link-3"
