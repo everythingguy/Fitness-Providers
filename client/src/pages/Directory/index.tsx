@@ -12,6 +12,7 @@ import {
 import { Link, useMatch, useSearchParams } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import { UserContext } from "../../context/UserState";
+import { Alert } from "react-bootstrap";
 
 // TODO: Get all categories
 
@@ -316,6 +317,14 @@ export const Directory: React.FC = () => {
 
     return (
         <>
+            {process.env.DEMO && process.env.DEMO === "true" && (
+                <Alert variant="info">
+                    Demo: To see the full functionality of the site please click
+                    login and login as an instructor. Then select my account
+                    (hambuger button on mobile) to see the content management
+                    tools.
+                </Alert>
+            )}
             <div className="h3">Directory</div>
             <div className="divider-border"></div>
             <div className="row mb-3">
