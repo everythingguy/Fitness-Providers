@@ -15,7 +15,7 @@ tf destory
 
 Currently mailgun needs to be setup manually.
 Also the minio bucket needs to be created manually using the minio dashboard.
-Make sure the bucket as a public read policy such as...
+Make sure the bucket has a public read policy such as...
 
 ```
 {
