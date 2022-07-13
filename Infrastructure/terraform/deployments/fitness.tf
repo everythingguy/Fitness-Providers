@@ -3,7 +3,7 @@ resource "kubernetes_namespace" "fitness" {
       name = "fitness"
     }
 }
-/*
+
 resource "kubernetes_deployment" "fitness" {
 
     depends_on = [
@@ -320,4 +320,3 @@ resource "cloudflare_record" "fitness" {
     type = "A"
     proxied = false
 }
-*/
