@@ -66,6 +66,7 @@ spec:
     name: cloudflare-prod
     kind: ClusterIssuer
   dnsNames:
+  - '${var.S3_DASHBOARD_ENDPOINT}'
   - '${var.S3_ENDPOINT}'   
     YAML
 }
