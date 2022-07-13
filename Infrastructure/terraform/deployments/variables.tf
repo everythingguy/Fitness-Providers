@@ -42,6 +42,11 @@ variable "REGISTRY_PASSWORD" {
   sensitive = true
 }
 
+variable "DEMO" {
+  type = string
+  default = "false"
+}
+
 variable "S3_ACCESS_KEY" {
   type = string
 }

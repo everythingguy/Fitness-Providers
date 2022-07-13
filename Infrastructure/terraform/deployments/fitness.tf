@@ -52,6 +52,11 @@ resource "kubernetes_deployment" "fitness" {
                     }
 
                     env {
+                        name = "DEMO"
+                        value = var.DEMO
+                    }
+
+                    env {
                         name = "S3_ACCESS_KEY"
                         value = var.S3_ACCESS_KEY
                     }
