@@ -41,6 +41,7 @@ resource "kubernetes_deployment" "fitness" {
                 container {
                     image = var.REGISTRY_CONTAINER
                     name  = "fitness"
+                    image_pull_policy = "Always"
 
                     port {
                         container_port = 80
