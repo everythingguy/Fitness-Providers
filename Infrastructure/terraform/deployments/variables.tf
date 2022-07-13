@@ -29,6 +29,10 @@ variable "REGISTRY_CONTAINER" {
   default = "gitlab.com/fitness-providers/fitness-providers:latest"
 }
 
+variable "REGISTRY_EMAIL" {
+  type = string
+}
+
 variable "REGISTRY_USERNAME" {
   type = string
 }

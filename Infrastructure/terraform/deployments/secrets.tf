@@ -30,6 +30,7 @@ resource "kubernetes_secret" "gitlab-registry" {
     ".dockerconfigjson" = jsonencode({
       auths = {
         "${var.REGISTRY_SERVER}" = {
+          "email" = var.REGISTRY_EMAIL
           "username" = var.REGISTRY_USERNAME
           "password" = var.REGISTRY_PASSWORD
           "auth"     = base64encode("${var.REGISTRY_USERNAME}:${var.REGISTRY_PASSWORD}")

@@ -34,6 +34,10 @@ variable "REGISTRY_SERVER" {
   default = "gitlab.com"
 }
 
+variable "REGISTRY_EMAIL" {
+  type = string
+}
+
 variable "REGISTRY_CONTAINER" {
   type = string
   default = "gitlab.com/fitness-providers/fitness-providers:latest"
