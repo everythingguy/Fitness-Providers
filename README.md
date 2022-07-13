@@ -1,3 +1,6 @@
+The original repository can be found [here](https://gitlab.duraken.com/fitness-providers/fitness-providers).
+The original repository does not have high availability and may be down often.
+
 # What is this?
 
 This is a full scale website for students to find fitness instructors. **This website is still a work in progress.**
