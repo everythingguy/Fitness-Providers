@@ -20,17 +20,12 @@ resource "helm_release" "mongodb" {
   }
 
   set {
-    name = "auth.databases[0]"
-    value = "admin"
-  }
-
-  set {
-    name = "auth.usernames[0]"
+    name = "auth.rootUser"
     value = var.DB_USERNAME
   }
 
   set_sensitive {
-    name = "auth.passwords[0]"
+    name = "auth.rootPassword"
     value = var.DB_PASSWORD
   }
 
