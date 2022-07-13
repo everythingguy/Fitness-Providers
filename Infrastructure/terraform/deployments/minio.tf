@@ -44,6 +44,8 @@ resource "helm_release" "minio" {
     value = <<YAML
 - name: MINIO_SERVER_URL
   value: "https://${var.S3_ENDPOINT}/"
+- name: MINIO_BROWSER_REDIRECT_URL
+  value: "https://${var.S3_DASHBOARD_ENDPOINT}/"
     YAML
   }
 }
@@ -69,6 +71,45 @@ spec:
 }
 
 
+resource "kubernetes_ingress_v1" "minio-dashboard" {
+
+    depends_on = [kubernetes_namespace.fitness, kubectl_manifest.minio-certificate]
+
+    metadata {
+        name = "minio-dashboard"
+        namespace = "fitness"
+    }
+
+    spec {
+        rule {
+
+            host = var.S3_DASHBOARD_ENDPOINT
+
+            http {
+
+                path {
+                    path = "/"
+
+                    backend {
+                        service {
+                            name = "minio"
+                            port {
+                                number = 9001
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        tls {
+          secret_name = "minio-cert"
+          hosts = [var.S3_DASHBOARD_ENDPOINT]
+        }
+    }
+}
+
 resource "kubernetes_ingress_v1" "minio" {
 
     depends_on = [kubernetes_namespace.fitness, kubectl_manifest.minio-certificate]
@@ -92,20 +133,6 @@ resource "kubernetes_ingress_v1" "minio" {
                         service {
                             name = "minio"
                             port {
-                                number = 9001
-                            }
-                        }
-                    }
-
-                }
-
-                path {
-                    path = "/${var.S3_BUCKET}"
-
-                    backend {
-                        service {
-                            name = "minio"
-                            port {
                                 number = 9000
                             }
                         }
@@ -120,6 +147,18 @@ resource "kubernetes_ingress_v1" "minio" {
           hosts = [var.S3_ENDPOINT]
         }
     }
+}
+
+resource "cloudflare_record" "minio-dashboard" {
+    depends_on = [
+      data.kubernetes_service.traefik
+    ]
+
+    zone_id = var.CLOUDFLARE_ZONE_ID
+    name = var.S3_DASHBOARD_ENDPOINT
+    value =  data.kubernetes_service.traefik.status[0].load_balancer[0].ingress[0].ip
+    type = "A"
+    proxied = false
 }
 
 resource "cloudflare_record" "minio" {

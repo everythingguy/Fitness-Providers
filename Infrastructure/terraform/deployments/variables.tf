@@ -127,9 +127,14 @@ variable "ACCESS_TOKEN_SECRET" {
   sensitive = true 
 }
 
+variable "S3_DASHBOARD_ENDPOINT" {
+  type = string
+  default = "minio"
+}
+
 variable "S3_ENDPOINT" {
   type = string
-  default = "" # TODO:
+  default = "image"
 }
 
 variable "S3_BUCKET" {
