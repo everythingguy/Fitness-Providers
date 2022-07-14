@@ -1,3 +1,13 @@
+variable "GRAFANA_DOMAIN" {
+  type = string
+  default = "grafana"
+}
+
+variable "GRAFANA_PASSWORD" {
+  type = string
+  sensitive = true
+}
+
 variable "FITNESS_REPLICA_COUNT" {
   type = number
 }
@@ -174,6 +184,11 @@ variable "MINIO_VOLUME_SIZE" {
 variable "MINIO_REPLICA_COUNT" {
   type = number
   default = 3
+}
+
+variable "MONGO_REPLICA_KEY" {
+  type = string
+  sensitive = true
 }
 
 variable "LETS_ENCRYPT_STAGING" {

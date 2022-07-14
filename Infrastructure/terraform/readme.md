@@ -13,6 +13,12 @@ destory: warning does not remove linode volumes for minio and mongodb.
 tf destory
 ```
 
+Access the prometheus ui on localhost:9090 by running the following
+
+```bash
+kubectl port-forward -n prometheus prometheus-prometheus-kube-prometheus-prometheus-0 9090
+```
+
 Currently mailgun needs to be setup manually.
 Also the minio bucket needs to be created manually using the minio dashboard.
 Make sure the bucket has a public read policy such as...

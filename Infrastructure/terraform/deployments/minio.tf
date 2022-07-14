@@ -1,6 +1,7 @@
 resource "helm_release" "minio" {
   depends_on = [
-    kubernetes_namespace.fitness
+    kubernetes_namespace.fitness,
+      helm_release.prometheus
   ]
 
   name = "minio"
@@ -40,6 +41,21 @@ resource "helm_release" "minio" {
   }
 
   set {
+    name = "metrics.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "metrics.serviceMonitor.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "metrics.serviceMonitor.namespace"
+    value = "prometheus"
+  }
+
+  set {
     name = "extraEnvVars"
     value = <<YAML
 - name: MINIO_SERVER_URL
@@ -51,8 +67,10 @@ resource "helm_release" "minio" {
 }
 
 resource "kubectl_manifest" "minio-certificate" {
-
-    depends_on = [kubernetes_namespace.fitness, time_sleep.wait_for_clusterissuer]
+    depends_on = [
+      kubernetes_namespace.fitness,
+      time_sleep.wait_for_clusterissuer
+    ]
 
     yaml_body = <<YAML
 apiVersion: cert-manager.io/v1
