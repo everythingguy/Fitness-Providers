@@ -11,7 +11,7 @@ resource "helm_release" "mongodb" {
 
   set {
     name = "architecture"
-    value = "replicaset"
+    value = var.MONGO_REPLICA_COUNT > 1 ? "replicaset" : "standalone"
   }
 
   set {
@@ -42,6 +42,54 @@ resource "helm_release" "mongodb" {
   set {
     name = "persistence.size"
     value = var.MONGO_VOLUME_SIZE
+  }
+
+  set {
+    name = "affinity"
+    value = <<YAML
+podAntiAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: arbiter
+          app.kubernetes.io/instance: mongodb
+          app.kubernetes.io/name: mongodb
+      namespaces:
+        - fitness
+      topologyKey: kubernetes.io/hostname
+    - labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: mongodb
+          app.kubernetes.io/instance: mongodb
+          app.kubernetes.io/name: mongodb
+      namespaces:
+        - fitness
+      topologyKey: kubernetes.io/hostname
+    YAML
+  }
+  
+  set {
+    name = "arbiter.affinity"
+    value = <<YAML
+podAntiAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: arbiter
+          app.kubernetes.io/instance: mongodb
+          app.kubernetes.io/name: mongodb
+      namespaces:
+        - fitness
+      topologyKey: kubernetes.io/hostname
+    - labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: mongodb
+          app.kubernetes.io/instance: mongodb
+          app.kubernetes.io/name: mongodb
+      namespaces:
+        - fitness
+      topologyKey: kubernetes.io/hostname
+    YAML
   }
 }
 
