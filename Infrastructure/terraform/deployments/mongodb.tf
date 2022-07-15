@@ -132,6 +132,6 @@ resource "helm_release" "mongodb-metrics" {
 
   set_sensitive {
     name = "mongodb.uri"
-    value = "mongodb://${var.DB_USERNAME}:${var.DB_PASSWORD}@mongodb-0.mongodb-headless.fitness.svc.cluster.local:27017/admin"
+    value = var.MONGO_REPLICA_COUNT > 1 ? "mongodb://${var.DB_USERNAME}:${var.DB_PASSWORD}@mongodb-headless.fitness.svc.cluster.local:27017/admin" : "mongodb://${var.DB_USERNAME}:${var.DB_PASSWORD}@mongodb.fitness.svc.cluster.local:27017/admin"
   }
 }
