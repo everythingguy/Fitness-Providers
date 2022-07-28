@@ -111,6 +111,44 @@ resource "kubernetes_deployment" "fitness" {
                     }
 
                     env {
+                        name = "PAYPAL_API_URL"
+                        value = var.PAYPAL_API_URL
+                    }
+
+                    env {
+                        name = "PAYPAL_PLAN_ID"
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "PAYPAL_PLAN_ID"
+                            optional = false
+                          }
+                        }
+                    }
+
+                    env {
+                        name = "PAYPAL_CLIENT_ID"
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "PAYPAL_CLIENT_ID"
+                            optional = false
+                          }
+                        }
+                    }
+
+                    env {
+                        name = "PAYPAL_SECRET"
+                        value_from {
+                          secret_key_ref {
+                            name = "fitness"
+                            key = "PAYPAL_SECRET"
+                            optional = false
+                          }
+                        }
+                    }
+
+                    env {
                         name = "GOOGLE_MAP_API"
 
                         value_from {
