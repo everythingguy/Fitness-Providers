@@ -61,7 +61,7 @@ export const Login: React.FC = () => {
                     <a
                         target="_blank"
                         rel="noreferrer"
-                        href="https://gitlab.duraken.com/fitness-providers/fitness-providers/-/blob/staging/README.md#demo"
+                        href="https://github.com/everythingguy/Fitness-Providers/blob/staging/README.md#demo"
                     >
                         here
                     </a>

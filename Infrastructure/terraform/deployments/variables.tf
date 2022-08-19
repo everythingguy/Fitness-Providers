@@ -93,6 +93,26 @@ variable "MAIL_CONTACT_EMAIL" {
   type = string
 }
 
+variable "PAYPAL_API_URL" {
+  type = string
+  default = "https://api-m.sandbox.paypal.com/v1"
+}
+
+variable "PAYPAL_PLAN_ID" {
+  type = string
+  sensitive = true
+}
+
+variable "PAYPAL_CLIENT_ID" {
+  type = string
+  sensitive = true
+}
+
+variable "PAYPAL_SECRET" {
+  type = string
+  sensitive = true
+}
+
 variable "GOOGLE_MAP_API" {
   type = string
   sensitive = true
