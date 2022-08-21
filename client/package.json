@@ -8,7 +8,7 @@
     "@fullcalendar/rrule": "^5.11.0",
     "@fullcalendar/timegrid": "^5.11.0",
     "@googlemaps/js-api-loader": "^1.14.3",
-    "@paypal/paypal-js": "^5.1.0",
+    "@paypal/paypal-js": "^5.1.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
