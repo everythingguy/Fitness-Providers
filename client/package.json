@@ -65,7 +65,7 @@
     "@cypress/webpack-dev-server": "^1.8.4",
     "@types/node": "^16.11.52",
     "@types/react": "^17.0.48",
-    "@types/react-calendar": "^3.5.1",
+    "@types/react-calendar": "^3.5.2",
     "@types/react-dom": "^18.0.6",
     "@types/react-router": "^5.1.18",
     "@types/react-router-dom": "^5.3.3",
