@@ -13,7 +13,6 @@
     "server": "nodemon --config nodemon.json src/app.ts",
     "server:debug": "nodemon --config nodemon.json --inspect-brk src/app.ts",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "silent-dev": "concurrently \"npm run server\" \"npm run silent-client\"",
     "test": "jest",
     "coverage": "jest --collectCoverage"
   },

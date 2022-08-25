@@ -35,7 +35,6 @@
     "build-scss": "sass scss:src/assets",
     "build-css": "postcss tailwind-src/tailwind.css -o src/assets/tailwind.css && npm run build-scss",
     "start": "react-scripts start",
-    "silent-start": "cross-env BROWSER=none react-scripts start",
     "build": "tsc && webpack --config webpack.config.js --mode production",
     "dev": "webpack --config webpack.config.js --watch --mode development",
     "test": "jest",
