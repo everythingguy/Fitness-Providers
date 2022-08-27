@@ -127,15 +127,15 @@ export const Header: React.FC = () => {
                             <Nav.Link
                                 as={Link}
                                 to="/user/login"
-                                className="btn btn-outline-light btn-sm text-decoration-none p-2 m-1"
+                                className="btn btn-sm text-light text-decoration-none p-2 m-1"
                                 eventKey="link-6"
                             >
-                                Log In
+                                Login
                             </Nav.Link>
                             <Nav.Link
                                 as={Link}
                                 to="/user/register"
-                                className="btn btn-outline-light btn-sm text-decoration-none p-2 m-1"
+                                className="btn btn-sm text-light text-decoration-none p-2 m-1"
                                 eventKey="link-7"
                             >
                                 Sign Up
