@@ -1,211 +1,203 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Open Browser Preview",
-      "command": "${command:simpleBrowser.show}",
-      //"command": "${command:browser-preview.openPreview}",
-      "problemMatcher": []
-    },
-    {
-      "type": "npm",
-      "script": "build",
-      "group": "build",
-      "problemMatcher": ["$tsc"],
-      "label": "npm: build",
-      "detail": "tsc",
-      "dependsOn": ["npm: install -D"]
-    },
-    {
-      "type": "npm",
-      "script": "build",
-      "path": "client/",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "dependsOn": [
-        "npm: build",
-        "npm: build-css - client",
-        "npm: install - client"
-      ],
-      "problemMatcher": [],
-      "label": "npm: build - client",
-      "detail": "react-scripts build"
-    },
-    {
-      "type": "npm",
-      "script": "test",
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
-      "dependsOn": ["npm: install -D", "npm: install -D - client"],
-      "problemMatcher": [],
-      "label": "npm: test",
-      "detail": "jest"
-    },
-    {
-      "type": "npm",
-      "script": "silent-dev",
-      "dependsOn": [
-        "npm: install -D",
-        "npm: install -D - client",
-        "Open Browser Preview"
-      ],
-      "problemMatcher": [],
-      "label": "npm: silent-dev",
-      "detail": "concurrently \"npm run server\" \"npm run silent-client\"",
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      }
-    },
-    {
-      "type": "npm",
-      "script": "dev",
-      "dependsOn": ["npm: install -D", "npm: install -D - client"],
-      "problemMatcher": [],
-      "label": "npm: dev",
-      "detail": "concurrently \"npm run server\" \"npm run client\""
-    },
-    {
-      "type": "npm",
-      "script": "build-css",
-      "path": "client/",
-      "group": "build",
-      "dependsOn": ["npm: install - client"],
-      "problemMatcher": [],
-      "label": "npm: build-css - client",
-      "detail": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss  "
-    },
-    {
-      "type": "npm",
-      "script": "coverage",
-      "dependsOn": ["npm: install -D", "npm: install -D - client"],
-      "problemMatcher": [],
-      "label": "npm: coverage",
-      "detail": "jest --collectCoverage",
-      "group": "test"
-    },
-    {
-      "type": "npm",
-      "script": "install",
-      "problemMatcher": [],
-      "label": "npm: install",
-      "detail": "install dependencies from package"
-    },
-    {
-      "type": "npm",
-      "script": "install",
-      "path": "client/",
-      "problemMatcher": [],
-      "label": "npm: install - client",
-      "detail": "install client dependencies from package"
-    },
-    {
-      "type": "shell",
-      "command": "npm i -D",
-      "problemMatcher": [],
-      "label": "npm: install -D",
-      "detail": "install dev dependencies from package",
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      }
-    },
-    {
-      "type": "shell",
-      "command": "npm i -D --prefix client",
-      "problemMatcher": [],
-      "label": "npm: install -D - client",
-      "detail": "install client dev dependencies from package",
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      }
-    },
-    {
-      "type": "npm",
-      "script": "lint",
-      "dependsOn": ["npm: install -D"],
-      "problemMatcher": [],
-      "label": "npm: lint",
-      "detail": "tslint -c tslint.json -p tsconfig.json --fix"
-    },
-    {
-      "type": "npm",
-      "script": "start",
-      "dependsOn": ["npm: build", "npm: build - client"],
-      "problemMatcher": [],
-      "label": "npm: start",
-      "detail": "node dist/app.js"
-    },
-    {
-      "type": "npm",
-      "script": "silent-client",
-      "problemMatcher": [
+    "version": "2.0.0",
+    "tasks": [
         {
-          "pattern": [
-            {
-              "regexp": ".",
-              "file": 1,
-              "location": 2,
-              "message": 3
+            "label": "Open Browser Preview",
+            "command": "${command:simpleBrowser.show}",
+            //"command": "${command:browser-preview.openPreview}",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "group": "build",
+            "problemMatcher": ["$tsc"],
+            "label": "npm: build",
+            "detail": "tsc",
+            "dependsOn": ["npm: install -D"]
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "path": "client/",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "npm: build",
+                "npm: build-css - client",
+                "npm: install - client"
+            ],
+            "problemMatcher": [],
+            "label": "npm: build - client",
+            "detail": "react-scripts build"
+        },
+        {
+            "type": "npm",
+            "script": "test",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": ["npm: install -D", "npm: install -D - client"],
+            "problemMatcher": [],
+            "label": "npm: test",
+            "detail": "jest"
+        },
+        {
+            "type": "npm",
+            "script": "dev",
+            "dependsOn": [
+                "npm: install -D",
+                "npm: install -D - client",
+                "Open Browser Preview"
+            ],
+            "problemMatcher": [],
+            "label": "npm: dev",
+            "detail": "concurrently \"npm run server\" \"npm run client\"",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
             }
-          ],
-          "background": {
-            "activeOnStart": true,
-            "beginsPattern": "cross-env BROWSER=none react-scripts start",
-            "endsPattern": "Compiled"
-          }
+        },
+        {
+            "type": "npm",
+            "script": "build-css",
+            "path": "client/",
+            "group": "build",
+            "dependsOn": ["npm: install - client"],
+            "problemMatcher": [],
+            "label": "npm: build-css - client",
+            "detail": "postcss tailwind-src/tailwind.css -o src/assets/main.css && npm run build-scss  "
+        },
+        {
+            "type": "npm",
+            "script": "coverage",
+            "dependsOn": ["npm: install -D", "npm: install -D - client"],
+            "problemMatcher": [],
+            "label": "npm: coverage",
+            "detail": "jest --collectCoverage",
+            "group": "test"
+        },
+        {
+            "type": "npm",
+            "script": "install",
+            "problemMatcher": [],
+            "label": "npm: install",
+            "detail": "install dependencies from package"
+        },
+        {
+            "type": "npm",
+            "script": "install",
+            "path": "client/",
+            "problemMatcher": [],
+            "label": "npm: install - client",
+            "detail": "install client dependencies from package"
+        },
+        {
+            "type": "shell",
+            "command": "npm i -D",
+            "problemMatcher": [],
+            "label": "npm: install -D",
+            "detail": "install dev dependencies from package",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "type": "shell",
+            "command": "npm i -D --prefix client",
+            "problemMatcher": [],
+            "label": "npm: install -D - client",
+            "detail": "install client dev dependencies from package",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "type": "npm",
+            "script": "lint",
+            "dependsOn": ["npm: install -D"],
+            "problemMatcher": [],
+            "label": "npm: lint",
+            "detail": "tslint -c tslint.json -p tsconfig.json --fix"
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "dependsOn": ["npm: build", "npm: build - client"],
+            "problemMatcher": [],
+            "label": "npm: start",
+            "detail": "node dist/app.js"
+        },
+        {
+            "type": "npm",
+            "script": "silent-client",
+            "problemMatcher": [
+                {
+                    "pattern": [
+                        {
+                            "regexp": ".",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "cross-env BROWSER=none react-scripts start",
+                        "endsPattern": "Compiled"
+                    }
+                }
+            ],
+            "label": "npm: silent-client",
+            "detail": "npm run silent-start --prefix client",
+            "isBackground": true
+        },
+        {
+            "label": "Sleep",
+            "type": "shell",
+            "command": "sleep 10",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "Terminate All Tasks",
+            "command": "echo ${input:terminate}",
+            "type": "shell",
+            "problemMatcher": []
         }
-      ],
-      "label": "npm: silent-client",
-      "detail": "npm run silent-start --prefix client",
-      "isBackground": true
-    },
-    {
-      "label": "Sleep",
-      "type": "shell",
-      "command": "sleep 10",
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      }
-    },
-    {
-      "label": "Terminate All Tasks",
-      "command": "echo ${input:terminate}",
-      "type": "shell",
-      "problemMatcher": []
-    }
-  ],
-  "inputs": [
-    {
-      "id": "terminate",
-      "type": "command",
-      "command": "workbench.action.tasks.terminate",
-      "args": "terminateAll"
-    }
-  ]
+    ],
+    "inputs": [
+        {
+            "id": "terminate",
+            "type": "command",
+            "command": "workbench.action.tasks.terminate",
+            "args": "terminateAll"
+        }
+    ]
 }
