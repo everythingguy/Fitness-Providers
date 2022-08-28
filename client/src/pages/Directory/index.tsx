@@ -343,21 +343,30 @@ export const Directory: React.FC = () => {
             </div>
             <div className="row mb-5">
                 <Link
-                    className="btn btn-dark text-light fw-bold d-inline w-25"
+                    className={
+                        "btn btn-dark text-light fw-bold d-inline w-25" +
+                        (display === "providers" ? " active" : "")
+                    }
                     to="/directory/providers"
                     onClick={() => setDisplay("providers")}
                 >
                     Providers
                 </Link>
                 <Link
-                    className="btn btn-dark text-light fw-bold d-inline w-25 active"
+                    className={
+                        "btn btn-dark text-light fw-bold d-inline w-25" +
+                        (display === "courses" ? " active" : "")
+                    }
                     to="/directory/courses"
                     onClick={() => setDisplay("courses")}
                 >
                     Courses
                 </Link>
                 <Link
-                    className="btn btn-dark text-light fw-bold d-inline w-25"
+                    className={
+                        "btn btn-dark text-light fw-bold d-inline w-25" +
+                        (display === "sessions" ? " active" : "")
+                    }
                     to="/directory/sessions"
                     onClick={() => setDisplay("sessions")}
                 >
