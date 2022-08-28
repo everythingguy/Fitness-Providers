@@ -455,61 +455,67 @@ export const Directory: React.FC = () => {
                 show={showFilterModal}
                 onHide={() => setFilterModal(!showFilterModal)}
             >
-                {display === "providers" || display === "courses" ? (
-                    <div className="col-12">
-                        <div className="card-body mb-md-4">
-                            <label className="fw-bold">Zip Code</label>
-                            <input
-                                className="form-control"
-                                type="text"
-                                placeholder="Zip Code"
-                                name="zip"
-                                value={zip || ""}
-                                onChange={(e) => {
-                                    try {
-                                        const val = e.target.value;
-                                        if (
-                                            val.length > 0 &&
-                                            !isNaN(parseInt(val, 10))
-                                        )
-                                            setZip(parseInt(val, 10));
-                                        else setZip(null);
-                                    } catch (error) {
-                                        setZip(null);
-                                    }
-                                }}
-                            />
+                <div className="p-3">
+                    {display === "providers" || display === "courses" ? (
+                        <div className="col-12">
+                            <div className="card-body mb-md-4">
+                                <label className="fw-bold">Zip Code</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="Zip Code"
+                                    name="zip"
+                                    value={zip || ""}
+                                    onChange={(e) => {
+                                        try {
+                                            const val = e.target.value;
+                                            if (
+                                                val.length > 0 &&
+                                                !isNaN(parseInt(val, 10))
+                                            )
+                                                setZip(parseInt(val, 10));
+                                            else setZip(null);
+                                        } catch (error) {
+                                            setZip(null);
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
-                    </div>
-                ) : undefined}
+                    ) : undefined}
 
-                {display === "providers" &&
-                    providerCategories.map((category) => (
-                        <CategoryComp
-                            category={category.name}
-                            items={(category.tags as TagType[]).map((t) => ({
-                                ...t,
-                                checked: tags.provider[t._id] || false
-                            }))}
-                            onChange={filterProvider}
-                            key={category._id}
-                            id={"instr"}
-                        />
-                    ))}
-                {display === "courses" || display === "sessions"
-                    ? courseCategories.map((category) => (
-                          <CategoryComp
-                              category={category.name}
-                              items={(category.tags as TagType[]).map((t) => ({
-                                  ...t,
-                                  checked: tags.course[t._id] || false
-                              }))}
-                              onChange={filterCourse}
-                              key={category._id}
-                              id={"course"}
-                          />
-                      ))
-                    : undefined}
+                    {display === "providers" &&
+                        providerCategories.map((category) => (
+                            <CategoryComp
+                                category={category.name}
+                                items={(category.tags as TagType[]).map(
+                                    (t) => ({
+                                        ...t,
+                                        checked: tags.provider[t._id] || false
+                                    })
+                                )}
+                                onChange={filterProvider}
+                                key={category._id}
+                                id={"instr"}
+                            />
+                        ))}
+                    {display === "courses" || display === "sessions"
+                        ? courseCategories.map((category) => (
+                              <CategoryComp
+                                  category={category.name}
+                                  items={(category.tags as TagType[]).map(
+                                      (t) => ({
+                                          ...t,
+                                          checked: tags.course[t._id] || false
+                                      })
+                                  )}
+                                  onChange={filterCourse}
+                                  key={category._id}
+                                  id={"course"}
+                              />
+                          ))
+                        : undefined}
+                </div>
             </Modal>
         </>
     );

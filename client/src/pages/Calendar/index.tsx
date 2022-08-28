@@ -169,43 +169,45 @@ export const Calendar: React.FC<Props> = () => {
                 show={showFilterModal}
                 onHide={() => setFilterModal(false)}
             >
-                <div className="col-12">
-                    <div className="card-body mb-md-4">
-                        <label className="fw-bold">Zip Code</label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            placeholder="Zip Code"
-                            name="zip"
-                            value={zip || ""}
-                            onChange={(e) => {
-                                try {
-                                    const val = e.target.value;
-                                    if (
-                                        val.length > 0 &&
-                                        !isNaN(parseInt(val, 10))
-                                    )
-                                        setZip(parseInt(val, 10));
-                                    else setZip(null);
-                                } catch (error) {
-                                    setZip(null);
-                                }
-                            }}
-                        />
+                <div className="p-3">
+                    <div className="col-12">
+                        <div className="card-body mb-md-4">
+                            <label className="fw-bold">Zip Code</label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                placeholder="Zip Code"
+                                name="zip"
+                                value={zip || ""}
+                                onChange={(e) => {
+                                    try {
+                                        const val = e.target.value;
+                                        if (
+                                            val.length > 0 &&
+                                            !isNaN(parseInt(val, 10))
+                                        )
+                                            setZip(parseInt(val, 10));
+                                        else setZip(null);
+                                    } catch (error) {
+                                        setZip(null);
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
+                    {categories.map((category) => (
+                        <CategoryComp
+                            category={category.name}
+                            items={(category.tags as TagType[]).map((t) => ({
+                                ...t,
+                                checked: tags[t._id] || false
+                            }))}
+                            onChange={filter}
+                            key={category._id}
+                            id={"course"}
+                        />
+                    ))}
                 </div>
-                {categories.map((category) => (
-                    <CategoryComp
-                        category={category.name}
-                        items={(category.tags as TagType[]).map((t) => ({
-                            ...t,
-                            checked: tags[t._id] || false
-                        }))}
-                        onChange={filter}
-                        key={category._id}
-                        id={"course"}
-                    />
-                ))}
             </Modal>
         </>
     );
