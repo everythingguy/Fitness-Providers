@@ -17,6 +17,11 @@ interface Props extends innerProps {
     newTab?: boolean;
     onEdit?: (_id: string) => void;
     onDelete?: (_id: string) => void;
+    setExternalWarningState?: (state: {
+        showModal: boolean;
+        link: string;
+        newTab: boolean;
+    }) => void;
 }
 
 const InnerLink: React.FC<innerProps> = ({
@@ -71,6 +76,7 @@ export const Result: React.FC<Props> = ({
     href,
     date,
     image,
+    setExternalWarningState,
     external = false,
     newTab = true,
     hidden = false,
@@ -96,13 +102,18 @@ export const Result: React.FC<Props> = ({
                         />
                     </Link>
                 ) : (
-                    /* TODO: external link warning */
-                    <a
-                        href={href}
-                        target={newTab ? "_blank" : "_self"}
-                        rel="noreferrer noopener"
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (setExternalWarningState)
+                                setExternalWarningState({
+                                    showModal: true,
+                                    link: href,
+                                    newTab
+                                });
+                        }}
                         data-id={_id}
-                        className="text-decoration-none text-reset d-inline-block"
+                        className="text-decoration-none text-reset d-inline-block border-0 bg-transparent p-0"
                         style={{ width: "90%" }}
                     >
                         <InnerLink
@@ -112,7 +123,7 @@ export const Result: React.FC<Props> = ({
                             date={date}
                             hidden={hidden}
                         />
-                    </a>
+                    </button>
                 )
             ) : onEdit ? (
                 <InnerLink
@@ -142,7 +153,10 @@ export const Result: React.FC<Props> = ({
                     </button>
                 ) : null}
                 {onDelete ? (
-                    <button className="btn p-0 border-0" onClick={() => onDelete(_id)}>
+                    <button
+                        className="btn p-0 border-0"
+                        onClick={() => onDelete(_id)}
+                    >
                         <i className="bi bi-trash ms-2"></i>
                     </button>
                 ) : null}

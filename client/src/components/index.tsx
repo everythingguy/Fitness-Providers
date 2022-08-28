@@ -9,4 +9,5 @@ export * from "./ResultList";
 export * from "./Result";
 export * from "./Card";
 export * from "./ProviderApplication";
+export * from "./ExternalWarning";
 export * from "./Footer";

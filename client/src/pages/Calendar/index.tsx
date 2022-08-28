@@ -14,6 +14,7 @@ import {
 import { liveSessionTimeToString } from "../../utils/Date";
 import { liveSessionDateToString } from "./../../utils/Date";
 import { UserContext } from "../../context/UserState";
+import ExternalWarning from "../../components/ExternalWarning";
 
 interface Props {}
 
@@ -29,6 +30,11 @@ export const Calendar: React.FC<Props> = () => {
     const [zip, setZip] = useState<number | null>(null);
     const [page, setPage] = useState<number | null>(1);
     const [showFilterModal, setFilterModal] = useState(false);
+    const [externalWarningState, setExternalWarningState] = useState({
+        showModal: false,
+        link: "",
+        newTab: true
+    });
 
     const searchTimeout = useRef<number | null>(null);
 
@@ -149,6 +155,7 @@ export const Calendar: React.FC<Props> = () => {
                                 s.session.URL ||
                                 `/course/${s.session.course._id}`,
                             external: s.session.URL ? true : false,
+                            setExternalWarningState,
                             image:
                                 s.session.course.image ||
                                 "https://picsum.photos/500/500?" + s._id,
@@ -209,6 +216,17 @@ export const Calendar: React.FC<Props> = () => {
                     ))}
                 </div>
             </Modal>
+            <ExternalWarning
+                showModal={externalWarningState.showModal}
+                setModal={(showModal: boolean) =>
+                    setExternalWarningState({
+                        ...externalWarningState,
+                        showModal
+                    })
+                }
+                link={externalWarningState.link}
+                newTab={externalWarningState.newTab}
+            />
         </>
     );
 };

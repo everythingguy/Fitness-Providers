@@ -15,6 +15,7 @@ import DeleteModal from "./Modals/Delete";
 import { Course, LiveSession } from "../../../API";
 import { liveSessionDateToString } from "../../../utils/Date";
 import { Info } from "../../../@types/misc";
+import ExternalWarning from "./../../../components/ExternalWarning";
 
 interface Props {}
 
@@ -23,6 +24,11 @@ export const LiveManagement: React.FC<Props> = () => {
 
     const [showLiveSessionModal, setLiveSessionModal] = useState(false);
     const [showDeleteModal, setDeleteModal] = useState(false);
+    const [externalWarningState, setExternalWarningState] = useState({
+        showModal: false,
+        link: "",
+        newTab: true
+    });
 
     const [courses, setCourses] = useState<CourseType[]>([]);
     const [liveSessions, setliveSessions] = useState<SessionType[]>([]);
@@ -76,6 +82,7 @@ export const LiveManagement: React.FC<Props> = () => {
                                     session.URL ||
                                     `/course/${session.course._id}`,
                                 external: session.URL ? true : false,
+                                setExternalWarningState,
                                 image:
                                     session.image ||
                                     "https://picsum.photos/500/500?" +
@@ -119,6 +126,17 @@ export const LiveManagement: React.FC<Props> = () => {
                 showModal={showDeleteModal}
                 info={editDeleteInfo}
                 setInfo={setEditDeleteInfo}
+            />
+            <ExternalWarning
+                showModal={externalWarningState.showModal}
+                setModal={(showModal: boolean) =>
+                    setExternalWarningState({
+                        ...externalWarningState,
+                        showModal
+                    })
+                }
+                link={externalWarningState.link}
+                newTab={externalWarningState.newTab}
             />
         </div>
     );

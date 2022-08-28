@@ -20,6 +20,7 @@ import { ResultList } from "../../../components/ResultList";
 import Error403 from "../../ErrorPages/403";
 import { Info } from "../../../@types/misc";
 import { Alert } from "react-bootstrap";
+import ExternalWarning from "../../../components/ExternalWarning";
 
 interface Props {}
 
@@ -33,6 +34,11 @@ export const Management: React.FC<Props> = () => {
     const [showCourseModal, setCourseModal] = useState(false);
     const [showSessionModal, setSessionModal] = useState(false);
     const [showDeleteModal, setDeleteModal] = useState(false);
+    const [externalWarningState, setExternalWarningState] = useState({
+        showModal: false,
+        link: "",
+        newTab: true
+    });
 
     const [searchParams, setSearchParams] = useState<{
         keywords: string;
@@ -227,7 +233,8 @@ export const Management: React.FC<Props> = () => {
                                 image:
                                     s.image ||
                                     "https://picsum.photos/500/500?" + s._id,
-                                external: s.URL ? true : false
+                                external: s.URL ? true : false,
+                                setExternalWarningState
                             }))}
                             onEdit={(id) => {
                                 setEditDeleteInfo({ id, type: "session" });
@@ -267,6 +274,17 @@ export const Management: React.FC<Props> = () => {
                 showModal={showDeleteModal}
                 info={editDeleteInfo}
                 setInfo={setEditDeleteInfo}
+            />
+            <ExternalWarning
+                showModal={externalWarningState.showModal}
+                setModal={(showModal: boolean) =>
+                    setExternalWarningState({
+                        ...externalWarningState,
+                        showModal
+                    })
+                }
+                link={externalWarningState.link}
+                newTab={externalWarningState.newTab}
             />
         </div>
     );

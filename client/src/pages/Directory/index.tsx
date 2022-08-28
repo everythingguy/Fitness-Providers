@@ -1,6 +1,11 @@
 import React, { useContext } from "react";
 import { useState, useEffect, useRef } from "react";
-import { Searchbar, Category as CategoryComp, Card } from "../../components";
+import {
+    Searchbar,
+    Category as CategoryComp,
+    Card,
+    ExternalWarning
+} from "../../components";
 import { Category, Provider, Course, Session } from "../../API";
 import {
     Category as CategoryType,
@@ -27,6 +32,12 @@ export const Directory: React.FC = () => {
             : "courses";
 
     const [searchParams] = useSearchParams();
+
+    const [externalWarningState, setExternalWarningState] = useState({
+        showModal: false,
+        link: "",
+        newTab: true
+    });
 
     const [showFilterModal, setFilterModal] = useState(false);
     const [providerCategories, setProviderCategories] = useState<
@@ -343,21 +354,30 @@ export const Directory: React.FC = () => {
             </div>
             <div className="row mb-5">
                 <Link
-                    className="btn btn-dark text-light fw-bold d-inline w-25"
+                    className={
+                        "btn btn-dark text-light fw-bold d-inline w-25" +
+                        (display === "providers" ? " active" : "")
+                    }
                     to="/directory/providers"
                     onClick={() => setDisplay("providers")}
                 >
                     Providers
                 </Link>
                 <Link
-                    className="btn btn-dark text-light fw-bold d-inline w-25 active"
+                    className={
+                        "btn btn-dark text-light fw-bold d-inline w-25" +
+                        (display === "courses" ? " active" : "")
+                    }
                     to="/directory/courses"
                     onClick={() => setDisplay("courses")}
                 >
                     Courses
                 </Link>
                 <Link
-                    className="btn btn-dark text-light fw-bold d-inline w-25"
+                    className={
+                        "btn btn-dark text-light fw-bold d-inline w-25" +
+                        (display === "sessions" ? " active" : "")
+                    }
                     to="/directory/sessions"
                     onClick={() => setDisplay("sessions")}
                 >
@@ -447,6 +467,7 @@ export const Directory: React.FC = () => {
                                     : false
                             }
                             external={s.URL ? true : false}
+                            setExternalWarningState={setExternalWarningState}
                         ></Card>
                     ))}
             </div>
@@ -517,6 +538,17 @@ export const Directory: React.FC = () => {
                         : undefined}
                 </div>
             </Modal>
+            <ExternalWarning
+                showModal={externalWarningState.showModal}
+                setModal={(showModal: boolean) =>
+                    setExternalWarningState({
+                        ...externalWarningState,
+                        showModal
+                    })
+                }
+                link={externalWarningState.link}
+                newTab={externalWarningState.newTab}
+            />
         </>
     );
 };
