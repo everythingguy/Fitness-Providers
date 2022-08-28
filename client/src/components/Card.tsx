@@ -83,7 +83,7 @@ export const Card: React.FC<Props> = ({
                                 });
                         }}
                         data-id={_id}
-                        className="text-decoration-none text-reset"
+                        className="text-decoration-none text-reset border-0 bg-transparent p-0"
                     >
                         <InnerCard
                             image={image}
