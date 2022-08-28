@@ -18,6 +18,11 @@ interface Props extends innerProps {
     date?: string;
     readMore?: boolean;
     hidden?: boolean;
+    setExternalWarningState?: (state: {
+        showModal: boolean;
+        link: string;
+        newTab: boolean;
+    }) => void;
 }
 
 const InnerCard: React.FC<innerProps> = ({ title, subtitle, image }) => {
@@ -47,6 +52,7 @@ export const Card: React.FC<Props> = ({
     href,
     date,
     image,
+    setExternalWarningState,
     className = "",
     external = false,
     newTab = true,
@@ -66,10 +72,16 @@ export const Card: React.FC<Props> = ({
                 }}
             >
                 {external ? (
-                    <a
-                        href={href}
-                        target={newTab ? "_blank" : "_self"}
-                        rel="noreferrer noopener"
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (setExternalWarningState)
+                                setExternalWarningState({
+                                    showModal: true,
+                                    link: href,
+                                    newTab
+                                });
+                        }}
                         data-id={_id}
                         className="text-decoration-none text-reset"
                     >
@@ -78,7 +90,7 @@ export const Card: React.FC<Props> = ({
                             title={title}
                             subtitle={subtitle}
                         />
-                    </a>
+                    </button>
                 ) : (
                     <Link
                         to={href}
