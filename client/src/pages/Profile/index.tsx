@@ -45,6 +45,7 @@ export const Profile: React.FC<Props> = () => {
     }>({ course: 1, liveSession: 1 });
 
     const [showEditModal, setEditModal] = useState(false);
+    const [showExportModal, setExportModal] = useState(false);
     const [selectedTags, setSelectedTags] = useState<
         { value: string; label: string }[]
     >([]);
@@ -353,6 +354,18 @@ export const Profile: React.FC<Props> = () => {
                     </div>
                 </div>
                 <div className="col-lg-6 col-md-12 p-0">
+                    {user &&
+                        user.provider &&
+                        user.provider.isEnrolled &&
+                        isMyProfile && (
+                            <button
+                                type="button"
+                                className="float-end border-0 bg-transparent"
+                                onClick={() => setExportModal(true)}
+                            >
+                                <i className="bi bi-share"></i>
+                            </button>
+                        )}
                     <ResultList
                         title="Courses"
                         maxHeight="550px"
@@ -432,6 +445,31 @@ export const Profile: React.FC<Props> = () => {
                     />
                 </div>
             </div>
+            {user && user.provider && user.provider.isEnrolled && isMyProfile && (
+                <Modal
+                    size="lg"
+                    show={showExportModal}
+                    onHide={() => {
+                        setExportModal(false);
+                    }}
+                >
+                    <Modal.Header>My Courses IFrame</Modal.Header>
+                    <Modal.Body>
+                        <p>
+                            You can share your courses on other websites using
+                            an iframe.
+                        </p>
+                        <textarea
+                            readOnly
+                            className="w-100"
+                            style={{ height: "250px" }}
+                            value={`<iframe src="${window.location.protocol}//${window.location.hostname}/embedded/courses/${user.provider._id}/?newTab=false" height="500" width="500" frameborder="0"></iframe>
+                        `}
+                        ></textarea>
+                    </Modal.Body>
+                    <Modal.Footer></Modal.Footer>
+                </Modal>
+            )}
             <Modal
                 size="lg"
                 show={showEditModal}
