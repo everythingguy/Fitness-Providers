@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface innerProps {
     image?: string;
@@ -83,24 +83,47 @@ export const Result: React.FC<Props> = ({
     onEdit,
     onDelete
 }) => {
+    const location = useLocation();
+
+    const embedded = location.pathname.includes("/embedded/");
+
     return (
         <div className="list-group-item list-group-item-action border-0 d-inline-flex">
             {href ? (
                 !external ? (
-                    <Link
-                        to={href}
-                        className="text-decoration-none text-reset d-inline-block"
-                        style={{ width: "90%" }}
-                        data-id={_id}
-                    >
-                        <InnerLink
-                            image={image}
-                            title={title}
-                            subtitle={subtitle}
-                            date={date}
-                            hidden={hidden}
-                        />
-                    </Link>
+                    embedded ? (
+                        <a
+                            href={href}
+                            className="text-decoration-none text-reset d-inline-block"
+                            style={{ width: "90%" }}
+                            data-id={_id}
+                            target={newTab ? "_blank" : "_parent"}
+                            rel="noreferrer noopener"
+                        >
+                            <InnerLink
+                                image={image}
+                                title={title}
+                                subtitle={subtitle}
+                                date={date}
+                                hidden={hidden}
+                            />
+                        </a>
+                    ) : (
+                        <Link
+                            to={href}
+                            className="text-decoration-none text-reset d-inline-block"
+                            style={{ width: "90%" }}
+                            data-id={_id}
+                        >
+                            <InnerLink
+                                image={image}
+                                title={title}
+                                subtitle={subtitle}
+                                date={date}
+                                hidden={hidden}
+                            />
+                        </Link>
+                    )
                 ) : (
                     <button
                         type="button"

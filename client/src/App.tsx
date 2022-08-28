@@ -1,5 +1,5 @@
 import React, { useContext, lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import Header from "./components/Header";
@@ -30,6 +30,8 @@ const Terms = lazy(() => import("./pages/Terms"));
 
 import Footer from "./components/Footer";
 
+const EmbeddedCourses = lazy(() => import("./pages/Embedded/Courses"));
+
 const Error400 = lazy(() => import("./pages/ErrorPages/400"));
 const Error403 = lazy(() => import("./pages/ErrorPages/403"));
 const Error404 = lazy(() => import("./pages/ErrorPages/404"));
@@ -40,12 +42,18 @@ import Loading from "./components/Loading";
 
 function App() {
     const { loading, user } = useContext(UserContext);
+    const location = useLocation();
+
+    const embedded = location.pathname.includes("/embedded/");
 
     return (
         <>
-            <Header />
-            <div id="main" className="bg-light">
-                <div className="container">
+            {embedded ? null : <Header />}
+            <div
+                id="main"
+                className={embedded ? "w-100 h-100 p-0" : "bg-light"}
+            >
+                <div className={embedded ? "w-100 h-100 p-0" : "container"}>
                     <Suspense fallback={<Loading />}>
                         {loading ? (
                             <Loading />
@@ -135,6 +143,11 @@ function App() {
                                 )}
 
                                 <Route
+                                    path="/embedded/courses/:provider"
+                                    element={<EmbeddedCourses />}
+                                />
+
+                                <Route
                                     path="/error/400"
                                     element={<Error400 />}
                                 />
@@ -157,14 +170,18 @@ function App() {
                 </div>
             </div>
 
-            <ToastContainer
-                position="bottom-right"
-                pauseOnHover
-                draggable
-                closeOnClick
-                autoClose={5000}
-            />
-            <Footer />
+            {embedded ? null : (
+                <>
+                    <ToastContainer
+                        position="bottom-right"
+                        pauseOnHover
+                        draggable
+                        closeOnClick
+                        autoClose={5000}
+                    />
+                    <Footer />
+                </>
+            )}
         </>
     );
 }
