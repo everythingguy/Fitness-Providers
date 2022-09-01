@@ -79,7 +79,7 @@
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^4.9.0",
+    "mongodb": "^4.9.1",
     "mongoose": "^6.5.4",
     "mongoose-aggregate-paginate-v2": "^1.0.6",
     "mongoose-paginate-v2": "^1.7.0",
