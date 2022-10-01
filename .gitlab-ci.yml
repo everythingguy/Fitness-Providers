@@ -489,7 +489,7 @@ stop_dev:
         - docker rm $DOCKER_NAME
         # - 'curl -s --location --request POST "http://10.0.0.175:5000/delete" --header "Content-Type: application/x-www-form-urlencoded" --data-urlencode "subdomain=$SUBDOMAIN" --data-urlencode "branch=$CI_COMMIT_BRANCH"'
 
-deploy_branch:
+.deploy_branch: #TODO: this job will not run until the . is removed from the name
     stage: deploy
     cache: []
     needs:
