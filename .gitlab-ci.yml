@@ -542,7 +542,7 @@ stop_dev:
         on_stop: stop_branch
         auto_stop_in: 5 days
 
-stop_branch:
+.stop_branch: #TODO: this job will not run until the . is removed from the name
     stage: deploy
     allow_failure: true
     tags:
