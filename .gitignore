@@ -41,3 +41,5 @@ junit.xml
 client/webpack-stats.json
 client/cypress/screenshots
 client/cypress/videos
+
+.dccache
