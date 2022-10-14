@@ -12,7 +12,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
-    "antd": "^4.23.4",
+    "antd": "^4.23.5",
     "bootstrap": "^5.2.2",
     "dotenv": "^16.0.3",
     "moment": "^2.29.4",
@@ -62,7 +62,7 @@
   "devDependencies": {
     "@cypress/react": "^5.12.5",
     "@cypress/webpack-dev-server": "^1.8.4",
-    "@types/node": "^16.11.64",
+    "@types/node": "^16.11.65",
     "@types/react": "^17.0.50",
     "@types/react-calendar": "^3.5.3",
     "@types/react-dom": "^18.0.6",
