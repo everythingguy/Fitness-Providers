@@ -4,7 +4,7 @@
   "description": "This is a full scale website for students to find fitness instructors.",
   "private": true,
   "dependencies": {
-    "@fullcalendar/react": "^5.11.2",
+    "@fullcalendar/react": "^5.11.3",
     "@fullcalendar/rrule": "^5.11.3",
     "@fullcalendar/timegrid": "^5.11.3",
     "@googlemaps/js-api-loader": "^1.15.1",
