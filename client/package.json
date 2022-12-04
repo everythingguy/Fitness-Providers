@@ -13,7 +13,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "antd": "^4.24.4",
-    "bootstrap": "^5.2.2",
+    "bootstrap": "^5.2.3",
     "dotenv": "^16.0.3",
     "moment": "^2.29.4",
     "postcss": "^8.4.19",
