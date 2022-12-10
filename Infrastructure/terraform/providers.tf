@@ -7,7 +7,7 @@ terraform {
 
     kubernetes = {
       source = "hashicorp/kubernetes"
-      version = "2.14.0"
+      version = "2.16.1"
     }
 
     kubectl = {
@@ -17,12 +17,12 @@ terraform {
 
     helm = {
       source = "hashicorp/helm"
-      version = "2.7.0"
+      version = "2.7.1"
     }
 
     cloudflare = {
       source = "cloudflare/cloudflare"
-      version = "3.25.0"
+      version = "3.29.0"
     }
   }
 }
