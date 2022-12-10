@@ -14,7 +14,7 @@ interface State {
 }
 
 interface Props {
-    children: any;
+    children: React.ReactNode;
 }
 
 const initialState: State = {
