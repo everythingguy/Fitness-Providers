@@ -80,6 +80,7 @@ tscompile:
               - cache/Cypress
           policy: pull-push
     script:
+        - npm config set registry=http://10.0.0.194:4873
         - npm i -g postcss-cli
         - npm i -g postcss
         - npm i -g typescript

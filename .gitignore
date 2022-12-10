@@ -13,6 +13,7 @@ client/.pnp.js
 **/dist
 
 # misc
+**/.npmrc
 **/.DS_Store
 **/.env.local
 **/.env.development.local
@@ -40,3 +41,5 @@ junit.xml
 client/webpack-stats.json
 client/cypress/screenshots
 client/cypress/videos
+
+.dccache

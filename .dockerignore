@@ -33,3 +33,5 @@ client/webpack-stats.json
 client/src/assets/main.css
 client/src/assets/style.css
 client/src/assets/style.css.map
+client/cypress/screenshots
+client/cypress/videos
