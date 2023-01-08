@@ -6,9 +6,7 @@ cache: &global_cache
               - client/package-lock.json
       paths:
           - node_modules
-          - .npm
           - client/node_modules
-          - client/.npm
       policy: pull
     - &build_cache
       key: build-$CI_PIPELINE_ID
@@ -37,7 +35,6 @@ stages:
     - deploy
 
 variables: &global_variables
-    npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
     MAIL_HOST: smtp.mailgun.org
     MAIL_PORT: 465
@@ -61,9 +58,7 @@ tscompile:
                   - client/package-lock.json
           paths:
               - node_modules
-              - .npm
               - client/node_modules
-              - client/.npm
           policy: pull-push
         - key: build-$CI_PIPELINE_ID
           paths:
