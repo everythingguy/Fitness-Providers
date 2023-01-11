@@ -17,12 +17,12 @@ terraform {
 
     helm = {
       source = "hashicorp/helm"
-      version = "2.7.1"
+      version = "2.8.0"
     }
 
     cloudflare = {
       source = "cloudflare/cloudflare"
-      version = "3.29.0"
+      version = "3.31.0"
     }
   }
 }
