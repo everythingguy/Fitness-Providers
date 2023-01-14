@@ -27,8 +27,7 @@
     "react-scripts": "4.0.3",
     "react-select": "^5.7.0",
     "react-toastify": "^9.1.1",
-    "tailwindcss": "^2.2.19",
-    "web-vitals": "^2.1.4"
+    "tailwindcss": "^2.2.19"
   },
   "scripts": {
     "watch-scss": "sass --watch scss:src/assets",
