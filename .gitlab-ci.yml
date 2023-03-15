@@ -127,6 +127,7 @@ jest_frontend:
     stage: test
     tags:
         - amd64
+        - docker
     before_script:
         - cp .env-sample .env
         - cd client
