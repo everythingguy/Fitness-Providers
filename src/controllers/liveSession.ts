@@ -203,7 +203,7 @@ export async function getLiveSessions(req: Request, res: express.Response) {
         query["session.course.tags"] = { $all: tagFilter };
     if (zip) query["session.course.location.zip"] = zip;
 
-    if (search && search.length > 0) {
+    if (search && (search.length as number) > 0) {
         query = appendQuery(query, {
             $or: [
                 {
