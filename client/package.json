@@ -73,7 +73,7 @@
     "cypress": "^9.7.0",
     "file-loader": "^6.2.0",
     "fitness-providers": "file:..",
-    "react-bootstrap-icons": "^1.10.2",
+    "react-bootstrap-icons": "^1.10.3",
     "react-calendar": "^4.0.0",
     "sass": "^1.59.3",
     "ts-loader": "^9.4.2",
