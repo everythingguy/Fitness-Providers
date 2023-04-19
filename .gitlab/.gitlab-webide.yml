@@ -1,0 +1,18 @@
+terminal:
+  image: node:latest
+  before_script:
+    - apt update
+    - apt upgrade -y
+    - apt install -y tzdata
+    - npm i -g npm
+    - npm i -g postcss-cli
+    - npm i -g postcss
+    - npm i -g typescript
+    - cp .env-sample .env
+    - npm i -D
+    - cd client
+    - npm i -D
+    - cd ..
+  script: sleep 60
+  variables:
+    NODE_ENV: "dev"
