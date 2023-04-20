@@ -12,7 +12,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^14.4.3",
-    "antd": "^4.24.8",
+    "antd": "^4.24.9",
     "bootstrap": "^5.2.3",
     "dotenv": "^16.0.3",
     "moment": "^2.29.4",
