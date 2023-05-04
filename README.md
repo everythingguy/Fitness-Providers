@@ -43,7 +43,7 @@ This app uses
 
 ## Demo
 
-There is a demo version of the site available at https://demo.fitnessproviders.net
+There is a demo version of the site available at https://demo.duraken.com
 The database for this version of the site is reset every night.
 Feel free to make accounts and explore the site. Email verification will be required for any accounts you create.
 Here are some demo accounts for your convenience.
